@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Script from "next/script"; // <-- Simple Script import add kiya hai
+import Script from "next/script";
 import "./globals.css";
-import ChatBot from "@/components/Chatbot"; // <-- Aap ka pehle wala import
+import ChatBot from "@/components/Chatbot";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,6 +17,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "ScholarGrid - Academic & Research Consultancy",
   description: "Professional academic research, thesis writing, and data analysis support.",
+  verification: {
+    google: "R-joaBU6oK5Y2WxN_RDz7f63hpLWrLt7CMKTBX6tzV8",
+  },
 };
 
 export default function RootLayout({
@@ -32,7 +35,7 @@ export default function RootLayout({
       <head />
       <body className="min-h-full flex flex-col relative">
         {children}
-        <ChatBot /> {/* <-- Aap ka pehle wala ChatBot component */}
+        <ChatBot />
         
         {/* Google AdSense Script */}
         <Script
