@@ -1,16 +1,39 @@
 import { NextResponse } from "next/server";
 import { GoogleGenAI } from "@google/genai";
 
-const SYSTEM_PROMPT =
-  "You are the official AI Assistant for ScholarGrid Support. Guide users professionally and helpfully regarding academic research, thesis writing, data analysis, and modeling.";
+const SYSTEM_PROMPT = `You are the official AI Assistant for ScholarGrid Support. Guide users professionally and helpfully regarding academic research, thesis writing, data analysis, and modeling.
 
-// Kitni pichli messages bhejni hain (free limit bachane ke liye)
+Formatting rules (strictly follow):
+- Reply in plain text only. Do NOT use markdown symbols such as **, *, _, #, ---, or backticks.
+- Do not use bold or italics.
+- Keep answers short and clear (under 150 words unless the user asks for detail).
+- For lists, use simple numbering like "1." and "2." on new lines, or short sentences.
+- Do not end every reply with a long list of follow-up questions. Ask at most one short question.
+- Use a polite, professional tone.
+- Reply in the same language the user writes in.`;
+
+// Free quota bachane ke liye sirf last N messages bhejte hain
 const MAX_HISTORY = 20;
 
 type ChatMessage = {
   role: "user" | "assistant";
   content: string;
 };
+
+// Safety net: agar model phir bhi markdown de, to saaf kar do
+function stripMarkdown(text: string): string {
+  return text
+    .replace(/```[\s\S]*?```/g, (m) => m.replace(/```\w*\n?/g, "")) // code fences
+    .replace(/^#{1,6}\s*/gm, "")                                    // headings
+    .replace(/\*\*(.*?)\*\*/g, "$1")                                // **bold**
+    .replace(/__(.*?)__/g, "$1")                                    // __bold__
+    .replace(/^\s*[\*\-]\s+/gm, "• ")                               // bullets
+    .replace(/(^|[\s(])\*(?!\s)([^*\n]+?)\*(?=[\s).,!?:;]|$)/g, "$1$2") // *italic*
+    .replace(/^\s*---+\s*$/gm, "")                                  // horizontal lines
+    .replace(/`([^`]*)`/g, "$1")                                    // inline code
+    .replace(/\n{3,}/g, "\n\n")                                     // extra blank lines
+    .trim();
+}
 
 export async function POST(req: Request) {
   try {
@@ -35,8 +58,8 @@ export async function POST(req: Request) {
     const modelName = process.env.GEMINI_MODEL || "gemini-3.5-flash-lite";
     const ai = new GoogleGenAI({ apiKey });
 
-    // Sirf valid messages lein aur Gemini ke format mein convert karein
-    let contents = messages
+    // Valid messages ko Gemini format mein convert karein
+    const contents = messages
       .filter((m) => m && typeof m.content === "string" && m.content.trim())
       .slice(-MAX_HISTORY)
       .map((m) => ({
@@ -61,10 +84,12 @@ export async function POST(req: Request) {
       contents,
       config: {
         systemInstruction: SYSTEM_PROMPT,
+        temperature: 0.6,
+        maxOutputTokens: 800,
       },
     });
 
-    const reply = response.text ?? "";
+    const reply = stripMarkdown(response.text ?? "");
 
     if (!reply) {
       return NextResponse.json(
@@ -79,7 +104,7 @@ export async function POST(req: Request) {
 
     const msg = String(error?.message || "");
 
-    // Free limit khatam hone par user-friendly message
+    // Free limit khatam
     if (error?.status === 429 || msg.includes("429")) {
       return NextResponse.json(
         { error: "Bohot zyada requests aa rahi hain. Thodi der baad try karein." },
@@ -87,7 +112,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // Model retire/not found hone par
+    // Model retire ho gaya
     if (error?.status === 404 || msg.includes("404")) {
       return NextResponse.json(
         { error: "AI model available nahi hai. Admin ko GEMINI_MODEL update karna hoga." },
