@@ -1,0 +1,21 @@
+import { MetadataRoute } from 'next';
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  const baseUrl = 'https://scholargrid.org';
+
+  return [
+    {
+      url: baseUrl,
+      lastModified: new Date(),
+      changeFrequency: 'yearly',
+      priority: 1,
+    },
+    // Agar aapke pass mazeed pages hain (jaise /about, /services) toh unhein yahan add karein:
+    // {
+    //   url: `${baseUrl}/services`,
+    //   lastModified: new Date(),
+    //   changeFrequency: 'monthly',
+    //   priority: 0.8,
+    // },
+  ];
+}
