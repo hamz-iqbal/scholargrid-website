@@ -204,22 +204,45 @@ export default function ScholarGridLandingPage() {
     }
   ];
 
+  // Google Schema Markup (JSON-LD) for FAQ SEO
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqs.map((faq) => ({
+      "@type": "Question",
+      "name": faq.q,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.a
+      }
+    }))
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-amber-400 selection:text-slate-950">
+      {/* FAQ JSON-LD Schema Integration */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+
       {/* 1. Top Announcement Bar */}
-      <div className="bg-slate-950 py-2.5 px-4 text-center text-xs font-bold tracking-wider text-amber-400 shadow-md flex items-center justify-center gap-2">
+      <header role="banner" className="bg-slate-950 py-2.5 px-4 text-center text-xs font-bold tracking-wider text-amber-400 shadow-md flex items-center justify-center gap-2">
         <Sparkles size={14} className="text-amber-400 animate-pulse" />
         <span>{currentAnnouncement}</span>
-      </div>
+      </header>
 
       {/* Navigation Bar */}
-      <nav className="border-b border-slate-200 bg-white/90 backdrop-blur-xl sticky top-0 z-50 px-6 py-4 shadow-sm">
+      <nav aria-label="Main Navigation" className="border-b border-slate-200 bg-white/90 backdrop-blur-xl sticky top-0 z-50 px-6 py-4 shadow-sm">
         <div className="max-w-7xl mx-auto flex justify-between items-center flex-wrap gap-4">
           <div className="text-2xl font-black tracking-tight text-slate-900 flex items-center gap-3">
             <div className="relative w-10 h-10 flex items-center justify-center">
-              <img 
+              <Image 
                 src="/logo.png" 
-                alt="ScholarGrid Logo" 
+                alt="ScholarGrid - Academic Research & Consultancy Logo" 
+                width={40}
+                height={40}
+                priority
                 className="w-full h-full object-contain"
               />
             </div>
@@ -235,6 +258,7 @@ export default function ScholarGridLandingPage() {
               href={gmailWebUrl}
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="Send Email to ScholarGrid"
               className="bg-slate-100 hover:bg-slate-200 text-blue-900 font-bold px-4 py-2.5 rounded-xl transition-all border border-slate-300 text-xs sm:text-sm flex items-center gap-2"
             >
               <Mail size={16} className="text-blue-700" /> Email Us
@@ -243,6 +267,7 @@ export default function ScholarGridLandingPage() {
               href={`https://wa.me/${whatsappNumber}?text=${whatsappMsg}`}
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="Consult ScholarGrid Team on WhatsApp"
               className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-5 py-2.5 rounded-xl transition-all shadow-md shadow-amber-500/20 text-xs sm:text-sm flex items-center gap-2 hover:scale-105"
             >
               <MessageSquare size={16} /> Consult on WhatsApp
@@ -251,346 +276,350 @@ export default function ScholarGridLandingPage() {
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section className="relative max-w-6xl mx-auto px-6 pt-20 pb-16 text-center">
-        <div className="relative z-10">
-          {/* 2. Hero Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-900 text-xs font-bold uppercase tracking-widest mb-6 shadow-sm">
-            <Zap size={14} className="text-amber-500" /> {currentBadge}
-          </div>
-          
-          {/* 3 & 4. Hero Main Title & Gradient Title */}
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-slate-950 leading-[1.15] mb-6 tracking-tight">
-            {currentMainTitle} <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-800 via-blue-600 to-amber-600">
-              {currentGradientTitle}
-            </span>
-          </h1>
-          
-          {/* 5. Hero Subtitle Paragraph */}
-          <p className="text-base sm:text-xl text-slate-600 max-w-3xl mx-auto mb-10 leading-relaxed font-normal">
-            {currentSubtitle}
-          </p>
-
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-            <a
-              href={`https://wa.me/${whatsappNumber}?text=${whatsappMsg}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto bg-blue-900 hover:bg-blue-800 text-white font-extrabold px-8 py-4 rounded-xl shadow-lg shadow-blue-900/20 transition-all flex items-center justify-center gap-2.5 text-base hover:scale-105"
-            >
-              <Send size={18} className="text-amber-400" /> Send Your Draft for Review
-            </a>
-            <a
-              href={gmailWebUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 font-bold px-8 py-4 rounded-xl transition-all text-base flex items-center justify-center gap-2 shadow-sm"
-            >
-              <Mail size={18} className="text-blue-700" /> Email Us Directly
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* Authority / Stats Section */}
-      <section className="bg-slate-950 py-12 border-y border-slate-800">
-        <div className="max-w-6xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-          <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-sm">
-            <div className="text-3xl md:text-4xl font-black text-amber-400">18+</div>
-            <div className="text-xs md:text-sm text-slate-300 mt-1 font-medium">Q1/Q2 Journal Papers</div>
-          </div>
-          <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-sm">
-            <div className="text-3xl md:text-4xl font-black text-blue-400">100+</div>
-            <div className="text-xs md:text-sm text-slate-300 mt-1 font-medium">Manuscripts Processed</div>
-          </div>
-          <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-sm">
-            <div className="text-3xl md:text-4xl font-black text-amber-400">100%</div>
-            <div className="text-xs md:text-sm text-slate-300 mt-1 font-medium">Publisher Compliance</div>
-          </div>
-          <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-sm">
-            <div className="text-3xl md:text-4xl font-black text-blue-400">Direct</div>
-            <div className="text-xs md:text-sm text-slate-300 mt-1 font-medium">1-on-1 Author Support</div>
-          </div>
-        </div>
-      </section>
-
-      {/* Services Breakdown */}
-      <section id="services" className="max-w-7xl mx-auto px-6 py-24">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-black text-slate-950 tracking-tight">Comprehensive Academic Services</h2>
-          <p className="text-slate-600 text-sm md:text-base mt-3 max-w-2xl mx-auto font-normal">
-            Designed specifically for postgraduate students, PhD scholars, and engineering authors aiming for top-tier international publications.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-8">
-          <div className="bg-white border border-slate-200 p-8 rounded-3xl hover:border-blue-600 transition-all group shadow-md hover:shadow-xl">
-            <div className="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <FileText className="text-amber-600" size={28} />
+      {/* Main Content Area */}
+      <main>
+        {/* Hero Section */}
+        <section className="relative max-w-6xl mx-auto px-6 pt-20 pb-16 text-center">
+          <div className="relative z-10">
+            {/* 2. Hero Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-900 text-xs font-bold uppercase tracking-widest mb-6 shadow-sm">
+              <Zap size={14} className="text-amber-500" /> {currentBadge}
             </div>
-            <h3 className="text-xl font-bold text-slate-900 mb-3">Manuscript Layout & Formatting</h3>
-            <p className="text-slate-600 text-sm mb-6 leading-relaxed">
-              Complete layout overhaul strictly following targeted journal style guides (LaTeX & MS Word).
+            
+            {/* 3 & 4. Hero Main Title & Gradient Title (Proper H1 Tag for SEO) */}
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-slate-950 leading-[1.15] mb-6 tracking-tight">
+              {currentMainTitle} <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-800 via-blue-600 to-amber-600">
+                {currentGradientTitle}
+              </span>
+            </h1>
+            
+            {/* 5. Hero Subtitle Paragraph */}
+            <p className="text-base sm:text-xl text-slate-600 max-w-3xl mx-auto mb-10 leading-relaxed font-normal">
+              {currentSubtitle}
             </p>
-            <ul className="text-xs text-slate-700 space-y-3 font-semibold">
-              <li className="flex items-center gap-2.5"><CheckCircle size={15} className="text-amber-500 shrink-0" /> IEEE, Elsevier, Springer & MDPI Templates</li>
-              <li className="flex items-center gap-2.5"><CheckCircle size={15} className="text-amber-500 shrink-0" /> Vector Figures & TikZ Graphics</li>
-              <li className="flex items-center gap-2.5"><CheckCircle size={15} className="text-amber-500 shrink-0" /> Reference Management (EndNote/Mendeley)</li>
-            </ul>
-          </div>
 
-          <div className="bg-white border-2 border-blue-600 p-8 rounded-3xl transition-all group shadow-xl relative">
-            <div className="absolute -top-3 right-6 bg-blue-900 text-amber-400 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider shadow">
-              Most Popular
-            </div>
-            <div className="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <Cpu className="text-blue-700" size={28} />
-            </div>
-            <h3 className="text-xl font-bold text-slate-900 mb-3">Computational Solvers & AI</h3>
-            <p className="text-slate-600 text-sm mb-6 leading-relaxed">
-              Custom Python & MATLAB script development for differential equations and fluid dynamics models.
-            </p>
-            <ul className="text-xs text-slate-700 space-y-3 font-semibold">
-              <li className="flex items-center gap-2.5"><CheckCircle size={15} className="text-blue-700 shrink-0" /> Physics-Informed Neural Networks (PINNs)</li>
-              <li className="flex items-center gap-2.5"><CheckCircle size={15} className="text-blue-700 shrink-0" /> Levenberg-Marquardt & PSO Algorithms</li>
-              <li className="flex items-center gap-2.5"><CheckCircle size={15} className="text-blue-700 shrink-0" /> ODEs, PDEs & Boundary Value Solvers</li>
-            </ul>
-          </div>
-
-          <div className="bg-white border border-slate-200 p-8 rounded-3xl hover:border-blue-600 transition-all group shadow-md hover:shadow-xl">
-            <div className="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <BarChart2 className="text-amber-600" size={28} />
-            </div>
-            <h3 className="text-xl font-bold text-slate-900 mb-3">Data Graphics & Analysis</h3>
-            <p className="text-slate-600 text-sm mb-6 leading-relaxed">
-              Transforming raw simulation and experimental datasets into publication-standard 2D/3D visual plots.
-            </p>
-            <ul className="text-xs text-slate-700 space-y-3 font-semibold">
-              <li className="flex items-center gap-2.5"><CheckCircle size={15} className="text-amber-500 shrink-0" /> High-Resolution Contour & Line Plots</li>
-              <li className="flex items-center gap-2.5"><CheckCircle size={15} className="text-amber-500 shrink-0" /> In-depth Result Interpretation & Drafting</li>
-              <li className="flex items-center gap-2.5"><CheckCircle size={15} className="text-amber-500 shrink-0" /> Abstract & Technical Section Polish</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* BLOG SECTION */}
-      <section className="max-w-7xl mx-auto px-6 py-20 bg-white border-y border-slate-200 my-12 rounded-3xl shadow-sm">
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-900 text-xs font-bold uppercase tracking-widest mb-4 shadow-sm">
-            <BookOpen size={14} className="text-amber-500" /> Technical Insights & Blog
-          </div>
-          <h2 className="text-3xl md:text-4xl font-black text-slate-950 tracking-tight">Expert Guides for Researchers</h2>
-          <p className="text-slate-600 text-sm md:text-base mt-2 max-w-xl mx-auto">
-            Practical walkthroughs on manuscript formatting, simulation workflows, and journal publication strategies.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-          {/* Blog 1 */}
-          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 hover:border-blue-600 transition-all shadow-sm flex flex-col justify-between">
-            <div>
-              <span className="text-xs font-bold px-3 py-1 bg-blue-100 text-blue-900 rounded-full uppercase tracking-wider">
-                Formatting Guide
-              </span>
-              <h3 className="text-xl font-black text-slate-900 mt-4 mb-2 leading-snug">
-                A Step-by-Step Guide to Formatting Engineering Manuscripts for Elsevier & IEEE
-              </h3>
-              <p className="text-slate-600 text-sm mb-6 leading-relaxed">
-                A practical walkthrough for PhD scholars covering templates, section structures, equation formatting, and figure resolutions.
-              </p>
-            </div>
-            <Link 
-              href="/blog/formatting-guide" 
-              className="inline-flex items-center gap-2 font-black text-blue-700 hover:text-blue-900 text-sm transition-colors"
-            >
-              Read Full Article <ArrowRight size={16} />
-            </Link>
-          </div>
-
-          {/* Blog 2 */}
-          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 hover:border-blue-600 transition-all shadow-sm flex flex-col justify-between">
-            <div>
-              <span className="text-xs font-bold px-3 py-1 bg-red-100 text-red-900 rounded-full uppercase tracking-wider">
-                Publishing Strategy
-              </span>
-              <h3 className="text-xl font-black text-slate-900 mt-4 mb-2 leading-snug">
-                Common Reasons Engineering Manuscripts Get Rejected by Journals (And How to Avoid Them)
-              </h3>
-              <p className="text-slate-600 text-sm mb-6 leading-relaxed">
-                A critical guide for PhD scholars and academic researchers to bypass desk rejections in Q1/Q2 journals.
-              </p>
-            </div>
-            <Link 
-              href="/blog/paper-rejection-reasons" 
-              className="inline-flex items-center gap-2 font-black text-blue-700 hover:text-blue-900 text-sm transition-colors"
-            >
-              Read Full Article <ArrowRight size={16} />
-            </Link>
-          </div>
-
-          {/* Blog 3 */}
-          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 hover:border-blue-600 transition-all shadow-sm flex flex-col justify-between">
-            <div>
-              <span className="text-xs font-bold px-3 py-1 bg-emerald-100 text-emerald-900 rounded-full uppercase tracking-wider">
-                Visualization Guide
-              </span>
-              <h3 className="text-xl font-black text-slate-900 mt-4 mb-2 leading-snug">
-                Mastering Contour Plots & 3D Visualizations in Python and MATLAB for Q1 Journals
-              </h3>
-              <p className="text-slate-600 text-sm mb-6 leading-relaxed">
-                A practical walkthrough for engineering authors on building clean contour plots, color maps, and 3D surfaces.
-              </p>
-            </div>
-            <Link 
-              href="/blog/contour-visualizations" 
-              className="inline-flex items-center gap-2 font-black text-blue-700 hover:text-blue-900 text-sm transition-colors"
-            >
-              Read Full Article <ArrowRight size={16} />
-            </Link>
-          </div>
-
-          {/* Blog 4 */}
-          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 hover:border-blue-600 transition-all shadow-sm flex flex-col justify-between">
-            <div>
-              <span className="text-xs font-bold px-3 py-1 bg-blue-100 text-blue-900 rounded-full uppercase tracking-wider">
-                Research Methodology
-              </span>
-              <h3 className="text-xl font-black text-slate-900 mt-4 mb-2 leading-snug">
-                How to Conduct a Systematic Literature Review (SLR) and Synthesize Prior Work Like a Senior Researcher
-              </h3>
-              <p className="text-slate-600 text-sm mb-6 leading-relaxed">
-                Learn how to follow documented search protocols, screen studies transparently using PRISMA guidelines, build concept matrices, and synthesize prior literature like a senior researcher.
-              </p>
-            </div>
-            <Link 
-              href="/blog/systematic-literature-review-guide" 
-              className="inline-flex items-center gap-2 font-black text-blue-700 hover:text-blue-900 text-sm transition-colors"
-            >
-              Read Full Article <ArrowRight size={16} />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Research Profiles & Publications Links Section */}
-      <section className="max-w-7xl mx-auto px-6 py-12">
-        <div className="bg-blue-50/60 border border-blue-200 rounded-3xl p-8 md:p-12 text-center shadow-sm">
-          <div className="flex items-center gap-3 mb-3 justify-center">
-            <div className="p-2 bg-blue-900 rounded-xl">
-              <Award className="text-amber-400" size={28} />
-            </div>
-            <h2 className="text-2xl md:text-3xl font-black text-slate-900">Explore Complete Scientific Portfolio</h2>
-          </div>
-          <p className="text-slate-600 mb-8 max-w-xl mx-auto text-sm">
-            Browse our full record of peer-reviewed publications, citations, and research metrics directly on our official academic profiles.
-          </p>
-
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-            <a
-              href={googleScholarUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto bg-white hover:bg-slate-50 border-2 border-blue-700 text-blue-900 font-extrabold px-8 py-4 rounded-xl transition-all shadow-md flex items-center justify-center gap-3 text-base hover:scale-105"
-            >
-              <span className="text-blue-700 font-black text-lg">📚</span> Google Scholar Profile <ExternalLink size={18} />
-            </a>
-
-            <a
-              href={researchGateUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto bg-emerald-700 hover:bg-emerald-600 text-white font-extrabold px-8 py-4 rounded-xl transition-all shadow-md flex items-center justify-center gap-3 text-base hover:scale-105"
-            >
-              <span className="text-emerald-300 font-black text-lg">🔬</span> ResearchGate Profile <ExternalLink size={18} />
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* Interactive Accordion Q&A Section */}
-      <section className="max-w-5xl mx-auto px-6 py-24">
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-900 text-xs font-bold uppercase tracking-widest mb-4 shadow-sm">
-            <HelpCircle size={14} className="text-amber-500" /> Executive Knowledge Base
-          </div>
-          <h2 className="text-3xl md:text-5xl font-black text-slate-950 tracking-tight">Frequently Asked Questions</h2>
-          <p className="text-slate-600 text-sm md:text-base mt-3 max-w-xl mx-auto">
-            Everything you need to know about our manuscript preparation, simulation solvers, and global academic consultancy standards.
-          </p>
-        </div>
-
-        <div className="space-y-4">
-          {faqs.map((faq, index) => {
-            const isOpen = openFaqIndex === index;
-            return (
-              <div 
-                key={index} 
-                className={`border rounded-2xl transition-all duration-300 overflow-hidden ${
-                  isOpen 
-                    ? 'bg-white border-blue-600 shadow-lg ring-1 ring-blue-600/20' 
-                    : 'bg-white/80 border-slate-200 hover:border-slate-300 shadow-sm'
-                }`}
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+              <a
+                href={`https://wa.me/${whatsappNumber}?text=${whatsappMsg}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto bg-blue-900 hover:bg-blue-800 text-white font-extrabold px-8 py-4 rounded-xl shadow-lg shadow-blue-900/20 transition-all flex items-center justify-center gap-2.5 text-base hover:scale-105"
               >
-                <button
-                  onClick={() => toggleFaq(index)}
-                  className="w-full text-left p-6 flex items-center justify-between gap-4 focus:outline-none"
-                >
-                  <div className="flex items-center gap-4">
-                    <span className="text-xs font-black uppercase tracking-wider px-3 py-1 rounded-md bg-slate-100 text-slate-700 border border-slate-200 shrink-0 hidden sm:inline-block">
-                      {faq.category}
-                    </span>
-                    <span className="text-sm md:text-base font-extrabold text-slate-900 leading-snug">
-                      <span className="text-blue-700 font-black mr-2">Q{index + 1}.</span>
-                      {faq.q}
-                    </span>
-                  </div>
-                  <div className={`p-2 rounded-full transition-transform duration-300 ${isOpen ? 'bg-blue-50 text-blue-700 rotate-180' : 'bg-slate-100 text-slate-500'}`}>
-                    <ChevronDown size={18} />
-                  </div>
-                </button>
-
-                {isOpen && (
-                  <div className="px-6 pb-6 pt-2 border-t border-slate-100 text-slate-600 text-sm md:text-base leading-relaxed bg-slate-50/50">
-                    <div className="pl-2 border-l-2 border-amber-500">
-                      {faq.a}
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* Bottom CTA Banner */}
-      <section className="relative bg-slate-950 border-t border-slate-800 py-20 px-6 text-center mt-16 overflow-hidden text-white">
-        <div className="relative max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-black mb-4 tracking-tight">Ready to Submit Your Paper with Confidence?</h2>
-          <p className="text-slate-300 max-w-xl mx-auto mb-8 text-sm md:text-base leading-relaxed font-normal">
-            Get a free initial manuscript review and professional consultation for formatting, simulation solvers, or research layout.
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-            <a
-              href={`https://wa.me/${whatsappNumber}?text=${whatsappMsg}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-8 py-4 rounded-xl transition-all shadow-xl shadow-amber-500/10 text-base hover:scale-105"
-            >
-              <Send size={18} /> Consult via WhatsApp
-            </a>
-            <a
-              href={gmailWebUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-white font-bold px-8 py-4 rounded-xl transition-all shadow-xl text-base hover:scale-105"
-            >
-              <Mail size={18} className="text-amber-400" /> Email Us
-            </a>
+                <Send size={18} className="text-amber-400" /> Send Your Draft for Review
+              </a>
+              <a
+                href={gmailWebUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 font-bold px-8 py-4 rounded-xl transition-all text-base flex items-center justify-center gap-2 shadow-sm"
+              >
+                <Mail size={18} className="text-blue-700" /> Email Us Directly
+              </a>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+
+        {/* Authority / Stats Section */}
+        <section className="bg-slate-950 py-12 border-y border-slate-800">
+          <div className="max-w-6xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-sm">
+              <div className="text-3xl md:text-4xl font-black text-amber-400">18+</div>
+              <div className="text-xs md:text-sm text-slate-300 mt-1 font-medium">Q1/Q2 Journal Papers</div>
+            </div>
+            <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-sm">
+              <div className="text-3xl md:text-4xl font-black text-blue-400">100+</div>
+              <div className="text-xs md:text-sm text-slate-300 mt-1 font-medium">Manuscripts Processed</div>
+            </div>
+            <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-sm">
+              <div className="text-3xl md:text-4xl font-black text-amber-400">100%</div>
+              <div className="text-xs md:text-sm text-slate-300 mt-1 font-medium">Publisher Compliance</div>
+            </div>
+            <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-sm">
+              <div className="text-3xl md:text-4xl font-black text-blue-400">Direct</div>
+              <div className="text-xs md:text-sm text-slate-300 mt-1 font-medium">1-on-1 Author Support</div>
+            </div>
+          </div>
+        </section>
+
+        {/* Services Breakdown Section */}
+        <section id="services" className="max-w-7xl mx-auto px-6 py-24">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-black text-slate-950 tracking-tight">Comprehensive Academic Services</h2>
+            <p className="text-slate-600 text-sm md:text-base mt-3 max-w-2xl mx-auto font-normal">
+              Designed specifically for postgraduate students, PhD scholars, and engineering authors aiming for top-tier international publications.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            <article className="bg-white border border-slate-200 p-8 rounded-3xl hover:border-blue-600 transition-all group shadow-md hover:shadow-xl">
+              <div className="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <FileText className="text-amber-600" size={28} />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 mb-3">Manuscript Layout & Formatting</h3>
+              <p className="text-slate-600 text-sm mb-6 leading-relaxed">
+                Complete layout overhaul strictly following targeted journal style guides (LaTeX & MS Word).
+              </p>
+              <ul className="text-xs text-slate-700 space-y-3 font-semibold">
+                <li className="flex items-center gap-2.5"><CheckCircle size={15} className="text-amber-500 shrink-0" /> IEEE, Elsevier, Springer & MDPI Templates</li>
+                <li className="flex items-center gap-2.5"><CheckCircle size={15} className="text-amber-500 shrink-0" /> Vector Figures & TikZ Graphics</li>
+                <li className="flex items-center gap-2.5"><CheckCircle size={15} className="text-amber-500 shrink-0" /> Reference Management (EndNote/Mendeley)</li>
+              </ul>
+            </article>
+
+            <article className="bg-white border-2 border-blue-600 p-8 rounded-3xl transition-all group shadow-xl relative">
+              <div className="absolute -top-3 right-6 bg-blue-900 text-amber-400 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider shadow">
+                Most Popular
+              </div>
+              <div className="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <Cpu className="text-blue-700" size={28} />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 mb-3">Computational Solvers & AI</h3>
+              <p className="text-slate-600 text-sm mb-6 leading-relaxed">
+                Custom Python & MATLAB script development for differential equations and fluid dynamics models.
+              </p>
+              <ul className="text-xs text-slate-700 space-y-3 font-semibold">
+                <li className="flex items-center gap-2.5"><CheckCircle size={15} className="text-blue-700 shrink-0" /> Physics-Informed Neural Networks (PINNs)</li>
+                <li className="flex items-center gap-2.5"><CheckCircle size={15} className="text-blue-700 shrink-0" /> Levenberg-Marquardt & PSO Algorithms</li>
+                <li className="flex items-center gap-2.5"><CheckCircle size={15} className="text-blue-700 shrink-0" /> ODEs, PDEs & Boundary Value Solvers</li>
+              </ul>
+            </article>
+
+            <article className="bg-white border border-slate-200 p-8 rounded-3xl hover:border-blue-600 transition-all group shadow-md hover:shadow-xl">
+              <div className="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <BarChart2 className="text-amber-600" size={28} />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 mb-3">Data Graphics & Analysis</h3>
+              <p className="text-slate-600 text-sm mb-6 leading-relaxed">
+                Transforming raw simulation and experimental datasets into publication-standard 2D/3D visual plots.
+              </p>
+              <ul className="text-xs text-slate-700 space-y-3 font-semibold">
+                <li className="flex items-center gap-2.5"><CheckCircle size={15} className="text-amber-500 shrink-0" /> High-Resolution Contour & Line Plots</li>
+                <li className="flex items-center gap-2.5"><CheckCircle size={15} className="text-amber-500 shrink-0" /> In-depth Result Interpretation & Drafting</li>
+                <li className="flex items-center gap-2.5"><CheckCircle size={15} className="text-amber-500 shrink-0" /> Abstract & Technical Section Polish</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        {/* BLOG SECTION */}
+        <section className="max-w-7xl mx-auto px-6 py-20 bg-white border-y border-slate-200 my-12 rounded-3xl shadow-sm">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-900 text-xs font-bold uppercase tracking-widest mb-4 shadow-sm">
+              <BookOpen size={14} className="text-amber-500" /> Technical Insights & Blog
+            </div>
+            <h2 className="text-3xl md:text-4xl font-black text-slate-950 tracking-tight">Expert Guides for Researchers</h2>
+            <p className="text-slate-600 text-sm md:text-base mt-2 max-w-xl mx-auto">
+              Practical walkthroughs on manuscript formatting, simulation workflows, and journal publication strategies.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            {/* Blog 1 */}
+            <article className="bg-slate-50 border border-slate-200 rounded-2xl p-6 hover:border-blue-600 transition-all shadow-sm flex flex-col justify-between">
+              <div>
+                <span className="text-xs font-bold px-3 py-1 bg-blue-100 text-blue-900 rounded-full uppercase tracking-wider">
+                  Formatting Guide
+                </span>
+                <h3 className="text-xl font-black text-slate-900 mt-4 mb-2 leading-snug">
+                  A Step-by-Step Guide to Formatting Engineering Manuscripts for Elsevier & IEEE
+                </h3>
+                <p className="text-slate-600 text-sm mb-6 leading-relaxed">
+                  A practical walkthrough for PhD scholars covering templates, section structures, equation formatting, and figure resolutions.
+                </p>
+              </div>
+              <Link 
+                href="/blog/formatting-guide" 
+                className="inline-flex items-center gap-2 font-black text-blue-700 hover:text-blue-900 text-sm transition-colors"
+              >
+                Read Full Article <ArrowRight size={16} />
+              </Link>
+            </article>
+
+            {/* Blog 2 */}
+            <article className="bg-slate-50 border border-slate-200 rounded-2xl p-6 hover:border-blue-600 transition-all shadow-sm flex flex-col justify-between">
+              <div>
+                <span className="text-xs font-bold px-3 py-1 bg-red-100 text-red-900 rounded-full uppercase tracking-wider">
+                  Publishing Strategy
+                </span>
+                <h3 className="text-xl font-black text-slate-900 mt-4 mb-2 leading-snug">
+                  Common Reasons Engineering Manuscripts Get Rejected by Journals (And How to Avoid Them)
+                </h3>
+                <p className="text-slate-600 text-sm mb-6 leading-relaxed">
+                  A critical guide for PhD scholars and academic researchers to bypass desk rejections in Q1/Q2 journals.
+                </p>
+              </div>
+              <Link 
+                href="/blog/paper-rejection-reasons" 
+                className="inline-flex items-center gap-2 font-black text-blue-700 hover:text-blue-900 text-sm transition-colors"
+              >
+                Read Full Article <ArrowRight size={16} />
+              </Link>
+            </article>
+
+            {/* Blog 3 */}
+            <article className="bg-slate-50 border border-slate-200 rounded-2xl p-6 hover:border-blue-600 transition-all shadow-sm flex flex-col justify-between">
+              <div>
+                <span className="text-xs font-bold px-3 py-1 bg-emerald-100 text-emerald-900 rounded-full uppercase tracking-wider">
+                  Visualization Guide
+                </span>
+                <h3 className="text-xl font-black text-slate-900 mt-4 mb-2 leading-snug">
+                  Mastering Contour Plots & 3D Visualizations in Python and MATLAB for Q1 Journals
+                </h3>
+                <p className="text-slate-600 text-sm mb-6 leading-relaxed">
+                  A practical walkthrough for engineering authors on building clean contour plots, color maps, and 3D surfaces.
+                </p>
+              </div>
+              <Link 
+                href="/blog/contour-visualizations" 
+                className="inline-flex items-center gap-2 font-black text-blue-700 hover:text-blue-900 text-sm transition-colors"
+              >
+                Read Full Article <ArrowRight size={16} />
+              </Link>
+            </article>
+
+            {/* Blog 4 */}
+            <article className="bg-slate-50 border border-slate-200 rounded-2xl p-6 hover:border-blue-600 transition-all shadow-sm flex flex-col justify-between">
+              <div>
+                <span className="text-xs font-bold px-3 py-1 bg-blue-100 text-blue-900 rounded-full uppercase tracking-wider">
+                  Research Methodology
+                </span>
+                <h3 className="text-xl font-black text-slate-900 mt-4 mb-2 leading-snug">
+                  How to Conduct a Systematic Literature Review (SLR) and Synthesize Prior Work Like a Senior Researcher
+                </h3>
+                <p className="text-slate-600 text-sm mb-6 leading-relaxed">
+                  Learn how to follow documented search protocols, screen studies transparently using PRISMA guidelines, build concept matrices, and synthesize prior literature like a senior researcher.
+                </p>
+              </div>
+              <Link 
+                href="/blog/systematic-literature-review-guide" 
+                className="inline-flex items-center gap-2 font-black text-blue-700 hover:text-blue-900 text-sm transition-colors"
+              >
+                Read Full Article <ArrowRight size={16} />
+              </Link>
+            </article>
+          </div>
+        </section>
+
+        {/* Research Profiles & Publications Links Section */}
+        <section className="max-w-7xl mx-auto px-6 py-12">
+          <div className="bg-blue-50/60 border border-blue-200 rounded-3xl p-8 md:p-12 text-center shadow-sm">
+            <div className="flex items-center gap-3 mb-3 justify-center">
+              <div className="p-2 bg-blue-900 rounded-xl">
+                <Award className="text-amber-400" size={28} />
+              </div>
+              <h2 className="text-2xl md:text-3xl font-black text-slate-900">Explore Complete Scientific Portfolio</h2>
+            </div>
+            <p className="text-slate-600 mb-8 max-w-xl mx-auto text-sm">
+              Browse our full record of peer-reviewed publications, citations, and research metrics directly on our official academic profiles.
+            </p>
+
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+              <a
+                href={googleScholarUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto bg-white hover:bg-slate-50 border-2 border-blue-700 text-blue-900 font-extrabold px-8 py-4 rounded-xl transition-all shadow-md flex items-center justify-center gap-3 text-base hover:scale-105"
+              >
+                <span className="text-blue-700 font-black text-lg">📚</span> Google Scholar Profile <ExternalLink size={18} />
+              </a>
+
+              <a
+                href={researchGateUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto bg-emerald-700 hover:bg-emerald-600 text-white font-extrabold px-8 py-4 rounded-xl transition-all shadow-md flex items-center justify-center gap-3 text-base hover:scale-105"
+              >
+                <span className="text-emerald-300 font-black text-lg">🔬</span> ResearchGate Profile <ExternalLink size={18} />
+              </a>
+            </div>
+          </div>
+        </section>
+
+        {/* Interactive Accordion Q&A Section */}
+        <section className="max-w-5xl mx-auto px-6 py-24">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-900 text-xs font-bold uppercase tracking-widest mb-4 shadow-sm">
+              <HelpCircle size={14} className="text-amber-500" /> Executive Knowledge Base
+            </div>
+            <h2 className="text-3xl md:text-5xl font-black text-slate-950 tracking-tight">Frequently Asked Questions</h2>
+            <p className="text-slate-600 text-sm md:text-base mt-3 max-w-xl mx-auto">
+              Everything you need to know about our manuscript preparation, simulation solvers, and global academic consultancy standards.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {faqs.map((faq, index) => {
+              const isOpen = openFaqIndex === index;
+              return (
+                <div 
+                  key={index} 
+                  className={`border rounded-2xl transition-all duration-300 overflow-hidden ${
+                    isOpen 
+                      ? 'bg-white border-blue-600 shadow-lg ring-1 ring-blue-600/20' 
+                      : 'bg-white/80 border-slate-200 hover:border-slate-300 shadow-sm'
+                  }`}
+                >
+                  <button
+                    onClick={() => toggleFaq(index)}
+                    aria-expanded={isOpen}
+                    className="w-full text-left p-6 flex items-center justify-between gap-4 focus:outline-none"
+                  >
+                    <div className="flex items-center gap-4">
+                      <span className="text-xs font-black uppercase tracking-wider px-3 py-1 rounded-md bg-slate-100 text-slate-700 border border-slate-200 shrink-0 hidden sm:inline-block">
+                        {faq.category}
+                      </span>
+                      <span className="text-sm md:text-base font-extrabold text-slate-900 leading-snug">
+                        <span className="text-blue-700 font-black mr-2">Q{index + 1}.</span>
+                        {faq.q}
+                      </span>
+                    </div>
+                    <div className={`p-2 rounded-full transition-transform duration-300 ${isOpen ? 'bg-blue-50 text-blue-700 rotate-180' : 'bg-slate-100 text-slate-500'}`}>
+                      <ChevronDown size={18} />
+                    </div>
+                  </button>
+
+                  {isOpen && (
+                    <div className="px-6 pb-6 pt-2 border-t border-slate-100 text-slate-600 text-sm md:text-base leading-relaxed bg-slate-50/50">
+                      <div className="pl-2 border-l-2 border-amber-500">
+                        {faq.a}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* Bottom CTA Banner */}
+        <section className="relative bg-slate-950 border-t border-slate-800 py-20 px-6 text-center mt-16 overflow-hidden text-white">
+          <div className="relative max-w-4xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-black mb-4 tracking-tight">Ready to Submit Your Paper with Confidence?</h2>
+            <p className="text-slate-300 max-w-xl mx-auto mb-8 text-sm md:text-base leading-relaxed font-normal">
+              Get a free initial manuscript review and professional consultation for formatting, simulation solvers, or research layout.
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+              <a
+                href={`https://wa.me/${whatsappNumber}?text=${whatsappMsg}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-8 py-4 rounded-xl transition-all shadow-xl shadow-amber-500/10 text-base hover:scale-105"
+              >
+                <Send size={18} /> Consult via WhatsApp
+              </a>
+              <a
+                href={gmailWebUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-white font-bold px-8 py-4 rounded-xl transition-all shadow-xl text-base hover:scale-105"
+              >
+                <Mail size={18} className="text-amber-400" /> Email Us
+              </a>
+            </div>
+          </div>
+        </section>
+      </main>
 
       {/* Footer */}
       <footer className="border-t border-slate-200 bg-white py-8 px-6 text-center text-xs text-slate-500 font-medium">
