@@ -1,12 +1,5 @@
-import { MetadataRoute } from 'next';
+User-agent: *
+Allow: /
+Disallow: /api/
 
-export default function robots(): MetadataRoute.Robots {
-  return {
-    rules: {
-      userAgent: '*',
-      allow: '/',
-      disallow: ['/api/'],
-    },
-    sitemap: 'https://scholargrid.org/sitemap.xml',
-  };
-}
+Sitemap: https://scholargrid.org/sitemap.xml
