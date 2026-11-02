@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Script from "next/script";
 import "./globals.css";
 import ChatBot from "@/components/Chatbot";
 
@@ -32,18 +31,17 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <head />
-      <body className="min-h-full flex flex-col relative">
-        {children}
-        <ChatBot />
-        
-        {/* Google AdSense Script */}
-        <Script
+      <head>
+        {/* Google AdSense Standard HTML Script (Fixes data-nscript error) */}
+        <script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4708685236568228"
           crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
+        ></script>
+      </head>
+      <body className="min-h-full flex flex-col relative">
+        {children}
+        <ChatBot />
       </body>
     </html>
   );

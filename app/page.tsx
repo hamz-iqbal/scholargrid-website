@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { 
@@ -21,18 +21,81 @@ import {
   Mail
 } from 'lucide-react';
 
+// 1. Top Announcement Bar - 6 Variations
+const announcementVariations = [
+  "HIGH-IMPACT ACADEMIC CONSULTANCY | FAST-TRACK YOUR Q1/Q2 MANUSCRIPT FOR ELSEVIER & SPRINGER",
+  "EXPERT MATLAB & PYTHON NUMERICAL MODELING | SEAMLESS THESIS AND RESEARCH SUPPORT",
+  "ACCELERATE YOUR SCHOLARLY PUBLICATIONS WITH ADVANCED COMPUTATIONAL SIMULATIONS",
+  "GLOBAL ACADEMIC CONSULTANCY FOR PHD SCHOLARS | IEEE & ELSEVIER FORMATTING EXPERTS",
+  "ENHANCE YOUR RESEARCH IMPACT WITH PRECISION DATA ANALYSIS & PINNS MODELING",
+  "PROFESSIONAL MANUSCRIPT EDITING & JOURNAL SUBMISSION STRATEGIES FOR RESEARCHERS"
+];
+
+// 2. Hero Badge - 6 Variations
+const badgeVariations = [
+  "Engineering & Computational Research Specialists",
+  "Advanced Numerical Simulation & AI Modeling Experts",
+  "Q1/Q2 Journal Manuscript Formatting & Support",
+  "Python, MATLAB & LaTeX Academic Consultants",
+  "Rigorous Editorial & Data Analysis Partners",
+  "Empowering Global Scholars & PhD Researchers"
+];
+
+// 3. Hero Main Title (First Part) - 6 Variations
+const mainTitleVariations = [
+  "Accelerate Your Research With",
+  "Elevate Your Academic Work To",
+  "Maximize Publication Success With",
+  "Optimize Your Scientific Papers For",
+  "Transform Your Research Drafts Into",
+  "Advance Your Scholarly Career With"
+];
+
+// 4. Hero Gradient Highlighted Text (Second Part) - 6 Variations
+const gradientTitleVariations = [
+  "Publication-Ready Precision",
+  "World-Class Journal Standards",
+  "Q1/Q2 Impact Excellence",
+  "Flawless Academic Formatting",
+  "Advanced Computational Accuracy",
+  "Top-Tier Editorial Mastery"
+];
+
+// 5. Hero Subtitle Paragraph - 6 Variations
+const subtitleVariations = [
+  "End-to-end expertise for Engineering Manuscripts, Python/MATLAB Numerical Simulations, Physics-Informed Neural Networks (PINNs), and IEEE/Elsevier Template Formatting.",
+  "Accelerate your academic publishing journey with advanced numerical simulations, precise data visualization, and rigorous editorial support.",
+  "Empowering researchers worldwide with publication-ready formatting, custom algorithmic solvers, and expert journal submission strategies.",
+  "Professional academic consultancy specializing in high-impact Q1/Q2 journal manuscripts, computational modeling, and thesis development.",
+  "Custom computational research solutions, comprehensive MATLAB/Python simulations, and immaculate journal layout styling for ambitious scholars.",
+  "Streamline your peer-reviewed submissions with expert technical proofreading, advanced mathematical modeling, and precise manuscript formatting."
+];
+
 export default function ScholarGridLandingPage() {
   const whatsappNumber = "923147982032";
   const whatsappMsg = encodeURIComponent("Hello ScholarGrid team! I need expert support for my research manuscript / thesis simulation & formatting.");
   const emailAddress = "scholargrid030@gmail.com";
   
-  // Direct Gmail web compose URL for 100% reliable opening on all browsers/devices
   const gmailWebUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${emailAddress}&su=Manuscript%20Review%20Inquiry&body=Hello%20ScholarGrid%20team,%20I%20would%20like%20to%20get%20assistance%20with%20my%20research%20manuscript.`;
 
   const googleScholarUrl = "https://scholar.google.com/citations?hl=en&user=-VGaDnoAAAAJ"; 
   const researchGateUrl = "https://www.researchgate.net/profile/Hamza-Iqbal-19?ev=hdr_xprf";
 
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
+  
+  const [currentAnnouncement, setCurrentAnnouncement] = useState(announcementVariations[0]);
+  const [currentBadge, setCurrentBadge] = useState(badgeVariations[0]);
+  const [currentMainTitle, setCurrentMainTitle] = useState(mainTitleVariations[0]);
+  const [currentGradientTitle, setCurrentGradientTitle] = useState(gradientTitleVariations[0]);
+  const [currentSubtitle, setCurrentSubtitle] = useState(subtitleVariations[0]);
+
+  useEffect(() => {
+    setCurrentAnnouncement(announcementVariations[Math.floor(Math.random() * announcementVariations.length)]);
+    setCurrentBadge(badgeVariations[Math.floor(Math.random() * badgeVariations.length)]);
+    setCurrentMainTitle(mainTitleVariations[Math.floor(Math.random() * mainTitleVariations.length)]);
+    setCurrentGradientTitle(gradientTitleVariations[Math.floor(Math.random() * gradientTitleVariations.length)]);
+    setCurrentSubtitle(subtitleVariations[Math.floor(Math.random() * subtitleVariations.length)]);
+  }, []);
 
   const toggleFaq = (index: number) => {
     setOpenFaqIndex(openFaqIndex === index ? null : index);
@@ -143,10 +206,10 @@ export default function ScholarGridLandingPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-amber-400 selection:text-slate-950">
-      {/* Top Announcement Bar */}
+      {/* 1. Top Announcement Bar */}
       <div className="bg-slate-950 py-2.5 px-4 text-center text-xs font-bold tracking-wider text-amber-400 shadow-md flex items-center justify-center gap-2">
         <Sparkles size={14} className="text-amber-400 animate-pulse" />
-        <span>HIGH-IMPACT ACADEMIC CONSULTANCY | FAST-TRACK YOUR Q1/Q2 MANUSCRIPT FOR ELSEVIER & SPRINGER</span>
+        <span>{currentAnnouncement}</span>
       </div>
 
       {/* Navigation Bar */}
@@ -191,19 +254,22 @@ export default function ScholarGridLandingPage() {
       {/* Hero Section */}
       <section className="relative max-w-6xl mx-auto px-6 pt-20 pb-16 text-center">
         <div className="relative z-10">
+          {/* 2. Hero Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-900 text-xs font-bold uppercase tracking-widest mb-6 shadow-sm">
-            <Zap size={14} className="text-amber-500" /> Engineering & Computational Research Specialists
+            <Zap size={14} className="text-amber-500" /> {currentBadge}
           </div>
           
+          {/* 3 & 4. Hero Main Title & Gradient Title */}
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-slate-950 leading-[1.15] mb-6 tracking-tight">
-            Accelerate Your Research With <br />
+            {currentMainTitle} <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-800 via-blue-600 to-amber-600">
-              Publication-Ready Precision
+              {currentGradientTitle}
             </span>
           </h1>
           
+          {/* 5. Hero Subtitle Paragraph */}
           <p className="text-base sm:text-xl text-slate-600 max-w-3xl mx-auto mb-10 leading-relaxed font-normal">
-            End-to-end expertise for Engineering Manuscripts, Python/MATLAB Numerical Simulations, Physics-Informed Neural Networks (PINNs), and IEEE/Elsevier Template Formatting.
+            {currentSubtitle}
           </p>
 
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
@@ -309,7 +375,7 @@ export default function ScholarGridLandingPage() {
         </div>
       </section>
 
-      {/* BLOG SECTION WITH UNIFORM 2-COLUMN GRID (ALL 4 BLOGS IN EQUAL SIZE) */}
+      {/* BLOG SECTION */}
       <section className="max-w-7xl mx-auto px-6 py-20 bg-white border-y border-slate-200 my-12 rounded-3xl shadow-sm">
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-900 text-xs font-bold uppercase tracking-widest mb-4 shadow-sm">
