@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -174,7 +173,7 @@ export default function ScholarGridLandingPage() {
     },
     {
       q: "How are post-delivery revisions or corrections handled?",
-      a: "We provide dedicated post-delivery support and complementary minor revisions to ensure complete satisfaction and journal compliance.",
+      a: "Yes, we provide dedicated post-delivery support and complementary minor revisions to ensure complete satisfaction and journal compliance.",
       category: "Process"
     },
     {
@@ -498,6 +497,27 @@ export default function ScholarGridLandingPage() {
                 Read Full Article <ArrowRight size={16} />
               </Link>
             </article>
+
+            {/* Blog 5 (Newly Added) */}
+            <article className="bg-slate-50 border border-slate-200 rounded-2xl p-6 hover:border-blue-600 transition-all shadow-sm flex flex-col justify-between md:col-span-2">
+              <div>
+                <span className="text-xs font-bold px-3 py-1 bg-amber-100 text-amber-900 rounded-full uppercase tracking-wider">
+                  Formatting & Publishing
+                </span>
+                <h3 className="text-xl font-black text-slate-900 mt-4 mb-2 leading-snug">
+                  Mastering Q1/Q2 Manuscript Formatting: Common Pitfalls and How to Avoid Rejection
+                </h3>
+                <p className="text-slate-600 text-sm mb-6 leading-relaxed">
+                  A practical manuscript formatting guide for researchers targeting Q1 and Q2 journals. Learn how to avoid outdated templates, weak first pages, low-quality figures, and reference chaos.
+                </p>
+              </div>
+              <Link 
+                href="/blog/q1-q2-manuscript-formatting-avoid-rejection" 
+                className="inline-flex items-center gap-2 font-black text-blue-700 hover:text-blue-900 text-sm transition-colors"
+              >
+                Read Full Article <ArrowRight size={16} />
+              </Link>
+            </article>
           </div>
         </section>
 
@@ -566,24 +586,20 @@ export default function ScholarGridLandingPage() {
                     className="w-full text-left p-6 flex items-center justify-between gap-4 focus:outline-none"
                   >
                     <div className="flex items-center gap-4">
-                      <span className="text-xs font-black uppercase tracking-wider px-3 py-1 rounded-md bg-slate-100 text-slate-700 border border-slate-200 shrink-0 hidden sm:inline-block">
+                      <span className="text-xs font-black uppercase tracking-wider px-3 py-1 rounded-md bg-slate-100 text-slate-700 border border-slate-200 shrink-0">
                         {faq.category}
                       </span>
-                      <span className="text-sm md:text-base font-extrabold text-slate-900 leading-snug">
-                        <span className="text-blue-700 font-black mr-2">Q{index + 1}.</span>
+                      <span className="font-bold text-slate-900 text-base sm:text-lg">
                         {faq.q}
                       </span>
                     </div>
-                    <div className={`p-2 rounded-full transition-transform duration-300 ${isOpen ? 'bg-blue-50 text-blue-700 rotate-180' : 'bg-slate-100 text-slate-500'}`}>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-transform duration-300 ${isOpen ? 'bg-blue-900 text-amber-400 rotate-180' : 'bg-slate-100 text-slate-600'}`}>
                       <ChevronDown size={18} />
                     </div>
                   </button>
-
                   {isOpen && (
-                    <div className="px-6 pb-6 pt-2 border-t border-slate-100 text-slate-600 text-sm md:text-base leading-relaxed bg-slate-50/50">
-                      <div className="pl-2 border-l-2 border-amber-500">
-                        {faq.a}
-                      </div>
+                    <div className="px-6 pb-6 pt-2 text-slate-600 text-sm sm:text-base leading-relaxed border-t border-slate-100 bg-slate-50/50">
+                      {faq.a}
                     </div>
                   )}
                 </div>
@@ -591,44 +607,32 @@ export default function ScholarGridLandingPage() {
             })}
           </div>
         </section>
-
-        {/* Bottom CTA Banner */}
-        <section className="relative bg-slate-950 border-t border-slate-800 py-20 px-6 text-center mt-16 overflow-hidden text-white">
-          <div className="relative max-w-4xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-black mb-4 tracking-tight">Ready to Submit Your Paper with Confidence?</h2>
-            <p className="text-slate-300 max-w-xl mx-auto mb-8 text-sm md:text-base leading-relaxed font-normal">
-              Get a free initial manuscript review and professional consultation for formatting, simulation solvers, or research layout.
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-              <a
-                href={`https://wa.me/${whatsappNumber}?text=${whatsappMsg}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-8 py-4 rounded-xl transition-all shadow-xl shadow-amber-500/10 text-base hover:scale-105"
-              >
-                <Send size={18} /> Consult via WhatsApp
-              </a>
-              <a
-                href={gmailWebUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-white font-bold px-8 py-4 rounded-xl transition-all shadow-xl text-base hover:scale-105"
-              >
-                <Mail size={18} className="text-amber-400" /> Email Us
-              </a>
-            </div>
-          </div>
-        </section>
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-200 bg-white py-8 px-6 text-center text-xs text-slate-500 font-medium">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p>© 2026 ScholarGrid — Computational Research, Simulation & Manuscript Consultancy. All rights reserved.</p>
-          <div className="flex items-center gap-6 font-semibold">
-            <Link href="/privacy-policy" className="hover:text-blue-700 transition-colors">Privacy Policy</Link>
-            <Link href="/terms" className="hover:text-blue-700 transition-colors">Terms & Conditions</Link>
-            <Link href="/contact" className="hover:text-blue-700 transition-colors">Contact Us</Link>
+      <footer className="bg-slate-950 text-white py-16 border-t border-slate-800">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <div className="text-2xl font-black tracking-tight text-white mb-4 flex items-center justify-center gap-3">
+            <div className="relative w-8 h-8 flex items-center justify-center">
+              <Image 
+                src="/logo.png" 
+                alt="ScholarGrid Logo" 
+                width={32}
+                height={32}
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <span>ScholarGrid</span>
+          </div>
+          <p className="text-slate-400 text-sm max-w-md mx-auto mb-8">
+            Global academic consultancy for PhD scholars, engineering researchers, and computational scientists targeting Q1/Q2 journals.
+          </p>
+          <div className="flex justify-center items-center gap-6 text-xs text-slate-400 mb-8 flex-wrap">
+            <span>Email: <a href={gmailWebUrl} target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:underline">scholargrid030@gmail.com</a></span>
+            <span>WhatsApp: <a href={`https://wa.me/${whatsappNumber}?text=${whatsappMsg}`} target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:underline">+92-314-7982032</a></span>
+          </div>
+          <div className="border-t border-slate-800 pt-8 text-xs text-slate-500">
+            &copy; 2026 ScholarGrid. All rights reserved. Professional Academic & Research Support.
           </div>
         </div>
       </footer>
