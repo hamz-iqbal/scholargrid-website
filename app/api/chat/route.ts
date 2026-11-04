@@ -13,7 +13,7 @@ Formatting rules (strictly follow):
 - Reply in the same language the user writes in.`;
 
 // Model code mein fix hai, Vercel ke GEMINI_MODEL se koi farq nahi parta
-const MODEL_NAME = "gemini-3.5-flash-lite";
+const MODEL_NAME = "gemini-3.1-flash-lite";
 
 // Free quota bachane ke liye sirf last N messages bhejte hain
 const MAX_HISTORY = 10;
