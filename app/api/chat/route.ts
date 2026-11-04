@@ -12,6 +12,9 @@ Formatting rules (strictly follow):
 - Use a polite, professional tone.
 - Reply in the same language the user writes in.`;
 
+// Model code mein fix hai, Vercel ke GEMINI_MODEL se koi farq nahi parta
+const MODEL_NAME = "gemini-3.5-flash-lite";
+
 // Free quota bachane ke liye sirf last N messages bhejte hain
 const MAX_HISTORY = 10;
 const MAX_CHARS_PER_MESSAGE = 2000;
@@ -23,6 +26,7 @@ type ChatMessage = {
 
 export async function POST(req: Request) {
   try {
+    const t0 = Date.now();
     const body = await req.json();
     const messages: ChatMessage[] = body.messages;
 
@@ -41,7 +45,6 @@ export async function POST(req: Request) {
       );
     }
 
-    const modelName = process.env.GEMINI_MODEL || "gemini-3.5-flash-lite";
     const ai = new GoogleGenAI({ apiKey });
 
     // Valid messages ko Gemini format mein convert karein
@@ -66,8 +69,8 @@ export async function POST(req: Request) {
     }
 
     // Streaming: jawab chunks mein foran aana shuru ho jata hai
-   const stream = await ai.models.generateContentStream({
-      model: modelName,
+    const stream = await ai.models.generateContentStream({
+      model: MODEL_NAME,
       contents,
       config: {
         systemInstruction: SYSTEM_PROMPT,
@@ -80,8 +83,13 @@ export async function POST(req: Request) {
 
     const readable = new ReadableStream({
       async start(controller) {
+        let first = true;
         try {
           for await (const chunk of stream) {
+            if (first) {
+              console.log("First chunk ms:", Date.now() - t0);
+              first = false;
+            }
             const text = chunk.text;
             if (text) controller.enqueue(encoder.encode(text));
           }
@@ -116,7 +124,7 @@ export async function POST(req: Request) {
     // Model retire ho gaya
     if (error?.status === 404 || msg.includes("404")) {
       return NextResponse.json(
-        { error: "AI model available nahi hai. Admin ko GEMINI_MODEL update karna hoga." },
+        { error: "AI model available nahi hai. Admin ko model name update karna hoga." },
         { status: 500 }
       );
     }
