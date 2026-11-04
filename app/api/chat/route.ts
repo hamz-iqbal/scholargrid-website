@@ -66,15 +66,14 @@ export async function POST(req: Request) {
     }
 
     // Streaming: jawab chunks mein foran aana shuru ho jata hai
-    const stream = await ai.models.generateContentStream({
+   const stream = await ai.models.generateContentStream({
       model: modelName,
       contents,
       config: {
-  systemInstruction: SYSTEM_PROMPT,
-  temperature: 0.6,
-  maxOutputTokens: 500,
-  thinkingConfig: { thinkingBudget: 0 },
-},
+        systemInstruction: SYSTEM_PROMPT,
+        temperature: 0.6,
+        maxOutputTokens: 500,
+      },
     });
 
     const encoder = new TextEncoder();
