@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { GoogleGenAI } from "@google/genai";
 
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+export const maxDuration = 30;
+
 const SYSTEM_PROMPT = `You are the official AI Assistant for ScholarGrid Support. Guide users professionally and helpfully regarding academic research, thesis writing, data analysis, and modeling.
 
 Formatting rules (strictly follow):
@@ -13,27 +17,13 @@ Formatting rules (strictly follow):
 - Reply in the same language the user writes in.`;
 
 // Free quota bachane ke liye sirf last N messages bhejte hain
-const MAX_HISTORY = 20;
+const MAX_HISTORY = 10;
+const MAX_CHARS_PER_MESSAGE = 2000;
 
 type ChatMessage = {
   role: "user" | "assistant";
   content: string;
 };
-
-// Safety net: agar model phir bhi markdown de, to saaf kar do
-function stripMarkdown(text: string): string {
-  return text
-    .replace(/```[\s\S]*?```/g, (m) => m.replace(/```\w*\n?/g, "")) // code fences
-    .replace(/^#{1,6}\s*/gm, "")                                    // headings
-    .replace(/\*\*(.*?)\*\*/g, "$1")                                // **bold**
-    .replace(/__(.*?)__/g, "$1")                                    // __bold__
-    .replace(/^\s*[\*\-]\s+/gm, "• ")                               // bullets
-    .replace(/(^|[\s(])\*(?!\s)([^*\n]+?)\*(?=[\s).,!?:;]|$)/g, "$1$2") // *italic*
-    .replace(/^\s*---+\s*$/gm, "")                                  // horizontal lines
-    .replace(/`([^`]*)`/g, "$1")                                    // inline code
-    .replace(/\n{3,}/g, "\n\n")                                     // extra blank lines
-    .trim();
-}
 
 export async function POST(req: Request) {
   try {
@@ -64,7 +54,7 @@ export async function POST(req: Request) {
       .slice(-MAX_HISTORY)
       .map((m) => ({
         role: m.role === "assistant" ? "model" : "user",
-        parts: [{ text: m.content }],
+        parts: [{ text: m.content.slice(0, MAX_CHARS_PER_MESSAGE) }],
       }));
 
     // Conversation hamesha "user" message se shuru honi chahiye
@@ -79,26 +69,41 @@ export async function POST(req: Request) {
       );
     }
 
-    const response = await ai.models.generateContent({
+    // Streaming: jawab chunks mein foran aana shuru ho jata hai
+    const stream = await ai.models.generateContentStream({
       model: modelName,
       contents,
       config: {
         systemInstruction: SYSTEM_PROMPT,
         temperature: 0.6,
-        maxOutputTokens: 800,
+        maxOutputTokens: 500,
       },
     });
 
-    const reply = stripMarkdown(response.text ?? "");
+    const encoder = new TextEncoder();
 
-    if (!reply) {
-      return NextResponse.json(
-        { error: "Empty response from model" },
-        { status: 502 }
-      );
-    }
+    const readable = new ReadableStream({
+      async start(controller) {
+        try {
+          for await (const chunk of stream) {
+            const text = chunk.text;
+            if (text) controller.enqueue(encoder.encode(text));
+          }
+        } catch (err: any) {
+          console.error("Gemini stream error:", err?.message || err);
+        } finally {
+          controller.close();
+        }
+      },
+    });
 
-    return NextResponse.json({ reply });
+    return new Response(readable, {
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Cache-Control": "no-cache, no-transform",
+        "X-Accel-Buffering": "no",
+      },
+    });
   } catch (error: any) {
     console.error("Gemini API Error:", error?.message || error);
 

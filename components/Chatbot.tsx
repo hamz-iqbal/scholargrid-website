@@ -2,9 +2,29 @@
 
 import { useState, useRef, useEffect } from "react";
 
+type Msg = { role: "user" | "assistant"; content: string };
+
+const MAX_HISTORY = 10;
+const MAX_INPUT = 1000;
+
+// Safety net: agar model phir bhi markdown de, to saaf kar do
+function stripMarkdown(text: string): string {
+  return text
+    .replace(/```[\s\S]*?```/g, (m) => m.replace(/```\w*\n?/g, ""))
+    .replace(/^#{1,6}\s*/gm, "")
+    .replace(/\*\*(.*?)\*\*/g, "$1")
+    .replace(/__(.*?)__/g, "$1")
+    .replace(/^\s*[\*\-]\s+/gm, "• ")
+    .replace(/(^|[\s(])\*(?!\s)([^*\n]+?)\*(?=[\s).,!?:;]|$)/g, "$1$2")
+    .replace(/^\s*---+\s*$/gm, "")
+    .replace(/`([^`]*)`/g, "$1")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState([
+  const [messages, setMessages] = useState<Msg[]>([
     {
       role: "assistant",
       content:
@@ -15,20 +35,20 @@ export default function Chatbot() {
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
   useEffect(() => {
-    scrollToBottom();
-  }, [messages, isOpen]);
+    // Streaming ke dauran "auto" scroll taake lag na ho
+    messagesEndRef.current?.scrollIntoView({
+      behavior: loading ? "auto" : "smooth",
+    });
+  }, [messages, isOpen, loading]);
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || loading) return;
+    const text = input.trim().slice(0, MAX_INPUT);
+    if (!text || loading) return;
 
-    const userMsg = { role: "user", content: input };
-    const newMessages = [...messages, userMsg];
+    const userMsg: Msg = { role: "user", content: text };
+    const newMessages: Msg[] = [...messages, userMsg];
     setMessages(newMessages);
     setInput("");
     setLoading(true);
@@ -38,17 +58,58 @@ export default function Chatbot() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          messages: newMessages.map((m) => ({ role: m.role, content: m.content })),
+          messages: newMessages
+            .slice(-MAX_HISTORY)
+            .map((m) => ({ role: m.role, content: m.content })),
         }),
       });
 
-      const data = await res.json();
-      if (data.reply) {
-        setMessages([...newMessages, { role: "assistant", content: data.reply }]);
-      } else if (data.error) {
+      const contentType = res.headers.get("content-type") || "";
+
+      // Error case: server ne JSON bheja
+      if (!res.ok || contentType.includes("application/json")) {
+        const data = await res.json().catch(() => ({}));
+        const errText = data.error
+          ? `Error: ${data.error}`
+          : data.reply || "Something went wrong. Please try again.";
+        setMessages([...newMessages, { role: "assistant", content: errText }]);
+        return;
+      }
+
+      if (!res.body) throw new Error("No stream");
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let raw = "";
+      let started = false;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        raw += decoder.decode(value, { stream: true });
+        const clean = stripMarkdown(raw);
+        if (!clean) continue;
+
+        if (!started) {
+          started = true;
+          setMessages([...newMessages, { role: "assistant", content: clean }]);
+        } else {
+          setMessages((prev) => {
+            const copy = [...prev];
+            copy[copy.length - 1] = { role: "assistant", content: clean };
+            return copy;
+          });
+        }
+      }
+
+      if (!started) {
         setMessages([
           ...newMessages,
-          { role: "assistant", content: `Error: ${data.error}` },
+          {
+            role: "assistant",
+            content: "Error: Empty response from model. Please try again.",
+          },
         ]);
       }
     } catch {
@@ -60,6 +121,9 @@ export default function Chatbot() {
       setLoading(false);
     }
   };
+
+  const lastIsUser =
+    messages.length > 0 && messages[messages.length - 1].role === "user";
 
   return (
     <div className="fixed bottom-5 right-5 z-[9999] flex flex-col items-end pointer-events-auto">
@@ -94,17 +158,17 @@ export default function Chatbot() {
                 }`}
               >
                 <div
-                  className={`max-w-[80%] px-3 py-2 rounded-xl text-gray-800 ${
+                  className={`max-w-[80%] px-3 py-2 rounded-xl whitespace-pre-wrap break-words ${
                     msg.role === "user"
                       ? "bg-blue-600 text-white rounded-br-none"
-                      : "bg-white border border-gray-200 shadow-sm rounded-bl-none"
+                      : "bg-white text-gray-800 border border-gray-200 shadow-sm rounded-bl-none"
                   }`}
                 >
                   {msg.content}
                 </div>
               </div>
             ))}
-            {loading && (
+            {loading && lastIsUser && (
               <div className="flex justify-start">
                 <div className="bg-white border border-gray-200 px-3 py-2 rounded-xl text-gray-400 text-xs italic">
                   ScholarGrid Assistant is typing...
@@ -120,6 +184,7 @@ export default function Chatbot() {
               type="text"
               placeholder="Type your message..."
               value={input}
+              maxLength={MAX_INPUT}
               onChange={(e) => setInput(e.target.value)}
               className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-blue-600 text-gray-800"
             />
