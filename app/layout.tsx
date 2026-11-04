@@ -16,10 +16,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://scholargrid.org"),
   title: {
-    default: "ScholarGrid - Academic & Research Consultancy",
+    default: "ScholarGrid | Global Academic & Research Publication Support",
     template: "%s | ScholarGrid",
   },
-  description: "Professional academic research, thesis writing, and data analysis support.",
+  description:
+    "International academic consultancy providing Q1/Q2 journal formatting, numerical modeling (MATLAB/Python), and systematic literature review support for PhD scholars worldwide.",
   keywords: [
     "Academic Consultancy",
     "Manuscript Formatting",
@@ -28,10 +29,22 @@ export const metadata: Metadata = {
     "Elsevier IEEE Formatting",
     "Thesis Research Assistance",
     "ScholarGrid",
+    "Q1 Q2 Journal Publication",
+    "Systematic Literature Review",
+    "Computational Fluid Dynamics",
   ],
   authors: [{ name: "ScholarGrid Team", url: "https://scholargrid.org" }],
   creator: "ScholarGrid",
   publisher: "ScholarGrid",
+  alternates: {
+    canonical: "https://scholargrid.org",
+    languages: {
+      "en-US": "https://scholargrid.org",
+      "en-GB": "https://scholargrid.org",
+      "en-AE": "https://scholargrid.org",
+      "x-default": "https://scholargrid.org",
+    },
+  },
   verification: {
     google: "R-joaBU6oK5Y2WxN_RDz7f63hpLWrLt7CMKTBX6tzV8",
   },
@@ -51,8 +64,9 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://scholargrid.org",
     siteName: "ScholarGrid",
-    title: "ScholarGrid - Academic & Research Consultancy",
-    description: "Professional academic research, thesis writing, and data analysis support.",
+    title: "ScholarGrid - Global Academic & Research Consultancy",
+    description:
+      "Expert research guidance, Q1/Q2 journal formatting, and advanced computational modeling for PhD scholars worldwide.",
     images: [
       {
         url: "/logo.png",
@@ -64,10 +78,23 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "ScholarGrid - Academic & Research Consultancy",
-    description: "Professional academic research, thesis writing, and data analysis support.",
+    title: "ScholarGrid - International PhD & Research Consultancy",
+    description:
+      "Professional guidance for Q1/Q2 manuscript preparation, thesis writing, and numerical modeling.",
     images: ["/logo.png"],
   },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "EducationalOrganization",
+  name: "ScholarGrid",
+  url: "https://scholargrid.org",
+  logo: "https://scholargrid.org/logo.png",
+  sameAs: ["https://www.youtube.com/@scholargrid"],
+  areaServed: "Worldwide",
+  description:
+    "Global academic writing, Q1/Q2 manuscript formatting, SPSS/Python modeling, and thesis consultancy services for postgraduates and researchers.",
 };
 
 export default function RootLayout({
@@ -87,6 +114,11 @@ export default function RootLayout({
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4708685236568228"
           crossOrigin="anonymous"
         ></script>
+        {/* International Schema Markup (JSON-LD) */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
       </head>
       <body className="min-h-full flex flex-col relative">
         {children}
