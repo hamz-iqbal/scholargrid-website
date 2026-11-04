@@ -70,10 +70,11 @@ export async function POST(req: Request) {
       model: modelName,
       contents,
       config: {
-        systemInstruction: SYSTEM_PROMPT,
-        temperature: 0.6,
-        maxOutputTokens: 500,
-      },
+  systemInstruction: SYSTEM_PROMPT,
+  temperature: 0.6,
+  maxOutputTokens: 500,
+  thinkingConfig: { thinkingBudget: 0 },
+},
     });
 
     const encoder = new TextEncoder();
