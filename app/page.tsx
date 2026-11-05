@@ -1,3 +1,4 @@
+
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
@@ -116,12 +117,12 @@ const researchGateUrl = "https://www.researchgate.net/profile/Hamza-Iqbal-19?ev=
 /*  Consultancy modal (WhatsApp / Email live only in here)             */
 /* ------------------------------------------------------------------ */
 function ConsultModal({ open, onClose }: { open: boolean; onClose: () => void }) {
-  // Contact details are used only to build links; they are never rendered as text.
   const whatsappNumber = "923147982032";
   const whatsappMsg = encodeURIComponent(
     "Hello ScholarGrid team! I need expert support for my research manuscript / thesis simulation & formatting."
   );
   const emailAddress = "scholargrid030@gmail.com";
+
   const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${emailAddress}&su=${encodeURIComponent(
     "Manuscript Review Inquiry"
   )}&body=${encodeURIComponent(
@@ -130,10 +131,13 @@ function ConsultModal({ open, onClose }: { open: boolean; onClose: () => void })
 
   useEffect(() => {
     if (!open) return;
+
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+
     document.addEventListener("keydown", onKey);
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+
     return () => {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = prev;
@@ -165,6 +169,7 @@ function ConsultModal({ open, onClose }: { open: boolean; onClose: () => void })
         <h2 id="consult-title" className="font-serif text-2xl font-bold text-slate-900">
           Get consultancy
         </h2>
+
         <p className="mt-2 text-sm leading-relaxed text-slate-600">
           Choose how you would like to reach us. Your first manuscript assessment is free, and we usually reply the same day.
         </p>
@@ -179,10 +184,12 @@ function ConsultModal({ open, onClose }: { open: boolean; onClose: () => void })
             <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-600 text-white">
               <MessageSquare size={20} />
             </span>
+
             <span className="flex-1">
               <span className="block font-semibold text-slate-900">Continue on WhatsApp</span>
               <span className="block text-xs text-slate-500">Fastest way to share drafts and files</span>
             </span>
+
             <ArrowRight size={18} className="text-slate-400 transition group-hover:translate-x-0.5 group-hover:text-emerald-700" />
           </a>
 
@@ -195,10 +202,12 @@ function ConsultModal({ open, onClose }: { open: boolean; onClose: () => void })
             <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-800 text-white">
               <Mail size={20} />
             </span>
+
             <span className="flex-1">
               <span className="block font-semibold text-slate-900">Send an email</span>
               <span className="block text-xs text-slate-500">Best for detailed project briefs</span>
             </span>
+
             <ArrowRight size={18} className="text-slate-400 transition group-hover:translate-x-0.5 group-hover:text-blue-800" />
           </a>
         </div>
@@ -271,36 +280,53 @@ export default function ScholarGridLandingPage() {
 
   return (
     <div className="min-h-screen bg-white font-sans text-slate-800 antialiased selection:bg-blue-200">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+
       <ConsultModal open={modalOpen} onClose={closeModal} />
 
       {/* Announcement bar */}
-      <div className="bg-blue-950 px-4 py-2 text-center text-xs text-blue-100 sm:text-sm">{announcement}</div>
+      <div className="bg-blue-950 px-4 py-2 text-center text-xs text-blue-100 sm:text-sm">
+        {announcement}
+      </div>
 
-      {/* Navigation */}
-      <nav aria-label="Main navigation" className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3.5">
-          <Link href="/" className="flex items-center gap-3">
+      {/* Responsive Navigation */}
+      <nav
+        aria-label="Main navigation"
+        className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur"
+      >
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-3.5">
+
+          {/* Logo */}
+          <Link href="/" className="flex shrink-0 items-center gap-2 sm:gap-3">
             <Image
               src="/logo.png"
               alt="ScholarGrid - Academic Research & Consultancy Logo"
               width={38}
               height={38}
               priority
-              className="h-9 w-9 object-contain"
+              className="h-8 w-8 object-contain sm:h-9 sm:w-9"
             />
-            <span className="font-serif text-xl font-bold tracking-tight text-slate-900">ScholarGrid</span>
+
+            <span className="font-serif text-lg font-bold tracking-tight text-slate-900 sm:text-xl">
+              ScholarGrid
+            </span>
           </Link>
 
-          <div className="hidden items-center gap-8 text-sm font-medium text-slate-600 md:flex">
-            <a href="#services" className="hover:text-blue-800">Services</a>
-            <a href="#process" className="hover:text-blue-800">How it works</a>
-            <a href="#insights" className="hover:text-blue-800">Insights</a>
-            <a href="#profiles" className="hover:text-blue-800">Publications</a>
-            <a href="#faq" className="hover:text-blue-800">FAQ</a>
+          {/* Desktop Navigation Links */}
+          <div className="hidden items-center gap-6 text-sm font-medium text-slate-600 lg:flex xl:gap-8">
+            <a href="#services" className="whitespace-nowrap hover:text-blue-800">Services</a>
+            <a href="#process" className="whitespace-nowrap hover:text-blue-800">How it works</a>
+            <a href="#insights" className="whitespace-nowrap hover:text-blue-800">Insights</a>
+            <a href="#profiles" className="whitespace-nowrap hover:text-blue-800">Publications</a>
+            <a href="#faq" className="whitespace-nowrap hover:text-blue-800">FAQ</a>
           </div>
 
-          <ConsultButton className="!px-5 !py-2.5" />
+          {/* Consultancy Button */}
+          <ConsultButton className="shrink-0 whitespace-nowrap !px-3 !py-2 !text-xs sm:!px-5 sm:!py-2.5 sm:!text-sm" />
+
         </div>
       </nav>
 
@@ -312,30 +338,43 @@ export default function ScholarGridLandingPage() {
               <p className="mb-5 inline-block rounded-full border border-blue-200 bg-blue-50 px-4 py-1.5 text-sm font-medium text-blue-900">
                 {badge}
               </p>
+
               <h1 className="font-serif text-4xl font-bold leading-[1.15] tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
                 {mainTitle}
                 <br />
                 <span className="text-blue-800">{gradientTitle}</span>
               </h1>
-              <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-600">{subtitle}</p>
+
+              <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-600">
+                {subtitle}
+              </p>
 
               <div className="mt-9 flex flex-wrap items-center gap-5">
                 <ConsultButton className="!px-8 !py-3.5 !text-base" />
+
                 <span className="flex items-center gap-2 text-sm text-slate-500">
-                  <CheckCircle size={16} className="text-emerald-600" /> Free initial manuscript assessment
+                  <CheckCircle size={16} className="text-emerald-600" />
+                  Free initial manuscript assessment
                 </span>
               </div>
             </div>
 
             {/* Process card */}
-            <div id="process" className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-8 shadow-xl shadow-slate-200/60">
-              <h2 className="font-serif text-xl font-bold text-slate-900">How a project starts</h2>
+            <div
+              id="process"
+              className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-8 shadow-xl shadow-slate-200/60"
+            >
+              <h2 className="font-serif text-xl font-bold text-slate-900">
+                How a project starts
+              </h2>
+
               <ol className="mt-6 space-y-6">
                 {steps.map((s, i) => (
                   <li key={s.t} className="flex gap-4">
                     <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-800 text-sm font-semibold text-white">
                       {i + 1}
                     </span>
+
                     <div>
                       <p className="font-semibold text-slate-900">{s.t}</p>
                       <p className="mt-1 text-sm leading-relaxed text-slate-600">{s.d}</p>
@@ -357,7 +396,9 @@ export default function ScholarGridLandingPage() {
               ["1-on-1", "Direct author support"],
             ].map(([n, l]) => (
               <div key={l} className="px-4 py-9 text-center">
-                <div className="font-serif text-3xl font-bold text-blue-900 md:text-4xl">{n}</div>
+                <div className="font-serif text-3xl font-bold text-blue-900 md:text-4xl">
+                  {n}
+                </div>
                 <div className="mt-1 text-sm text-slate-600">{l}</div>
               </div>
             ))}
@@ -374,7 +415,10 @@ export default function ScholarGridLandingPage() {
         {/* Services */}
         <section id="services" className="mx-auto max-w-7xl scroll-mt-24 px-6 py-24">
           <div className="mx-auto mb-14 max-w-2xl text-center">
-            <h2 className="font-serif text-3xl font-bold text-slate-900 md:text-4xl">Comprehensive academic services</h2>
+            <h2 className="font-serif text-3xl font-bold text-slate-900 md:text-4xl">
+              Comprehensive academic services
+            </h2>
+
             <p className="mt-4 text-slate-600">
               Built for postgraduate students, PhD scholars, and engineering authors aiming for top-tier international publications.
             </p>
@@ -417,15 +461,19 @@ export default function ScholarGridLandingPage() {
                     Most requested
                   </span>
                 )}
+
                 <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-800">
                   <Icon size={24} />
                 </div>
+
                 <h3 className="font-serif text-xl font-bold text-slate-900">{title}</h3>
                 <p className="mt-3 text-sm leading-relaxed text-slate-600">{desc}</p>
+
                 <ul className="mt-6 space-y-3 text-sm text-slate-700">
                   {items.map((it) => (
                     <li key={it} className="flex items-start gap-2.5">
-                      <CheckCircle size={16} className="mt-0.5 shrink-0 text-emerald-600" /> {it}
+                      <CheckCircle size={16} className="mt-0.5 shrink-0 text-emerald-600" />
+                      {it}
                     </li>
                   ))}
                 </ul>
@@ -444,9 +492,14 @@ export default function ScholarGridLandingPage() {
             <div className="mb-12 flex flex-wrap items-end justify-between gap-4">
               <div>
                 <p className="mb-2 flex items-center gap-2 text-sm font-medium text-blue-800">
-                  <BookOpen size={16} /> Technical insights
+                  <BookOpen size={16} />
+                  Technical insights
                 </p>
-                <h2 className="font-serif text-3xl font-bold text-slate-900 md:text-4xl">Expert guides for researchers</h2>
+
+                <h2 className="font-serif text-3xl font-bold text-slate-900 md:text-4xl">
+                  Expert guides for researchers
+                </h2>
+
                 <p className="mt-3 max-w-xl text-slate-600">
                   Practical walkthroughs on manuscript formatting, simulation workflows, and journal publication strategy.
                 </p>
@@ -462,10 +515,19 @@ export default function ScholarGridLandingPage() {
                   }`}
                 >
                   <div>
-                    <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-900">{p.tag}</span>
-                    <h3 className="mt-4 font-serif text-xl font-bold leading-snug text-slate-900">{p.title}</h3>
-                    <p className="mt-3 text-sm leading-relaxed text-slate-600">{p.desc}</p>
+                    <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-900">
+                      {p.tag}
+                    </span>
+
+                    <h3 className="mt-4 font-serif text-xl font-bold leading-snug text-slate-900">
+                      {p.title}
+                    </h3>
+
+                    <p className="mt-3 text-sm leading-relaxed text-slate-600">
+                      {p.desc}
+                    </p>
                   </div>
+
                   <Link
                     href={p.href}
                     className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-blue-800 hover:text-blue-950"
@@ -484,10 +546,15 @@ export default function ScholarGridLandingPage() {
             <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-blue-900 text-amber-300">
               <Award size={28} />
             </div>
-            <h2 className="font-serif text-2xl font-bold text-slate-900 md:text-3xl">Explore the full scientific portfolio</h2>
+
+            <h2 className="font-serif text-2xl font-bold text-slate-900 md:text-3xl">
+              Explore the full scientific portfolio
+            </h2>
+
             <p className="mx-auto mt-3 max-w-xl text-sm text-slate-600 md:text-base">
               Browse peer-reviewed publications, citations, and research metrics on our official academic profiles.
             </p>
+
             <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <a
                 href={googleScholarUrl}
@@ -497,6 +564,7 @@ export default function ScholarGridLandingPage() {
               >
                 Google Scholar profile <ExternalLink size={16} />
               </a>
+
               <a
                 href={researchGateUrl}
                 target="_blank"
@@ -512,7 +580,10 @@ export default function ScholarGridLandingPage() {
         {/* FAQ */}
         <section id="faq" className="mx-auto max-w-4xl scroll-mt-24 px-6 pb-24">
           <div className="mb-12 text-center">
-            <h2 className="font-serif text-3xl font-bold text-slate-900 md:text-4xl">Frequently asked questions</h2>
+            <h2 className="font-serif text-3xl font-bold text-slate-900 md:text-4xl">
+              Frequently asked questions
+            </h2>
+
             <p className="mx-auto mt-3 max-w-xl text-slate-600">
               Everything you need to know about manuscript preparation, simulation solvers, and our consultancy process.
             </p>
@@ -521,6 +592,7 @@ export default function ScholarGridLandingPage() {
           <div className="divide-y divide-slate-200 overflow-hidden rounded-2xl border border-slate-200 bg-white">
             {visibleFaqs.map((faq, index) => {
               const isOpen = openFaqIndex === index;
+
               return (
                 <div key={faq.q}>
                   <button
@@ -529,14 +601,23 @@ export default function ScholarGridLandingPage() {
                     className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-700"
                   >
                     <span className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-4">
-                      <span className="w-24 shrink-0 text-xs font-medium text-blue-700">{faq.category}</span>
-                      <span className="font-semibold text-slate-900">{faq.q}</span>
+                      <span className="w-24 shrink-0 text-xs font-medium text-blue-700">
+                        {faq.category}
+                      </span>
+
+                      <span className="font-semibold text-slate-900">
+                        {faq.q}
+                      </span>
                     </span>
+
                     <ChevronDown
                       size={20}
-                      className={`shrink-0 text-slate-500 transition-transform duration-200 ${isOpen ? "rotate-180 text-blue-800" : ""}`}
+                      className={`shrink-0 text-slate-500 transition-transform duration-200 ${
+                        isOpen ? "rotate-180 text-blue-800" : ""
+                      }`}
                     />
                   </button>
+
                   {isOpen && (
                     <div className="bg-slate-50 px-6 pb-6 pt-1 text-sm leading-relaxed text-slate-600 sm:pl-[10.5rem] sm:text-base">
                       {faq.a}
@@ -562,10 +643,14 @@ export default function ScholarGridLandingPage() {
         {/* Final CTA */}
         <section className="bg-blue-950">
           <div className="mx-auto max-w-4xl px-6 py-20 text-center">
-            <h2 className="font-serif text-3xl font-bold text-white md:text-4xl">Ready to get your manuscript publication-ready?</h2>
+            <h2 className="font-serif text-3xl font-bold text-white md:text-4xl">
+              Ready to get your manuscript publication-ready?
+            </h2>
+
             <p className="mx-auto mt-4 max-w-xl text-blue-100">
               Share your draft or project brief and receive a free assessment from our technical consultancy team.
             </p>
+
             <div className="mt-8">
               <ConsultButton variant="light" className="!px-9 !py-3.5 !text-base" />
             </div>
@@ -578,12 +663,23 @@ export default function ScholarGridLandingPage() {
         <div className="mx-auto grid max-w-7xl gap-10 px-6 py-14 md:grid-cols-[1.5fr_1fr_1fr]">
           <div>
             <div className="flex items-center gap-3">
-              <Image src="/logo.png" alt="ScholarGrid Logo" width={32} height={32} className="h-8 w-8 object-contain" />
-              <span className="font-serif text-xl font-bold text-white">ScholarGrid</span>
+              <Image
+                src="/logo.png"
+                alt="ScholarGrid Logo"
+                width={32}
+                height={32}
+                className="h-8 w-8 object-contain"
+              />
+
+              <span className="font-serif text-xl font-bold text-white">
+                ScholarGrid
+              </span>
             </div>
+
             <p className="mt-4 max-w-sm text-sm leading-relaxed">
               Global academic consultancy for PhD scholars, engineering researchers, and computational scientists targeting Q1/Q2 journals.
             </p>
+
             <button
               onClick={openModal}
               className="mt-6 inline-flex items-center gap-2 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-blue-950 transition hover:bg-blue-50"
@@ -594,6 +690,7 @@ export default function ScholarGridLandingPage() {
 
           <div>
             <h3 className="text-sm font-semibold text-white">Explore</h3>
+
             <ul className="mt-4 space-y-2.5 text-sm">
               <li><a href="#services" className="hover:text-white">Services</a></li>
               <li><a href="#process" className="hover:text-white">How it works</a></li>
@@ -604,14 +701,26 @@ export default function ScholarGridLandingPage() {
 
           <div>
             <h3 className="text-sm font-semibold text-white">Research profiles</h3>
+
             <ul className="mt-4 space-y-2.5 text-sm">
               <li>
-                <a href={googleScholarUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 hover:text-white">
+                <a
+                  href={googleScholarUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 hover:text-white"
+                >
                   Google Scholar <ExternalLink size={13} />
                 </a>
               </li>
+
               <li>
-                <a href={researchGateUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 hover:text-white">
+                <a
+                  href={researchGateUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 hover:text-white"
+                >
                   ResearchGate <ExternalLink size={13} />
                 </a>
               </li>
