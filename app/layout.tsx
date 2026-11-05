@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Source_Serif_4 } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import ChatBot from "@/components/Chatbot";
 import { Analytics } from "@vercel/analytics/next";
@@ -13,6 +14,15 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
+// Serif font used for headings on the landing page (font-serif)
+const sourceSerif = Source_Serif_4({
+  variable: "--font-source-serif",
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
+});
+
+const ADSENSE_CLIENT = "ca-pub-4708685236568228";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://scholargrid.org"),
@@ -48,6 +58,10 @@ export const metadata: Metadata = {
   },
   verification: {
     google: "R-joaBU6oK5Y2WxN_RDz7f63hpLWrLt7CMKTBX6tzV8",
+  },
+  // AdSense site verification via meta tag (rendered server-side in <head>)
+  other: {
+    "google-adsense-account": ADSENSE_CLIENT,
   },
   robots: {
     index: true,
@@ -106,25 +120,31 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      // AdSense and browser extensions can modify <head>/<html> before React
+      // hydrates; this stops that from throwing a hydration warning.
+      suppressHydrationWarning
+      className={`${geistSans.variable} ${geistMono.variable} ${sourceSerif.variable} h-full antialiased`}
     >
-      <head>
-        {/* Google AdSense Standard HTML Script */}
-        <script
+      {/* No manual <script> tags here. Next.js manages <head> from `metadata`. */}
+      <body className="min-h-full flex flex-col relative">
+        {children}
+        <ChatBot />
+        <Analytics /> {/* Vercel Live Traffic & Visitor Tracking Component */}
+
+        {/* Google AdSense: loaded via next/script so Next controls injection */}
+        <Script
+          id="adsense-script"
           async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4708685236568228"
+          strategy="afterInteractive"
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`}
           crossOrigin="anonymous"
-        ></script>
+        />
+
         {/* International Schema Markup (JSON-LD) */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-      </head>
-      <body className="min-h-full flex flex-col relative">
-        {children}
-        <ChatBot />
-        <Analytics /> {/* Vercel Live Traffic & Visitor Tracking Component */}
       </body>
     </html>
   );

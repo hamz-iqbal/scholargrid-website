@@ -1,604 +1,544 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { 
-  FileText, 
-  Award, 
-  Cpu, 
-  BarChart2, 
-  MessageSquare, 
-  Send, 
-  CheckCircle, 
-  Sparkles,
-  Zap,
-  ExternalLink,
-  HelpCircle,
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import {
+  FileText,
+  Award,
+  Cpu,
+  BarChart2,
+  MessageSquare,
+  CheckCircle,
   ChevronDown,
   BookOpen,
   ArrowRight,
-  Mail
-} from 'lucide-react';
+  Mail,
+  ExternalLink,
+  ShieldCheck,
+  X,
+  Send,
+} from "lucide-react";
 
-// 1. Top Announcement Bar - 6 Variations
+/* ------------------------------------------------------------------ */
+/*  Rotating copy (kept from your original version)                    */
+/* ------------------------------------------------------------------ */
 const announcementVariations = [
-  "HIGH-IMPACT ACADEMIC CONSULTANCY | FAST-TRACK YOUR Q1/Q2 MANUSCRIPT FOR ELSEVIER & SPRINGER",
-  "EXPERT MATLAB & PYTHON NUMERICAL MODELING | SEAMLESS THESIS AND RESEARCH SUPPORT",
-  "ACCELERATE YOUR SCHOLARLY PUBLICATIONS WITH ADVANCED COMPUTATIONAL SIMULATIONS",
-  "GLOBAL ACADEMIC CONSULTANCY FOR PHD SCHOLARS | IEEE & ELSEVIER FORMATTING EXPERTS",
-  "ENHANCE YOUR RESEARCH IMPACT WITH PRECISION DATA ANALYSIS & PINNS MODELING",
-  "PROFESSIONAL MANUSCRIPT EDITING & JOURNAL SUBMISSION STRATEGIES FOR RESEARCHERS"
+  "Fast-track your Q1/Q2 manuscript for Elsevier and Springer",
+  "Expert MATLAB and Python numerical modeling for thesis and research support",
+  "Accelerate your scholarly publications with advanced computational simulations",
+  "Global academic consultancy for PhD scholars: IEEE and Elsevier formatting experts",
+  "Enhance your research impact with precision data analysis and PINNs modeling",
+  "Professional manuscript editing and journal submission strategy for researchers",
 ];
 
-// 2. Hero Badge - 6 Variations
 const badgeVariations = [
-  "Engineering & Computational Research Specialists",
-  "Advanced Numerical Simulation & AI Modeling Experts",
-  "Q1/Q2 Journal Manuscript Formatting & Support",
-  "Python, MATLAB & LaTeX Academic Consultants",
-  "Rigorous Editorial & Data Analysis Partners",
-  "Empowering Global Scholars & PhD Researchers"
+  "Engineering and computational research specialists",
+  "Advanced numerical simulation and AI modeling experts",
+  "Q1/Q2 journal manuscript formatting and support",
+  "Python, MATLAB and LaTeX academic consultants",
+  "Rigorous editorial and data analysis partners",
+  "Empowering global scholars and PhD researchers",
 ];
 
-// 3. Hero Main Title (First Part) - 6 Variations
 const mainTitleVariations = [
-  "Accelerate Your Research With",
-  "Elevate Your Academic Work To",
-  "Maximize Publication Success With",
-  "Optimize Your Scientific Papers For",
-  "Transform Your Research Drafts Into",
-  "Advance Your Scholarly Career With"
+  "Accelerate your research with",
+  "Elevate your academic work to",
+  "Maximize publication success with",
+  "Optimize your scientific papers for",
+  "Transform your research drafts into",
+  "Advance your scholarly career with",
 ];
 
-// 4. Hero Gradient Highlighted Text (Second Part) - 6 Variations
 const gradientTitleVariations = [
-  "Publication-Ready Precision",
-  "World-Class Journal Standards",
-  "Q1/Q2 Impact Excellence",
-  "Flawless Academic Formatting",
-  "Advanced Computational Accuracy",
-  "Top-Tier Editorial Mastery"
+  "publication-ready precision",
+  "world-class journal standards",
+  "Q1/Q2 impact excellence",
+  "flawless academic formatting",
+  "advanced computational accuracy",
+  "top-tier editorial mastery",
 ];
 
-// 5. Hero Subtitle Paragraph - 6 Variations
 const subtitleVariations = [
-  "End-to-end expertise for Engineering Manuscripts, Python/MATLAB Numerical Simulations, Physics-Informed Neural Networks (PINNs), and IEEE/Elsevier Template Formatting.",
+  "End-to-end expertise for engineering manuscripts, Python/MATLAB numerical simulations, Physics-Informed Neural Networks (PINNs), and IEEE/Elsevier template formatting.",
   "Accelerate your academic publishing journey with advanced numerical simulations, precise data visualization, and rigorous editorial support.",
   "Empowering researchers worldwide with publication-ready formatting, custom algorithmic solvers, and expert journal submission strategies.",
   "Professional academic consultancy specializing in high-impact Q1/Q2 journal manuscripts, computational modeling, and thesis development.",
   "Custom computational research solutions, comprehensive MATLAB/Python simulations, and immaculate journal layout styling for ambitious scholars.",
-  "Streamline your peer-reviewed submissions with expert technical proofreading, advanced mathematical modeling, and precise manuscript formatting."
+  "Streamline your peer-reviewed submissions with expert technical proofreading, advanced mathematical modeling, and precise manuscript formatting.",
 ];
 
-export default function ScholarGridLandingPage() {
+const pick = (arr: string[]) => arr[Math.floor(Math.random() * arr.length)];
+
+/* ------------------------------------------------------------------ */
+/*  Static data                                                        */
+/* ------------------------------------------------------------------ */
+const faqs = [
+  { q: "What core services does ScholarGrid offer to researchers?", a: "We provide comprehensive academic research assistance, including journal manuscript formatting, custom computational modeling, numerical simulations, data visualization, and technical polishing for peer-reviewed submissions.", category: "Services" },
+  { q: "Which academic publishers do you format manuscripts for?", a: "We format manuscripts strictly according to the author guidelines of major international publishers, including IEEE, Elsevier, Springer Nature, Wiley, Taylor & Francis, and MDPI.", category: "Formatting" },
+  { q: "Can you assist with both LaTeX and MS Word templates?", a: "Yes, we handle complete document conversions and styling in both LaTeX (Overleaf) and MS Word, ensuring all figures, equations, and tables adhere to target journal specifications.", category: "Formatting" },
+  { q: "How do I get started with a consultation?", a: "Click the Get Consultancy button and choose WhatsApp or Email to share your project outline, draft, or simulation requirements directly with our technical consultancy team.", category: "Process" },
+  { q: "Is the initial manuscript review or project assessment free?", a: "Yes, our initial manuscript evaluation and preliminary project feasibility assessment are completely free of charge.", category: "Pricing" },
+  { q: "What is the typical turnaround time for a project?", a: "Turnaround times depend on project scope and complexity. Standard formatting takes 2–4 days, while complex simulation scripts and data modeling usually require 5–10 days.", category: "Process" },
+  { q: "Can you assist postgraduate students with thesis and dissertation formatting?", a: "Yes, we format Master's theses and Ph.D. dissertations according to specific institutional or university guidelines and style manuals.", category: "Services" },
+  { q: "How do you ensure the confidentiality of my research data?", a: "We treat all intellectual property with strict confidentiality. Your drafts, raw data, codes, and unpublished results remain 100% secure and private.", category: "Security" },
+  { q: "Do you offer custom coding for numerical modeling and algorithms?", a: "Yes, we develop custom, well-documented scripts in Python and MATLAB for mathematical modeling, differential equations, optimization, and data analysis.", category: "Simulations" },
+  { q: "Can you fix reference lists and citation style inconsistencies?", a: "Yes, we organize and format references using tools like EndNote and Mendeley to match the exact citation style (APA, IEEE, Harvard, Vancouver, etc.) required by your journal.", category: "Formatting" },
+  { q: "Do you generate publication-quality figures and graphics?", a: "Yes, we transform raw experimental or numerical data into high-resolution 2D/3D plots, vector graphics, and clear schematic diagrams suitable for high-impact journals.", category: "Graphics" },
+  { q: "Can you help respond to reviewer comments and revise manuscripts?", a: "Yes, we assist authors in addressing peer-review feedback, revising manuscript content, and drafting professional point-by-point response letters.", category: "Publishing" },
+  { q: "What options are available for international client payments?", a: "We accept flexible international transfer options. Detailed payment steps and invoices are provided upon project confirmation.", category: "Pricing" },
+  { q: "Do you offer language editing and technical proofreading?", a: "Yes, we refine scientific English, correct grammatical errors, improve academic phrasing, and enhance overall technical clarity.", category: "Editing" },
+  { q: "How are post-delivery revisions or corrections handled?", a: "Yes, we provide dedicated post-delivery support and complementary minor revisions to ensure complete satisfaction and journal compliance.", category: "Process" },
+  { q: "Can you convert an existing MS Word draft into a LaTeX project?", a: "Yes, we perform complete document conversions from MS Word to LaTeX, including complex mathematical equations, tables, and bibtex reference files.", category: "Formatting" },
+  { q: "Do you provide original, reproducible code files with simulations?", a: "Yes, upon project completion, clients receive all original source codes, scripts, data files, and documentation for complete transparency and reproducibility.", category: "Simulations" },
+  { q: "What fields of study do you support?", a: "While our core strength is in applied mathematics, engineering, computational sciences, and AI modeling, our manuscript formatting and publishing support applies to all quantitative research domains.", category: "Services" },
+  { q: "Can we schedule a one-on-one virtual consultation?", a: "Yes, after an initial text review, we can arrange direct communication or virtual technical discussions to review your project requirements in detail.", category: "Process" },
+  { q: "How can I submit my manuscript files for a quote?", a: "Use the Get Consultancy button and send your manuscript draft, guidelines, or simulation specs as a PDF, Word document, or ZIP file via WhatsApp or Email.", category: "Process" },
+];
+
+const blogPosts = [
+  { tag: "Formatting guide", title: "A Step-by-Step Guide to Formatting Engineering Manuscripts for Elsevier & IEEE", desc: "Templates, section structures, equation formatting, and figure resolutions for PhD scholars.", href: "/blog/formatting-guide" },
+  { tag: "Publishing strategy", title: "Common Reasons Engineering Manuscripts Get Rejected by Journals (And How to Avoid Them)", desc: "A critical guide to bypassing desk rejections in Q1/Q2 journals.", href: "/blog/paper-rejection-reasons" },
+  { tag: "Visualization", title: "Mastering Contour Plots & 3D Visualizations in Python and MATLAB for Q1 Journals", desc: "Build clean contour plots, color maps, and 3D surfaces for engineering papers.", href: "/blog/contour-visualizations" },
+  { tag: "Research methodology", title: "How to Conduct a Systematic Literature Review and Synthesize Prior Work Like a Senior Researcher", desc: "Search protocols, PRISMA screening, concept matrices, and synthesis.", href: "/blog/systematic-literature-review-guide" },
+  { tag: "Formatting & publishing", title: "Mastering Q1/Q2 Manuscript Formatting: Common Pitfalls and How to Avoid Rejection", desc: "Avoid outdated templates, weak first pages, low-quality figures, and reference chaos.", href: "/blog/q1-q2-manuscript-formatting-avoid-rejection" },
+];
+
+const steps = [
+  { t: "Share your draft or requirements", d: "Send a manuscript, thesis, or simulation brief through WhatsApp or Email." },
+  { t: "Receive a free assessment", d: "We review scope, target journal, and feasibility before any commitment." },
+  { t: "Delivery with revision support", d: "Get publication-ready files, source code, and complementary minor revisions." },
+];
+
+const googleScholarUrl = "https://scholar.google.com/citations?hl=en&user=-VGaDnoAAAAJ";
+const researchGateUrl = "https://www.researchgate.net/profile/Hamza-Iqbal-19?ev=hdr_xprf";
+
+/* ------------------------------------------------------------------ */
+/*  Consultancy modal (WhatsApp / Email live only in here)             */
+/* ------------------------------------------------------------------ */
+function ConsultModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  // Contact details are used only to build links; they are never rendered as text.
   const whatsappNumber = "923147982032";
-  const whatsappMsg = encodeURIComponent("Hello ScholarGrid team! I need expert support for my research manuscript / thesis simulation & formatting.");
+  const whatsappMsg = encodeURIComponent(
+    "Hello ScholarGrid team! I need expert support for my research manuscript / thesis simulation & formatting."
+  );
   const emailAddress = "scholargrid030@gmail.com";
-  
-  const gmailWebUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${emailAddress}&su=Manuscript%20Review%20Inquiry&body=Hello%20ScholarGrid%20team,%20I%20would%20like%20to%20get%20assistance%20with%20my%20research%20manuscript.`;
-
-  const googleScholarUrl = "https://scholar.google.com/citations?hl=en&user=-VGaDnoAAAAJ"; 
-  const researchGateUrl = "https://www.researchgate.net/profile/Hamza-Iqbal-19?ev=hdr_xprf";
-
-  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
-  
-  const [currentAnnouncement, setCurrentAnnouncement] = useState(announcementVariations[0]);
-  const [currentBadge, setCurrentBadge] = useState(badgeVariations[0]);
-  const [currentMainTitle, setCurrentMainTitle] = useState(mainTitleVariations[0]);
-  const [currentGradientTitle, setCurrentGradientTitle] = useState(gradientTitleVariations[0]);
-  const [currentSubtitle, setCurrentSubtitle] = useState(subtitleVariations[0]);
+  const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${emailAddress}&su=${encodeURIComponent(
+    "Manuscript Review Inquiry"
+  )}&body=${encodeURIComponent(
+    "Hello ScholarGrid team, I would like to get assistance with my research manuscript."
+  )}`;
 
   useEffect(() => {
-    setCurrentAnnouncement(announcementVariations[Math.floor(Math.random() * announcementVariations.length)]);
-    setCurrentBadge(badgeVariations[Math.floor(Math.random() * badgeVariations.length)]);
-    setCurrentMainTitle(mainTitleVariations[Math.floor(Math.random() * mainTitleVariations.length)]);
-    setCurrentGradientTitle(gradientTitleVariations[Math.floor(Math.random() * gradientTitleVariations.length)]);
-    setCurrentSubtitle(subtitleVariations[Math.floor(Math.random() * subtitleVariations.length)]);
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    document.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [open, onClose]);
+
+  if (!open) return null;
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="consult-title"
+    >
+      <div
+        className="relative w-full max-w-md rounded-2xl bg-white p-7 shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={onClose}
+          aria-label="Close"
+          className="absolute right-4 top-4 rounded-full p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700"
+        >
+          <X size={18} />
+        </button>
+
+        <h2 id="consult-title" className="font-serif text-2xl font-bold text-slate-900">
+          Get consultancy
+        </h2>
+        <p className="mt-2 text-sm leading-relaxed text-slate-600">
+          Choose how you would like to reach us. Your first manuscript assessment is free, and we usually reply the same day.
+        </p>
+
+        <div className="mt-6 space-y-3">
+          <a
+            href={`https://wa.me/${whatsappNumber}?text=${whatsappMsg}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center gap-4 rounded-xl border border-slate-200 p-4 transition hover:border-emerald-600 hover:bg-emerald-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-700"
+          >
+            <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-600 text-white">
+              <MessageSquare size={20} />
+            </span>
+            <span className="flex-1">
+              <span className="block font-semibold text-slate-900">Continue on WhatsApp</span>
+              <span className="block text-xs text-slate-500">Fastest way to share drafts and files</span>
+            </span>
+            <ArrowRight size={18} className="text-slate-400 transition group-hover:translate-x-0.5 group-hover:text-emerald-700" />
+          </a>
+
+          <a
+            href={gmailUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center gap-4 rounded-xl border border-slate-200 p-4 transition hover:border-blue-700 hover:bg-blue-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700"
+          >
+            <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-800 text-white">
+              <Mail size={20} />
+            </span>
+            <span className="flex-1">
+              <span className="block font-semibold text-slate-900">Send an email</span>
+              <span className="block text-xs text-slate-500">Best for detailed project briefs</span>
+            </span>
+            <ArrowRight size={18} className="text-slate-400 transition group-hover:translate-x-0.5 group-hover:text-blue-800" />
+          </a>
+        </div>
+
+        <p className="mt-5 flex items-center gap-2 text-xs text-slate-500">
+          <ShieldCheck size={14} className="text-emerald-600" />
+          Your drafts and data stay strictly confidential.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Page                                                               */
+/* ------------------------------------------------------------------ */
+export default function ScholarGridLandingPage() {
+  const [modalOpen, setModalOpen] = useState(false);
+  const openModal = () => setModalOpen(true);
+  const closeModal = () => setModalOpen(false);
+
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
+  const [showAllFaqs, setShowAllFaqs] = useState(false);
+
+  const [announcement, setAnnouncement] = useState(announcementVariations[0]);
+  const [badge, setBadge] = useState(badgeVariations[0]);
+  const [mainTitle, setMainTitle] = useState(mainTitleVariations[0]);
+  const [gradientTitle, setGradientTitle] = useState(gradientTitleVariations[0]);
+  const [subtitle, setSubtitle] = useState(subtitleVariations[0]);
+
+  useEffect(() => {
+    setAnnouncement(pick(announcementVariations));
+    setBadge(pick(badgeVariations));
+    setMainTitle(pick(mainTitleVariations));
+    setGradientTitle(pick(gradientTitleVariations));
+    setSubtitle(pick(subtitleVariations));
   }, []);
 
-  const toggleFaq = (index: number) => {
-    setOpenFaqIndex(openFaqIndex === index ? null : index);
-  };
+  const visibleFaqs = showAllFaqs ? faqs : faqs.slice(0, 6);
 
-  const faqs = [
-    {
-      q: "What core services does ScholarGrid offer to researchers?",
-      a: "We provide comprehensive academic research assistance, including journal manuscript formatting, custom computational modeling, numerical simulations, data visualization, and technical polishing for peer-reviewed submissions.",
-      category: "Services"
-    },
-    {
-      q: "Which academic publishers do you format manuscripts for?",
-      a: "We format manuscripts strictly according to the author guidelines of major international publishers, including IEEE, Elsevier, Springer Nature, Wiley, Taylor & Francis, and MDPI.",
-      category: "Formatting"
-    },
-    {
-      q: "Can you assist with both LaTeX and MS Word templates?",
-      a: "Yes, we handle complete document conversions and styling in both LaTeX (Overleaf) and MS Word, ensuring all figures, equations, and tables adhere to target journal specifications.",
-      category: "Formatting"
-    },
-    {
-      q: "How do I get started with a consultation?",
-      a: "Simply click the WhatsApp button or email us on our page to share your project outline, draft, or simulation requirements directly with our technical consultancy team.",
-      category: "Process"
-    },
-    {
-      q: "Is the initial manuscript review or project assessment free?",
-      a: "Yes, our initial manuscript evaluation and preliminary project feasibility assessment are completely free of charge.",
-      category: "Pricing"
-    },
-    {
-      q: "What is the typical turnaround time for a project?",
-      a: "Turnaround times depend on project scope and complexity. Standard formatting takes 2–4 days, while complex simulation scripts and data modeling usually require 5–10 days.",
-      category: "Process"
-    },
-    {
-      q: "Can you assist postgraduate students with thesis and dissertation formatting?",
-      a: "Yes, we format Master's theses and Ph.D. dissertations according to specific institutional or university guidelines and style manuals.",
-      category: "Services"
-    },
-    {
-      q: "How do you ensure the confidentiality of my research data?",
-      a: "We treat all intellectual property with strict confidentiality. Your drafts, raw data, codes, and unpublished results remain 100% secure and private.",
-      category: "Security"
-    },
-    {
-      q: "Do you offer custom coding for numerical modeling and algorithms?",
-      a: "Yes, we develop custom, well-documented scripts in Python and MATLAB for mathematical modeling, differential equations, optimization, and data analysis.",
-      category: "Simulations"
-    },
-    {
-      q: "Can you fix reference lists and citation style inconsistencies?",
-      a: "Yes, we organize and format references using tools like EndNote and Mendeley to match the exact citation style (APA, IEEE, Harvard, Vancouver, etc.) required by your journal.",
-      category: "Formatting"
-    },
-    {
-      q: "Do you generate publication-quality figures and graphics?",
-      a: "Yes, we transform raw experimental or numerical data into high-resolution 2D/3D plots, vector graphics, and clear schematic diagrams suitable for high-impact journals.",
-      category: "Graphics"
-    },
-    {
-      q: "Can you help respond to reviewer comments and revise manuscripts?",
-      a: "Yes, we assist authors in addressing peer-review feedback, revising manuscript content, and drafting professional point-by-point response letters.",
-      category: "Publishing"
-    },
-    {
-      q: "What options are available for international client payments?",
-      a: "We accept flexible international transfer options. Detailed payment steps and invoices are provided upon project confirmation via WhatsApp or Email.",
-      category: "Pricing"
-    },
-    {
-      q: "Do you offer language editing and technical proofreading?",
-      a: "Yes, we refine scientific English, correct grammatical errors, improve academic phrasing, and enhance overall technical clarity.",
-      category: "Editing"
-    },
-    {
-      q: "How are post-delivery revisions or corrections handled?",
-      a: "Yes, we provide dedicated post-delivery support and complementary minor revisions to ensure complete satisfaction and journal compliance.",
-      category: "Process"
-    },
-    {
-      q: "Can you convert an existing MS Word draft into a LaTeX project?",
-      a: "Yes, we perform complete document conversions from MS Word to LaTeX, including complex mathematical equations, tables, and bibtex reference files.",
-      category: "Formatting"
-    },
-    {
-      q: "Do you provide original, reproducible code files with simulations?",
-      a: "Yes, upon project completion, clients receive all original source codes, scripts, data files, and documentation for complete transparency and reproducibility.",
-      category: "Simulations"
-    },
-    {
-      q: "What fields of study do you support?",
-      a: "While our core strength is in applied mathematics, engineering, computational sciences, and AI modeling, our manuscript formatting and publishing support applies to all quantitative research domains.",
-      category: "Services"
-    },
-    {
-      q: "Can we schedule a one-on-one virtual consultation?",
-      a: "Yes, after an initial text review, we can arrange direct communication or virtual technical discussions to review your project requirements in detail.",
-      category: "Process"
-    },
-    {
-      q: "How can I submit my manuscript files for a quote?",
-      a: "You can send your manuscript draft, guidelines, or simulation specs directly as a PDF, Word document, or ZIP file via WhatsApp or Email.",
-      category: "Process"
-    }
-  ];
-
-  // Google Schema Markup (JSON-LD) for FAQ SEO
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": faqs.map((faq) => ({
+    mainEntity: faqs.map((f) => ({
       "@type": "Question",
-      "name": faq.q,
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": faq.a
-      }
-    }))
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
   };
 
+  /* One button style, used everywhere */
+  const ConsultButton = ({
+    className = "",
+    variant = "solid",
+  }: {
+    className?: string;
+    variant?: "solid" | "light";
+  }) => (
+    <button
+      onClick={openModal}
+      className={`inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 ${
+        variant === "solid"
+          ? "bg-blue-800 text-white shadow-sm hover:bg-blue-900"
+          : "bg-white text-blue-900 hover:bg-blue-50"
+      } ${className}`}
+    >
+      Get Consultancy <ArrowRight size={16} />
+    </button>
+  );
+
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-amber-400 selection:text-slate-950">
-      {/* FAQ JSON-LD Schema Integration */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
+    <div className="min-h-screen bg-white font-sans text-slate-800 antialiased selection:bg-blue-200">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <ConsultModal open={modalOpen} onClose={closeModal} />
 
-      {/* 1. Top Announcement Bar */}
-      <header role="banner" className="bg-slate-950 py-2.5 px-4 text-center text-xs font-bold tracking-wider text-amber-400 shadow-md flex items-center justify-center gap-2">
-        <Sparkles size={14} className="text-amber-400 animate-pulse" />
-        <span>{currentAnnouncement}</span>
-      </header>
+      {/* Announcement bar */}
+      <div className="bg-blue-950 px-4 py-2 text-center text-xs text-blue-100 sm:text-sm">{announcement}</div>
 
-      {/* Navigation Bar */}
-      <nav aria-label="Main Navigation" className="border-b border-slate-200 bg-white/90 backdrop-blur-xl sticky top-0 z-50 px-6 py-4 shadow-sm">
-        <div className="max-w-7xl mx-auto flex justify-between items-center flex-wrap gap-4">
-          <div className="text-2xl font-black tracking-tight text-slate-900 flex items-center gap-3">
-            <div className="relative w-10 h-10 flex items-center justify-center">
-              <Image 
-                src="/logo.png" 
-                alt="ScholarGrid - Academic Research & Consultancy Logo" 
-                width={40}
-                height={40}
-                priority
-                className="w-full h-full object-contain"
-              />
-            </div>
-            <span>ScholarGrid</span>
+      {/* Navigation */}
+      <nav aria-label="Main navigation" className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3.5">
+          <Link href="/" className="flex items-center gap-3">
+            <Image
+              src="/logo.png"
+              alt="ScholarGrid - Academic Research & Consultancy Logo"
+              width={38}
+              height={38}
+              priority
+              className="h-9 w-9 object-contain"
+            />
+            <span className="font-serif text-xl font-bold tracking-tight text-slate-900">ScholarGrid</span>
+          </Link>
+
+          <div className="hidden items-center gap-8 text-sm font-medium text-slate-600 md:flex">
+            <a href="#services" className="hover:text-blue-800">Services</a>
+            <a href="#process" className="hover:text-blue-800">How it works</a>
+            <a href="#insights" className="hover:text-blue-800">Insights</a>
+            <a href="#profiles" className="hover:text-blue-800">Publications</a>
+            <a href="#faq" className="hover:text-blue-800">FAQ</a>
           </div>
-          
-          <div className="flex items-center gap-3 flex-wrap">
-            <div className="hidden md:flex items-center gap-2 text-xs text-slate-600 font-semibold">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
-              <span>Accepting New Manuscripts</span>
-            </div>
-            <a
-              href={gmailWebUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Send Email to ScholarGrid"
-              className="bg-slate-100 hover:bg-slate-200 text-blue-900 font-bold px-4 py-2.5 rounded-xl transition-all border border-slate-300 text-xs sm:text-sm flex items-center gap-2"
-            >
-              <Mail size={16} className="text-blue-700" /> Email Us
-            </a>
-            <a
-              href={`https://wa.me/${whatsappNumber}?text=${whatsappMsg}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Consult ScholarGrid Team on WhatsApp"
-              className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-5 py-2.5 rounded-xl transition-all shadow-md shadow-amber-500/20 text-xs sm:text-sm flex items-center gap-2 hover:scale-105"
-            >
-              <MessageSquare size={16} /> Consult on WhatsApp
-            </a>
-          </div>
+
+          <ConsultButton className="!px-5 !py-2.5" />
         </div>
       </nav>
 
-      {/* Main Content Area */}
       <main>
-        {/* Hero Section */}
-        <section className="relative max-w-6xl mx-auto px-6 pt-20 pb-16 text-center">
-          <div className="relative z-10">
-            {/* 2. Hero Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-900 text-xs font-bold uppercase tracking-widest mb-6 shadow-sm">
-              <Zap size={14} className="text-amber-500" /> {currentBadge}
-            </div>
-            
-            {/* 3 & 4. Hero Main Title & Gradient Title (Proper H1 Tag for SEO) */}
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-slate-950 leading-[1.15] mb-6 tracking-tight">
-              {currentMainTitle} <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-800 via-blue-600 to-amber-600">
-                {currentGradientTitle}
-              </span>
-            </h1>
-            
-            {/* 5. Hero Subtitle Paragraph */}
-            <p className="text-base sm:text-xl text-slate-600 max-w-3xl mx-auto mb-10 leading-relaxed font-normal">
-              {currentSubtitle}
-            </p>
-
-            <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-              <a
-                href={`https://wa.me/${whatsappNumber}?text=${whatsappMsg}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full sm:w-auto bg-blue-900 hover:bg-blue-800 text-white font-extrabold px-8 py-4 rounded-xl shadow-lg shadow-blue-900/20 transition-all flex items-center justify-center gap-2.5 text-base hover:scale-105"
-              >
-                <Send size={18} className="text-amber-400" /> Send Your Draft for Review
-              </a>
-              <a
-                href={gmailWebUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full sm:w-auto bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 font-bold px-8 py-4 rounded-xl transition-all text-base flex items-center justify-center gap-2 shadow-sm"
-              >
-                <Mail size={18} className="text-blue-700" /> Email Us Directly
-              </a>
-            </div>
-          </div>
-        </section>
-
-        {/* Authority / Stats Section */}
-        <section className="bg-slate-950 py-12 border-y border-slate-800">
-          <div className="max-w-6xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-sm">
-              <div className="text-3xl md:text-4xl font-black text-amber-400">18+</div>
-              <div className="text-xs md:text-sm text-slate-300 mt-1 font-medium">Q1/Q2 Journal Papers</div>
-            </div>
-            <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-sm">
-              <div className="text-3xl md:text-4xl font-black text-blue-400">100+</div>
-              <div className="text-xs md:text-sm text-slate-300 mt-1 font-medium">Manuscripts Processed</div>
-            </div>
-            <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-sm">
-              <div className="text-3xl md:text-4xl font-black text-amber-400">100%</div>
-              <div className="text-xs md:text-sm text-slate-300 mt-1 font-medium">Publisher Compliance</div>
-            </div>
-            <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-sm">
-              <div className="text-3xl md:text-4xl font-black text-blue-400">Direct</div>
-              <div className="text-xs md:text-sm text-slate-300 mt-1 font-medium">1-on-1 Author Support</div>
-            </div>
-          </div>
-        </section>
-
-        {/* Services Breakdown Section */}
-        <section id="services" className="max-w-7xl mx-auto px-6 py-24">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-black text-slate-950 tracking-tight">Comprehensive Academic Services</h2>
-            <p className="text-slate-600 text-sm md:text-base mt-3 max-w-2xl mx-auto font-normal">
-              Designed specifically for postgraduate students, PhD scholars, and engineering authors aiming for top-tier international publications.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <article className="bg-white border border-slate-200 p-8 rounded-3xl hover:border-blue-600 transition-all group shadow-md hover:shadow-xl">
-              <div className="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <FileText className="text-amber-600" size={28} />
-              </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-3">Manuscript Layout & Formatting</h3>
-              <p className="text-slate-600 text-sm mb-6 leading-relaxed">
-                Complete layout overhaul strictly following targeted journal style guides (LaTeX & MS Word).
+        {/* Hero */}
+        <section className="border-b border-slate-200 bg-gradient-to-b from-slate-50 to-white">
+          <div className="mx-auto grid max-w-7xl items-center gap-14 px-6 py-20 lg:grid-cols-[1.15fr_0.85fr] lg:py-28">
+            <div>
+              <p className="mb-5 inline-block rounded-full border border-blue-200 bg-blue-50 px-4 py-1.5 text-sm font-medium text-blue-900">
+                {badge}
               </p>
-              <ul className="text-xs text-slate-700 space-y-3 font-semibold">
-                <li className="flex items-center gap-2.5"><CheckCircle size={15} className="text-amber-500 shrink-0" /> IEEE, Elsevier, Springer & MDPI Templates</li>
-                <li className="flex items-center gap-2.5"><CheckCircle size={15} className="text-amber-500 shrink-0" /> Vector Figures & TikZ Graphics</li>
-                <li className="flex items-center gap-2.5"><CheckCircle size={15} className="text-amber-500 shrink-0" /> Reference Management (EndNote/Mendeley)</li>
-              </ul>
-            </article>
+              <h1 className="font-serif text-4xl font-bold leading-[1.15] tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
+                {mainTitle}
+                <br />
+                <span className="text-blue-800">{gradientTitle}</span>
+              </h1>
+              <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-600">{subtitle}</p>
 
-            <article className="bg-white border-2 border-blue-600 p-8 rounded-3xl transition-all group shadow-xl relative">
-              <div className="absolute -top-3 right-6 bg-blue-900 text-amber-400 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider shadow">
-                Most Popular
+              <div className="mt-9 flex flex-wrap items-center gap-5">
+                <ConsultButton className="!px-8 !py-3.5 !text-base" />
+                <span className="flex items-center gap-2 text-sm text-slate-500">
+                  <CheckCircle size={16} className="text-emerald-600" /> Free initial manuscript assessment
+                </span>
               </div>
-              <div className="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <Cpu className="text-blue-700" size={28} />
-              </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-3">Computational Solvers & AI</h3>
-              <p className="text-slate-600 text-sm mb-6 leading-relaxed">
-                Custom Python & MATLAB script development for differential equations and fluid dynamics models.
-              </p>
-              <ul className="text-xs text-slate-700 space-y-3 font-semibold">
-                <li className="flex items-center gap-2.5"><CheckCircle size={15} className="text-blue-700 shrink-0" /> Physics-Informed Neural Networks (PINNs)</li>
-                <li className="flex items-center gap-2.5"><CheckCircle size={15} className="text-blue-700 shrink-0" /> Levenberg-Marquardt & PSO Algorithms</li>
-                <li className="flex items-center gap-2.5"><CheckCircle size={15} className="text-blue-700 shrink-0" /> ODEs, PDEs & Boundary Value Solvers</li>
-              </ul>
-            </article>
+            </div>
 
-            <article className="bg-white border border-slate-200 p-8 rounded-3xl hover:border-blue-600 transition-all group shadow-md hover:shadow-xl">
-              <div className="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <BarChart2 className="text-amber-600" size={28} />
-              </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-3">Data Graphics & Analysis</h3>
-              <p className="text-slate-600 text-sm mb-6 leading-relaxed">
-                Transforming raw simulation and experimental datasets into publication-standard 2D/3D visual plots.
-              </p>
-              <ul className="text-xs text-slate-700 space-y-3 font-semibold">
-                <li className="flex items-center gap-2.5"><CheckCircle size={15} className="text-amber-500 shrink-0" /> High-Resolution Contour & Line Plots</li>
-                <li className="flex items-center gap-2.5"><CheckCircle size={15} className="text-amber-500 shrink-0" /> In-depth Result Interpretation & Drafting</li>
-                <li className="flex items-center gap-2.5"><CheckCircle size={15} className="text-amber-500 shrink-0" /> Abstract & Technical Section Polish</li>
-              </ul>
-            </article>
+            {/* Process card */}
+            <div id="process" className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-8 shadow-xl shadow-slate-200/60">
+              <h2 className="font-serif text-xl font-bold text-slate-900">How a project starts</h2>
+              <ol className="mt-6 space-y-6">
+                {steps.map((s, i) => (
+                  <li key={s.t} className="flex gap-4">
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-800 text-sm font-semibold text-white">
+                      {i + 1}
+                    </span>
+                    <div>
+                      <p className="font-semibold text-slate-900">{s.t}</p>
+                      <p className="mt-1 text-sm leading-relaxed text-slate-600">{s.d}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </div>
           </div>
         </section>
 
-        {/* BLOG SECTION */}
-        <section className="max-w-7xl mx-auto px-6 py-20 bg-white border-y border-slate-200 my-12 rounded-3xl shadow-sm">
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-900 text-xs font-bold uppercase tracking-widest mb-4 shadow-sm">
-              <BookOpen size={14} className="text-amber-500" /> Technical Insights & Blog
-            </div>
-            <h2 className="text-3xl md:text-4xl font-black text-slate-950 tracking-tight">Expert Guides for Researchers</h2>
-            <p className="text-slate-600 text-sm md:text-base mt-2 max-w-xl mx-auto">
-              Practical walkthroughs on manuscript formatting, simulation workflows, and journal publication strategies.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            {/* Blog 1 */}
-            <article className="bg-slate-50 border border-slate-200 rounded-2xl p-6 hover:border-blue-600 transition-all shadow-sm flex flex-col justify-between">
-              <div>
-                <span className="text-xs font-bold px-3 py-1 bg-blue-100 text-blue-900 rounded-full uppercase tracking-wider">
-                  Formatting Guide
-                </span>
-                <h3 className="text-xl font-black text-slate-900 mt-4 mb-2 leading-snug">
-                  A Step-by-Step Guide to Formatting Engineering Manuscripts for Elsevier & IEEE
-                </h3>
-                <p className="text-slate-600 text-sm mb-6 leading-relaxed">
-                  A practical walkthrough for PhD scholars covering templates, section structures, equation formatting, and figure resolutions.
-                </p>
+        {/* Stats */}
+        <section aria-label="Track record" className="border-b border-slate-200 bg-white">
+          <div className="mx-auto grid max-w-7xl grid-cols-2 divide-x divide-slate-200 px-6 md:grid-cols-4">
+            {[
+              ["18+", "Q1/Q2 journal papers"],
+              ["100+", "Manuscripts processed"],
+              ["100%", "Publisher compliance"],
+              ["1-on-1", "Direct author support"],
+            ].map(([n, l]) => (
+              <div key={l} className="px-4 py-9 text-center">
+                <div className="font-serif text-3xl font-bold text-blue-900 md:text-4xl">{n}</div>
+                <div className="mt-1 text-sm text-slate-600">{l}</div>
               </div>
-              <Link 
-                href="/blog/formatting-guide" 
-                className="inline-flex items-center gap-2 font-black text-blue-700 hover:text-blue-900 text-sm transition-colors"
-              >
-                Read Full Article <ArrowRight size={16} />
-              </Link>
-            </article>
-
-            {/* Blog 2 */}
-            <article className="bg-slate-50 border border-slate-200 rounded-2xl p-6 hover:border-blue-600 transition-all shadow-sm flex flex-col justify-between">
-              <div>
-                <span className="text-xs font-bold px-3 py-1 bg-red-100 text-red-900 rounded-full uppercase tracking-wider">
-                  Publishing Strategy
-                </span>
-                <h3 className="text-xl font-black text-slate-900 mt-4 mb-2 leading-snug">
-                  Common Reasons Engineering Manuscripts Get Rejected by Journals (And How to Avoid Them)
-                </h3>
-                <p className="text-slate-600 text-sm mb-6 leading-relaxed">
-                  A critical guide for PhD scholars and academic researchers to bypass desk rejections in Q1/Q2 journals.
-                </p>
-              </div>
-              <Link 
-                href="/blog/paper-rejection-reasons" 
-                className="inline-flex items-center gap-2 font-black text-blue-700 hover:text-blue-900 text-sm transition-colors"
-              >
-                Read Full Article <ArrowRight size={16} />
-              </Link>
-            </article>
-
-            {/* Blog 3 */}
-            <article className="bg-slate-50 border border-slate-200 rounded-2xl p-6 hover:border-blue-600 transition-all shadow-sm flex flex-col justify-between">
-              <div>
-                <span className="text-xs font-bold px-3 py-1 bg-emerald-100 text-emerald-900 rounded-full uppercase tracking-wider">
-                  Visualization Guide
-                </span>
-                <h3 className="text-xl font-black text-slate-900 mt-4 mb-2 leading-snug">
-                  Mastering Contour Plots & 3D Visualizations in Python and MATLAB for Q1 Journals
-                </h3>
-                <p className="text-slate-600 text-sm mb-6 leading-relaxed">
-                  A practical walkthrough for engineering authors on building clean contour plots, color maps, and 3D surfaces.
-                </p>
-              </div>
-              <Link 
-                href="/blog/contour-visualizations" 
-                className="inline-flex items-center gap-2 font-black text-blue-700 hover:text-blue-900 text-sm transition-colors"
-              >
-                Read Full Article <ArrowRight size={16} />
-              </Link>
-            </article>
-
-            {/* Blog 4 */}
-            <article className="bg-slate-50 border border-slate-200 rounded-2xl p-6 hover:border-blue-600 transition-all shadow-sm flex flex-col justify-between">
-              <div>
-                <span className="text-xs font-bold px-3 py-1 bg-blue-100 text-blue-900 rounded-full uppercase tracking-wider">
-                  Research Methodology
-                </span>
-                <h3 className="text-xl font-black text-slate-900 mt-4 mb-2 leading-snug">
-                  How to Conduct a Systematic Literature Review (SLR) and Synthesize Prior Work Like a Senior Researcher
-                </h3>
-                <p className="text-slate-600 text-sm mb-6 leading-relaxed">
-                  Learn how to follow documented search protocols, screen studies transparently using PRISMA guidelines, build concept matrices, and synthesize prior literature like a senior researcher.
-                </p>
-              </div>
-              <Link 
-                href="/blog/systematic-literature-review-guide" 
-                className="inline-flex items-center gap-2 font-black text-blue-700 hover:text-blue-900 text-sm transition-colors"
-              >
-                Read Full Article <ArrowRight size={16} />
-              </Link>
-            </article>
-
-            {/* Blog 5 (Newly Added) */}
-            <article className="bg-slate-50 border border-slate-200 rounded-2xl p-6 hover:border-blue-600 transition-all shadow-sm flex flex-col justify-between md:col-span-2">
-              <div>
-                <span className="text-xs font-bold px-3 py-1 bg-amber-100 text-amber-900 rounded-full uppercase tracking-wider">
-                  Formatting & Publishing
-                </span>
-                <h3 className="text-xl font-black text-slate-900 mt-4 mb-2 leading-snug">
-                  Mastering Q1/Q2 Manuscript Formatting: Common Pitfalls and How to Avoid Rejection
-                </h3>
-                <p className="text-slate-600 text-sm mb-6 leading-relaxed">
-                  A practical manuscript formatting guide for researchers targeting Q1 and Q2 journals. Learn how to avoid outdated templates, weak first pages, low-quality figures, and reference chaos.
-                </p>
-              </div>
-              <Link 
-                href="/blog/q1-q2-manuscript-formatting-avoid-rejection" 
-                className="inline-flex items-center gap-2 font-black text-blue-700 hover:text-blue-900 text-sm transition-colors"
-              >
-                Read Full Article <ArrowRight size={16} />
-              </Link>
-            </article>
+            ))}
           </div>
         </section>
 
-        {/* Research Profiles & Publications Links Section */}
-        <section className="max-w-7xl mx-auto px-6 py-12">
-          <div className="bg-blue-50/60 border border-blue-200 rounded-3xl p-8 md:p-12 text-center shadow-sm">
-            <div className="flex items-center gap-3 mb-3 justify-center">
-              <div className="p-2 bg-blue-900 rounded-xl">
-                <Award className="text-amber-400" size={28} />
-              </div>
-              <h2 className="text-2xl md:text-3xl font-black text-slate-900">Explore Complete Scientific Portfolio</h2>
-            </div>
-            <p className="text-slate-600 mb-8 max-w-xl mx-auto text-sm">
-              Browse our full record of peer-reviewed publications, citations, and research metrics directly on our official academic profiles.
-            </p>
+        {/* Publishers strip */}
+        <section aria-label="Supported publishers" className="bg-slate-50 py-8">
+          <p className="mx-auto max-w-4xl px-6 text-center text-sm text-slate-500">
+            Formatting aligned to the author guidelines of IEEE, Elsevier, Springer Nature, Wiley, Taylor &amp; Francis and MDPI
+          </p>
+        </section>
 
-            <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+        {/* Services */}
+        <section id="services" className="mx-auto max-w-7xl scroll-mt-24 px-6 py-24">
+          <div className="mx-auto mb-14 max-w-2xl text-center">
+            <h2 className="font-serif text-3xl font-bold text-slate-900 md:text-4xl">Comprehensive academic services</h2>
+            <p className="mt-4 text-slate-600">
+              Built for postgraduate students, PhD scholars, and engineering authors aiming for top-tier international publications.
+            </p>
+          </div>
+
+          <div className="grid gap-8 md:grid-cols-3">
+            {[
+              {
+                icon: FileText,
+                title: "Manuscript layout & formatting",
+                desc: "Complete layout overhaul following the target journal's style guide in LaTeX or MS Word.",
+                items: ["IEEE, Elsevier, Springer & MDPI templates", "Vector figures & TikZ graphics", "Reference management (EndNote / Mendeley)"],
+                featured: false,
+              },
+              {
+                icon: Cpu,
+                title: "Computational solvers & AI",
+                desc: "Custom Python and MATLAB development for differential equations and fluid dynamics models.",
+                items: ["Physics-Informed Neural Networks (PINNs)", "Levenberg-Marquardt & PSO algorithms", "ODEs, PDEs & boundary value solvers"],
+                featured: true,
+              },
+              {
+                icon: BarChart2,
+                title: "Data graphics & analysis",
+                desc: "Raw simulation and experimental datasets turned into publication-standard 2D/3D plots.",
+                items: ["High-resolution contour & line plots", "Result interpretation & drafting", "Abstract & technical section polish"],
+                featured: false,
+              },
+            ].map(({ icon: Icon, title, desc, items, featured }) => (
+              <article
+                key={title}
+                className={`relative flex flex-col rounded-2xl p-8 ${
+                  featured
+                    ? "border-2 border-blue-800 bg-white shadow-xl shadow-blue-900/10"
+                    : "border border-slate-200 bg-white shadow-sm"
+                }`}
+              >
+                {featured && (
+                  <span className="absolute -top-3 left-8 rounded-full bg-blue-800 px-3 py-1 text-xs font-semibold text-white">
+                    Most requested
+                  </span>
+                )}
+                <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-800">
+                  <Icon size={24} />
+                </div>
+                <h3 className="font-serif text-xl font-bold text-slate-900">{title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-slate-600">{desc}</p>
+                <ul className="mt-6 space-y-3 text-sm text-slate-700">
+                  {items.map((it) => (
+                    <li key={it} className="flex items-start gap-2.5">
+                      <CheckCircle size={16} className="mt-0.5 shrink-0 text-emerald-600" /> {it}
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-12 text-center">
+            <ConsultButton />
+          </div>
+        </section>
+
+        {/* Insights / Blog */}
+        <section id="insights" className="scroll-mt-24 border-y border-slate-200 bg-slate-50 py-24">
+          <div className="mx-auto max-w-6xl px-6">
+            <div className="mb-12 flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <p className="mb-2 flex items-center gap-2 text-sm font-medium text-blue-800">
+                  <BookOpen size={16} /> Technical insights
+                </p>
+                <h2 className="font-serif text-3xl font-bold text-slate-900 md:text-4xl">Expert guides for researchers</h2>
+                <p className="mt-3 max-w-xl text-slate-600">
+                  Practical walkthroughs on manuscript formatting, simulation workflows, and journal publication strategy.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-2">
+              {blogPosts.map((p, i) => (
+                <article
+                  key={p.href}
+                  className={`flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-7 transition hover:border-blue-700 hover:shadow-md ${
+                    i === blogPosts.length - 1 && blogPosts.length % 2 === 1 ? "md:col-span-2" : ""
+                  }`}
+                >
+                  <div>
+                    <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-900">{p.tag}</span>
+                    <h3 className="mt-4 font-serif text-xl font-bold leading-snug text-slate-900">{p.title}</h3>
+                    <p className="mt-3 text-sm leading-relaxed text-slate-600">{p.desc}</p>
+                  </div>
+                  <Link
+                    href={p.href}
+                    className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-blue-800 hover:text-blue-950"
+                  >
+                    Read article <ArrowRight size={16} />
+                  </Link>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Profiles */}
+        <section id="profiles" className="mx-auto max-w-5xl scroll-mt-24 px-6 py-24">
+          <div className="rounded-2xl border border-slate-200 bg-white p-10 text-center shadow-sm md:p-14">
+            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-blue-900 text-amber-300">
+              <Award size={28} />
+            </div>
+            <h2 className="font-serif text-2xl font-bold text-slate-900 md:text-3xl">Explore the full scientific portfolio</h2>
+            <p className="mx-auto mt-3 max-w-xl text-sm text-slate-600 md:text-base">
+              Browse peer-reviewed publications, citations, and research metrics on our official academic profiles.
+            </p>
+            <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <a
                 href={googleScholarUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto bg-white hover:bg-slate-50 border-2 border-blue-700 text-blue-900 font-extrabold px-8 py-4 rounded-xl transition-all shadow-md flex items-center justify-center gap-3 text-base hover:scale-105"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-7 py-3 text-sm font-semibold text-slate-800 transition hover:border-blue-800 hover:text-blue-900 sm:w-auto"
               >
-                <span className="text-blue-700 font-black text-lg">📚</span> Google Scholar Profile <ExternalLink size={18} />
+                Google Scholar profile <ExternalLink size={16} />
               </a>
-
               <a
                 href={researchGateUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto bg-emerald-700 hover:bg-emerald-600 text-white font-extrabold px-8 py-4 rounded-xl transition-all shadow-md flex items-center justify-center gap-3 text-base hover:scale-105"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-7 py-3 text-sm font-semibold text-slate-800 transition hover:border-blue-800 hover:text-blue-900 sm:w-auto"
               >
-                <span className="text-emerald-300 font-black text-lg">🔬</span> ResearchGate Profile <ExternalLink size={18} />
+                ResearchGate profile <ExternalLink size={16} />
               </a>
             </div>
           </div>
         </section>
 
-        {/* Interactive Accordion Q&A Section */}
-        <section className="max-w-5xl mx-auto px-6 py-24">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-900 text-xs font-bold uppercase tracking-widest mb-4 shadow-sm">
-              <HelpCircle size={14} className="text-amber-500" /> Executive Knowledge Base
-            </div>
-            <h2 className="text-3xl md:text-5xl font-black text-slate-950 tracking-tight">Frequently Asked Questions</h2>
-            <p className="text-slate-600 text-sm md:text-base mt-3 max-w-xl mx-auto">
-              Everything you need to know about our manuscript preparation, simulation solvers, and global academic consultancy standards.
+        {/* FAQ */}
+        <section id="faq" className="mx-auto max-w-4xl scroll-mt-24 px-6 pb-24">
+          <div className="mb-12 text-center">
+            <h2 className="font-serif text-3xl font-bold text-slate-900 md:text-4xl">Frequently asked questions</h2>
+            <p className="mx-auto mt-3 max-w-xl text-slate-600">
+              Everything you need to know about manuscript preparation, simulation solvers, and our consultancy process.
             </p>
           </div>
 
-          <div className="space-y-4">
-            {faqs.map((faq, index) => {
+          <div className="divide-y divide-slate-200 overflow-hidden rounded-2xl border border-slate-200 bg-white">
+            {visibleFaqs.map((faq, index) => {
               const isOpen = openFaqIndex === index;
               return (
-                <div 
-                  key={index} 
-                  className={`border rounded-2xl transition-all duration-300 overflow-hidden ${
-                    isOpen 
-                      ? 'bg-white border-blue-600 shadow-lg ring-1 ring-blue-600/20' 
-                      : 'bg-white/80 border-slate-200 hover:border-slate-300 shadow-sm'
-                  }`}
-                >
+                <div key={faq.q}>
                   <button
-                    onClick={() => toggleFaq(index)}
+                    onClick={() => setOpenFaqIndex(isOpen ? null : index)}
                     aria-expanded={isOpen}
-                    className="w-full text-left p-6 flex items-center justify-between gap-4 focus:outline-none"
+                    className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-700"
                   >
-                    <div className="flex items-center gap-4">
-                      <span className="text-xs font-black uppercase tracking-wider px-3 py-1 rounded-md bg-slate-100 text-slate-700 border border-slate-200 shrink-0">
-                        {faq.category}
-                      </span>
-                      <span className="font-bold text-slate-900 text-base sm:text-lg">
-                        {faq.q}
-                      </span>
-                    </div>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-transform duration-300 ${isOpen ? 'bg-blue-900 text-amber-400 rotate-180' : 'bg-slate-100 text-slate-600'}`}>
-                      <ChevronDown size={18} />
-                    </div>
+                    <span className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-4">
+                      <span className="w-24 shrink-0 text-xs font-medium text-blue-700">{faq.category}</span>
+                      <span className="font-semibold text-slate-900">{faq.q}</span>
+                    </span>
+                    <ChevronDown
+                      size={20}
+                      className={`shrink-0 text-slate-500 transition-transform duration-200 ${isOpen ? "rotate-180 text-blue-800" : ""}`}
+                    />
                   </button>
                   {isOpen && (
-                    <div className="px-6 pb-6 pt-2 text-slate-600 text-sm sm:text-base leading-relaxed border-t border-slate-100 bg-slate-50/50">
+                    <div className="bg-slate-50 px-6 pb-6 pt-1 text-sm leading-relaxed text-slate-600 sm:pl-[10.5rem] sm:text-base">
                       {faq.a}
                     </div>
                   )}
@@ -606,34 +546,81 @@ export default function ScholarGridLandingPage() {
               );
             })}
           </div>
+
+          {!showAllFaqs && (
+            <div className="mt-6 text-center">
+              <button
+                onClick={() => setShowAllFaqs(true)}
+                className="text-sm font-semibold text-blue-800 hover:text-blue-950"
+              >
+                Show all {faqs.length} questions
+              </button>
+            </div>
+          )}
+        </section>
+
+        {/* Final CTA */}
+        <section className="bg-blue-950">
+          <div className="mx-auto max-w-4xl px-6 py-20 text-center">
+            <h2 className="font-serif text-3xl font-bold text-white md:text-4xl">Ready to get your manuscript publication-ready?</h2>
+            <p className="mx-auto mt-4 max-w-xl text-blue-100">
+              Share your draft or project brief and receive a free assessment from our technical consultancy team.
+            </p>
+            <div className="mt-8">
+              <ConsultButton variant="light" className="!px-9 !py-3.5 !text-base" />
+            </div>
+          </div>
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="bg-slate-950 text-white py-16 border-t border-slate-800">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <div className="text-2xl font-black tracking-tight text-white mb-4 flex items-center justify-center gap-3">
-            <div className="relative w-8 h-8 flex items-center justify-center">
-              <Image 
-                src="/logo.png" 
-                alt="ScholarGrid Logo" 
-                width={32}
-                height={32}
-                className="w-full h-full object-contain"
-              />
+      {/* Footer (no phone / email shown) */}
+      <footer className="border-t border-slate-200 bg-slate-950 text-slate-400">
+        <div className="mx-auto grid max-w-7xl gap-10 px-6 py-14 md:grid-cols-[1.5fr_1fr_1fr]">
+          <div>
+            <div className="flex items-center gap-3">
+              <Image src="/logo.png" alt="ScholarGrid Logo" width={32} height={32} className="h-8 w-8 object-contain" />
+              <span className="font-serif text-xl font-bold text-white">ScholarGrid</span>
             </div>
-            <span>ScholarGrid</span>
+            <p className="mt-4 max-w-sm text-sm leading-relaxed">
+              Global academic consultancy for PhD scholars, engineering researchers, and computational scientists targeting Q1/Q2 journals.
+            </p>
+            <button
+              onClick={openModal}
+              className="mt-6 inline-flex items-center gap-2 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-blue-950 transition hover:bg-blue-50"
+            >
+              Get Consultancy <ArrowRight size={16} />
+            </button>
           </div>
-          <p className="text-slate-400 text-sm max-w-md mx-auto mb-8">
-            Global academic consultancy for PhD scholars, engineering researchers, and computational scientists targeting Q1/Q2 journals.
-          </p>
-          <div className="flex justify-center items-center gap-6 text-xs text-slate-400 mb-8 flex-wrap">
-            <span>Email: <a href={gmailWebUrl} target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:underline">scholargrid030@gmail.com</a></span>
-            <span>WhatsApp: <a href={`https://wa.me/${whatsappNumber}?text=${whatsappMsg}`} target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:underline">+92-314-7982032</a></span>
+
+          <div>
+            <h3 className="text-sm font-semibold text-white">Explore</h3>
+            <ul className="mt-4 space-y-2.5 text-sm">
+              <li><a href="#services" className="hover:text-white">Services</a></li>
+              <li><a href="#process" className="hover:text-white">How it works</a></li>
+              <li><a href="#insights" className="hover:text-white">Insights</a></li>
+              <li><a href="#faq" className="hover:text-white">FAQ</a></li>
+            </ul>
           </div>
-          <div className="border-t border-slate-800 pt-8 text-xs text-slate-500">
-            &copy; 2026 ScholarGrid. All rights reserved. Professional Academic & Research Support.
+
+          <div>
+            <h3 className="text-sm font-semibold text-white">Research profiles</h3>
+            <ul className="mt-4 space-y-2.5 text-sm">
+              <li>
+                <a href={googleScholarUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 hover:text-white">
+                  Google Scholar <ExternalLink size={13} />
+                </a>
+              </li>
+              <li>
+                <a href={researchGateUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 hover:text-white">
+                  ResearchGate <ExternalLink size={13} />
+                </a>
+              </li>
+            </ul>
           </div>
+        </div>
+
+        <div className="border-t border-slate-800 px-6 py-6 text-center text-xs text-slate-500">
+          &copy; 2026 ScholarGrid. All rights reserved. Professional academic and research support.
         </div>
       </footer>
     </div>
