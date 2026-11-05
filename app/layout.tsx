@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ChatBot from "@/components/Chatbot";
+import { Analytics } from "@vercel/analytics/react"; // Vercel Analytics Import
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -108,7 +109,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
-        {/* Google AdSense Standard HTML Script (Fixes data-nscript error) */}
+        {/* Google AdSense Standard HTML Script */}
         <script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4708685236568228"
@@ -123,6 +124,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col relative">
         {children}
         <ChatBot />
+        <Analytics /> {/* Vercel Live Traffic & Visitor Tracking Component */}
       </body>
     </html>
   );
