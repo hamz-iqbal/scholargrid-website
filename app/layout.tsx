@@ -1,6 +1,6 @@
+
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Source_Serif_4 } from "next/font/google";
-import Script from "next/script";
 import "./globals.css";
 import ChatBot from "@/components/Chatbot";
 import { Analytics } from "@vercel/analytics/next";
@@ -131,11 +131,9 @@ export default function RootLayout({
         <ChatBot />
         <Analytics /> {/* Vercel Live Traffic & Visitor Tracking Component */}
 
-        {/* Google AdSense: loaded via next/script so Next controls injection */}
-        <Script
-          id="adsense-script"
+        {/* Google AdSense: standard script loading without Next.js data-nscript */}
+        <script
           async
-          strategy="afterInteractive"
           src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`}
           crossOrigin="anonymous"
         />

@@ -1,4 +1,3 @@
-
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
@@ -97,11 +96,42 @@ const faqs = [
 ];
 
 const blogPosts = [
-  { tag: "Formatting guide", title: "A Step-by-Step Guide to Formatting Engineering Manuscripts for Elsevier & IEEE", desc: "Templates, section structures, equation formatting, and figure resolutions for PhD scholars.", href: "/blog/formatting-guide" },
-  { tag: "Publishing strategy", title: "Common Reasons Engineering Manuscripts Get Rejected by Journals (And How to Avoid Them)", desc: "A critical guide to bypassing desk rejections in Q1/Q2 journals.", href: "/blog/paper-rejection-reasons" },
-  { tag: "Visualization", title: "Mastering Contour Plots & 3D Visualizations in Python and MATLAB for Q1 Journals", desc: "Build clean contour plots, color maps, and 3D surfaces for engineering papers.", href: "/blog/contour-visualizations" },
-  { tag: "Research methodology", title: "How to Conduct a Systematic Literature Review and Synthesize Prior Work Like a Senior Researcher", desc: "Search protocols, PRISMA screening, concept matrices, and synthesis.", href: "/blog/systematic-literature-review-guide" },
-  { tag: "Formatting & publishing", title: "Mastering Q1/Q2 Manuscript Formatting: Common Pitfalls and How to Avoid Rejection", desc: "Avoid outdated templates, weak first pages, low-quality figures, and reference chaos.", href: "/blog/q1-q2-manuscript-formatting-avoid-rejection" },
+  {
+    tag: "Research paper structure",
+    title: "The Master Guide to Structuring a Q1 Research Paper from Scratch: A 10-Part Blueprint",
+    desc: "A comprehensive 10-part blueprint covering research paper organization, essential manuscript sections, logical flow, and preparation for high-impact journal submission.",
+    href: "/blog/q1-research-paper-structure",
+  },
+  {
+    tag: "Formatting guide",
+    title: "A Step-by-Step Guide to Formatting Engineering Manuscripts for Elsevier & IEEE",
+    desc: "Templates, section structures, equation formatting, and figure resolutions for PhD scholars.",
+    href: "/blog/formatting-guide",
+  },
+  {
+    tag: "Publishing strategy",
+    title: "Common Reasons Engineering Manuscripts Get Rejected by Journals (And How to Avoid Them)",
+    desc: "A critical guide to bypassing desk rejections in Q1/Q2 journals.",
+    href: "/blog/paper-rejection-reasons",
+  },
+  {
+    tag: "Visualization",
+    title: "Mastering Contour Plots & 3D Visualizations in Python and MATLAB for Q1 Journals",
+    desc: "Build clean contour plots, color maps, and 3D surfaces for engineering papers.",
+    href: "/blog/contour-visualizations",
+  },
+  {
+    tag: "Research methodology",
+    title: "How to Conduct a Systematic Literature Review and Synthesize Prior Work Like a Senior Researcher",
+    desc: "Search protocols, PRISMA screening, concept matrices, and synthesis.",
+    href: "/blog/systematic-literature-review-guide",
+  },
+  {
+    tag: "Formatting & publishing",
+    title: "Mastering Q1/Q2 Manuscript Formatting: Common Pitfalls and How to Avoid Rejection",
+    desc: "Avoid outdated templates, weak first pages, low-quality figures, and reference chaos.",
+    href: "/blog/q1-q2-manuscript-formatting-avoid-rejection",
+  },
 ];
 
 const steps = [
