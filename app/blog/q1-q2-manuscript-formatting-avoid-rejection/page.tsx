@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -9,37 +9,19 @@ import {
   Calendar,
   Clock,
   CheckCircle2,
-  ShieldCheck,
-  Mail,
-  MessageSquare,
-  X,
   BookOpen,
   ChevronRight,
   Menu,
+  X,
+  List,
 } from "lucide-react";
-
-/* ------------------------------------------------------------------ */
-/* Contact configuration                                               */
-/* ------------------------------------------------------------------ */
-
-const whatsappNumber = "923147982032";
-const emailAddress = "scholargrid030@gmail.com";
-
-const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
-  "Hello ScholarGrid team! I need expert manuscript formatting and journal submission support."
-)}`;
-
-const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${emailAddress}&su=${encodeURIComponent(
-  "Manuscript Formatting Inquiry"
-)}&body=${encodeURIComponent(
-  "Hello ScholarGrid team,\n\nI need assistance with manuscript formatting and journal submission support.\n\nThank you."
-)}`;
 
 /* ------------------------------------------------------------------ */
 /* Table of contents                                                   */
 /* ------------------------------------------------------------------ */
 
 const contents = [
+  { id: "introduction", title: "Introduction" },
   { id: "why-formatting", title: "Why Formatting Matters for Q1 and Q2" },
   { id: "pitfalls", title: "The Nine Most Common Pitfalls" },
   { id: "timeline", title: "Your Two-Week Pre-Submission Timeline" },
@@ -64,18 +46,18 @@ function ArticleFigure({
   priority?: boolean;
 }) {
   return (
-    <figure className="my-12 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <div className="bg-slate-50 p-3 sm:p-6">
+    <figure className="my-7 overflow-hidden rounded-xl border border-slate-200 bg-white">
+      <div className="bg-slate-50 p-3 sm:p-5">
         <Image
           src={src}
           alt={alt}
           width={1400}
           height={900}
           priority={priority}
-          className="mx-auto h-auto max-h-[560px] w-full rounded-lg object-contain"
+          className="mx-auto h-auto max-h-[520px] w-full rounded-lg object-contain"
         />
       </div>
-      <figcaption className="border-t border-slate-100 px-5 py-4 text-center text-sm leading-relaxed text-slate-500 sm:px-8">
+      <figcaption className="border-t border-slate-100 px-4 py-3 text-center text-xs leading-relaxed text-slate-500 sm:px-6 sm:text-sm">
         {caption}
       </figcaption>
     </figure>
@@ -94,21 +76,21 @@ function SectionHeading({
   return (
     <div id={id} className="scroll-mt-28 pt-8">
       {number && (
-        <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-blue-800">
+        <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.16em] text-blue-800">
           Section {number}
         </p>
       )}
-      <h2 className="font-serif text-2xl font-bold leading-tight tracking-tight text-slate-950 sm:text-3xl">
+      <h2 className="font-serif text-2xl font-bold leading-tight tracking-tight text-slate-950 sm:text-[28px]">
         {children}
       </h2>
-      <div className="mt-4 h-1 w-12 rounded-full bg-blue-800" />
+      <div className="mt-3 h-1 w-10 rounded-full bg-blue-800" />
     </div>
   );
 }
 
 function SubHeading({ children }: { children: React.ReactNode }) {
   return (
-    <h3 className="mt-12 font-serif text-xl font-bold text-slate-950 sm:text-2xl">
+    <h3 className="mt-7 font-serif text-xl font-bold text-slate-950">
       {children}
     </h3>
   );
@@ -129,7 +111,7 @@ function Cite({ n }: { n: number }) {
 function Check({ children }: { children: React.ReactNode }) {
   return (
     <li className="flex gap-3">
-      <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-blue-800" />
+      <CheckCircle2 className="mt-1 h-[18px] w-[18px] shrink-0 text-blue-800" />
       <span>{children}</span>
     </li>
   );
@@ -137,7 +119,7 @@ function Check({ children }: { children: React.ReactNode }) {
 
 function CheckList({ children }: { children: React.ReactNode }) {
   return (
-    <ul className="mt-5 space-y-4 text-base leading-relaxed text-slate-700">
+    <ul className="mt-4 space-y-3 text-[15px] leading-[1.8] text-slate-700">
       {children}
     </ul>
   );
@@ -151,150 +133,21 @@ function Callout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="my-8 rounded-xl border border-blue-100 bg-blue-50/60 p-5">
+    <div className="my-6 rounded-lg border border-blue-100 bg-blue-50/60 p-4">
       <p className="text-sm font-bold text-blue-950">{title}</p>
-      <p className="mt-2 text-sm leading-relaxed text-slate-700">{children}</p>
+      <p className="mt-1.5 text-sm leading-[1.8] text-slate-700">{children}</p>
     </div>
   );
 }
 
-const P = "text-base leading-[1.9] text-slate-700";
-
-/* ------------------------------------------------------------------ */
-/* Consultancy modal                                                   */
-/* ------------------------------------------------------------------ */
-
-function ConsultModal({
-  open,
-  onClose,
-}: {
-  open: boolean;
-  onClose: () => void;
-}) {
-  useEffect(() => {
-    if (!open) return;
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
-    };
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    document.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [open, onClose]);
-
-  if (!open) return null;
-
-  return (
-    <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/65 p-4 backdrop-blur-sm"
-      onClick={onClose}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="consult-title"
-    >
-      <div
-        className="relative w-full max-w-md rounded-2xl border border-slate-200 bg-white p-7 shadow-2xl sm:p-8"
-        onClick={(event) => event.stopPropagation()}
-      >
-        <button
-          onClick={onClose}
-          aria-label="Close consultancy dialog"
-          className="absolute right-4 top-4 rounded-full p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-950"
-        >
-          <X size={19} />
-        </button>
-
-        <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-900">
-          <BookOpen size={24} />
-        </div>
-
-        <h2
-          id="consult-title"
-          className="font-serif text-2xl font-bold text-slate-950"
-        >
-          Get consultancy
-        </h2>
-
-        <p className="mt-3 text-sm leading-relaxed text-slate-600">
-          Discuss your research requirements with our technical consultancy
-          team. Choose your preferred communication channel below.
-        </p>
-
-        <div className="mt-7 space-y-3">
-          <a
-            href={whatsappUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={onClose}
-            className="group flex items-center gap-4 rounded-xl border border-slate-200 p-4 transition hover:border-emerald-600 hover:bg-emerald-50"
-          >
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-emerald-600 text-white">
-              <MessageSquare size={20} />
-            </span>
-            <span className="flex-1">
-              <span className="block font-semibold text-slate-900">
-                Continue on WhatsApp
-              </span>
-              <span className="mt-1 block text-xs text-slate-500">
-                Quick communication and file sharing
-              </span>
-            </span>
-            <ArrowRight
-              size={18}
-              className="text-slate-400 transition group-hover:translate-x-1 group-hover:text-emerald-700"
-            />
-          </a>
-
-          <a
-            href={gmailUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={onClose}
-            className="group flex items-center gap-4 rounded-xl border border-slate-200 p-4 transition hover:border-blue-700 hover:bg-blue-50"
-          >
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-blue-900 text-white">
-              <Mail size={20} />
-            </span>
-            <span className="flex-1">
-              <span className="block font-semibold text-slate-900">
-                Send an email
-              </span>
-              <span className="mt-1 block text-xs text-slate-500">
-                Best for detailed research requirements
-              </span>
-            </span>
-            <ArrowRight
-              size={18}
-              className="text-slate-400 transition group-hover:translate-x-1 group-hover:text-blue-800"
-            />
-          </a>
-        </div>
-
-        <div className="mt-6 flex items-center gap-2 border-t border-slate-100 pt-5 text-xs text-slate-500">
-          <ShieldCheck size={15} className="shrink-0 text-emerald-600" />
-          Your research drafts and unpublished data remain confidential.
-        </div>
-      </div>
-    </div>
-  );
-}
+const P = "text-[15px] leading-[1.85] text-slate-700";
 
 /* ------------------------------------------------------------------ */
 /* Main blog page                                                      */
 /* ------------------------------------------------------------------ */
 
 export default function ManuscriptFormattingBlog() {
-  const [modalOpen, setModalOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  const openModal = () => setModalOpen(true);
-  const closeModal = () => setModalOpen(false);
 
   const checklist = [
     "The current template and Guide for Authors are followed, and the page and word limits are met.",
@@ -308,26 +161,23 @@ export default function ManuscriptFormattingBlog() {
   ];
 
   const references: React.ReactNode[] = [
-    <>SCImago, "SJR: SCImago Journal &amp; Country Rank," scimagojr.com.</>,
-    <>Clarivate, "Journal Citation Reports," clarivate.com.</>,
-    <>Elsevier, "Guide for Authors," available on each journal's homepage at sciencedirect.com.</>,
-    <>IEEE Author Center, "Templates for IEEE journal and conference articles," ieee.org.</>,
-    <>IEEE, "IEEE Editorial Style Manual for Authors," IEEE Periodicals.</>,
-    <>A. Brand, L. Allen, M. Altman, M. Hlava, and J. Scott, "Beyond authorship: Attribution, contribution, collaboration, and credit," <i>Learned Publishing</i>, vol. 28, no. 2, pp. 151–155, 2015.</>,
-    <>Committee on Publication Ethics (COPE), "Core Practices," publicationethics.org.</>,
-    <>Crossref, "Similarity Check," crossref.org.</>,
-    <>Elsevier, "Artwork and media instructions," Elsevier Author Resources.</>,
-    <>B. Wong, "Points of view: Color blindness," <i>Nature Methods</i>, vol. 8, no. 6, p. 441, 2011.</>,
+    <>SCImago, &quot;SJR: SCImago Journal &amp; Country Rank,&quot; scimagojr.com.</>,
+    <>Clarivate, &quot;Journal Citation Reports,&quot; clarivate.com.</>,
+    <>Elsevier, &quot;Guide for Authors,&quot; available on each journal&apos;s homepage at sciencedirect.com.</>,
+    <>IEEE Author Center, &quot;Templates for IEEE journal and conference articles,&quot; ieee.org.</>,
+    <>IEEE, &quot;IEEE Editorial Style Manual for Authors,&quot; IEEE Periodicals.</>,
+    <>A. Brand, L. Allen, M. Altman, M. Hlava, and J. Scott, &quot;Beyond authorship: Attribution, contribution, collaboration, and credit,&quot; <i>Learned Publishing</i>, vol. 28, no. 2, pp. 151–155, 2015.</>,
+    <>Committee on Publication Ethics (COPE), &quot;Core Practices,&quot; publicationethics.org.</>,
+    <>Crossref, &quot;Similarity Check,&quot; crossref.org.</>,
+    <>Elsevier, &quot;Artwork and media instructions,&quot; Elsevier Author Resources.</>,
+    <>B. Wong, &quot;Points of view: Color blindness,&quot; <i>Nature Methods</i>, vol. 8, no. 6, p. 441, 2011.</>,
   ];
 
   return (
-    <div className="min-h-screen bg-white font-sans text-slate-800 antialiased selection:bg-blue-200">
-      <ConsultModal open={modalOpen} onClose={closeModal} />
-
+    <div className="min-h-screen bg-white font-sans text-slate-800 antialiased selection:bg-blue-100">
       {/* Announcement bar */}
-      <div className="bg-blue-950 px-4 py-2 text-center text-xs text-blue-100 sm:text-sm">
-        Advanced computational research, scientific visualization and
-        publication support for researchers worldwide.
+      <div className="bg-blue-950 px-4 py-2 text-center text-xs leading-relaxed text-blue-100 sm:text-sm">
+        Academic Research Resources, Manuscript Formatting and Publishing Insights
       </div>
 
       {/* Navigation */}
@@ -335,8 +185,8 @@ export default function ManuscriptFormattingBlog() {
         aria-label="Main navigation"
         className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-md"
       >
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3.5 sm:px-6">
-          <Link href="/" className="flex items-center gap-3">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3 sm:px-6">
+          <Link href="/" className="flex items-center gap-2.5">
             <Image
               src="/logo.png"
               alt="ScholarGrid Logo"
@@ -350,50 +200,34 @@ export default function ManuscriptFormattingBlog() {
             </span>
           </Link>
 
-          <div className="hidden items-center gap-8 text-sm font-medium text-slate-600 md:flex">
+          <div className="hidden items-center gap-7 text-sm font-medium text-slate-600 md:flex">
+            <Link href="/" className="transition hover:text-blue-800">Home</Link>
             <Link href="/#services" className="transition hover:text-blue-800">Services</Link>
             <Link href="/#process" className="transition hover:text-blue-800">How it works</Link>
             <Link href="/#insights" className="transition hover:text-blue-800">Insights</Link>
-            <Link href="/#profiles" className="transition hover:text-blue-800">Publications</Link>
-            <Link href="/#faq" className="transition hover:text-blue-800">FAQ</Link>
+            <Link href="/blog" className="font-semibold text-blue-800 transition hover:text-blue-950">
+              Knowledge Library
+            </Link>
           </div>
 
-          <div className="flex items-center gap-3">
-            <button
-              onClick={openModal}
-              className="hidden items-center gap-2 rounded-lg bg-blue-800 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-950 sm:inline-flex"
-            >
-              Get Consultancy <ArrowRight size={16} />
-            </button>
-
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Toggle navigation"
-              aria-expanded={mobileMenuOpen}
-              className="rounded-lg border border-slate-200 p-2 text-slate-700 md:hidden"
-            >
-              {mobileMenuOpen ? <X size={21} /> : <Menu size={21} />}
-            </button>
-          </div>
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle navigation"
+            aria-expanded={mobileMenuOpen}
+            className="rounded-lg border border-slate-200 p-2 text-slate-700 transition hover:bg-slate-50 md:hidden"
+          >
+            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
         </div>
 
         {mobileMenuOpen && (
-          <div className="border-t border-slate-200 bg-white px-6 py-5 md:hidden">
+          <div className="border-t border-slate-200 bg-white px-6 py-4 md:hidden">
             <div className="flex flex-col gap-4 text-sm font-medium text-slate-700">
+              <Link href="/" onClick={() => setMobileMenuOpen(false)}>Home</Link>
               <Link href="/#services" onClick={() => setMobileMenuOpen(false)}>Services</Link>
               <Link href="/#process" onClick={() => setMobileMenuOpen(false)}>How it works</Link>
               <Link href="/#insights" onClick={() => setMobileMenuOpen(false)}>Insights</Link>
-              <Link href="/#profiles" onClick={() => setMobileMenuOpen(false)}>Publications</Link>
-              <Link href="/#faq" onClick={() => setMobileMenuOpen(false)}>FAQ</Link>
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  openModal();
-                }}
-                className="mt-2 rounded-lg bg-blue-800 px-5 py-3 text-left font-semibold text-white"
-              >
-                Get Consultancy <ArrowRight size={16} className="ml-2 inline" />
-              </button>
+              <Link href="/blog" onClick={() => setMobileMenuOpen(false)}>Knowledge Library</Link>
             </div>
           </div>
         )}
@@ -402,17 +236,22 @@ export default function ManuscriptFormattingBlog() {
       <main>
         {/* Article header */}
         <section className="border-b border-slate-200 bg-gradient-to-b from-slate-50 to-white">
-          <div className="mx-auto max-w-5xl px-6 pb-14 pt-12 sm:pb-16 sm:pt-16">
-            <Link
-              href="/"
-              className="mb-9 inline-flex items-center gap-2 text-sm font-semibold text-blue-800 transition hover:text-blue-950"
-            >
-              <ArrowLeft size={16} />
-              Back to ScholarGrid
-            </Link>
+          <div className="mx-auto max-w-5xl px-6 pb-10 pt-9 sm:pb-12 sm:pt-12">
+            {/* Breadcrumb */}
+            <div className="mb-7 flex flex-wrap items-center gap-2 text-sm">
+              <Link href="/" className="font-medium text-slate-500 transition hover:text-blue-800">
+                Home
+              </Link>
+              <ChevronRight size={14} className="text-slate-400" />
+              <Link href="/blog" className="font-medium text-slate-500 transition hover:text-blue-800">
+                Knowledge Library
+              </Link>
+              <ChevronRight size={14} className="text-slate-400" />
+              <span className="font-medium text-blue-800">Publishing &amp; Formatting</span>
+            </div>
 
-            <div className="mb-6 flex flex-wrap items-center gap-3">
-              <span className="rounded-full border border-blue-200 bg-blue-50 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-blue-900">
+            <div className="mb-5 flex flex-wrap items-center gap-3">
+              <span className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-blue-900">
                 Publishing &amp; Formatting Guide
               </span>
               <span className="flex items-center gap-1.5 text-xs text-slate-500">
@@ -425,44 +264,40 @@ export default function ManuscriptFormattingBlog() {
               </span>
             </div>
 
-            <h1 className="max-w-4xl font-serif text-3xl font-bold leading-[1.18] tracking-tight text-slate-950 sm:text-4xl lg:text-5xl">
+            <h1 className="max-w-4xl font-serif text-3xl font-bold leading-[1.2] tracking-tight text-slate-950 sm:text-4xl lg:text-[44px]">
               Mastering Q1/Q2 Manuscript Formatting: Common Pitfalls and How to Avoid Rejection
             </h1>
 
-            <p className="mt-6 max-w-3xl text-lg leading-relaxed text-slate-600 sm:text-xl">
+            <p className="mt-5 max-w-3xl text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">
               A practical manuscript formatting guide for researchers
               targeting Q1 and Q2 journals, covering the mistakes that most
               often trigger returns and desk rejections.
             </p>
 
-            <div className="mt-9 flex flex-wrap items-center justify-between gap-5 border-t border-slate-200 pt-7">
+            <div className="mt-7 flex flex-wrap items-center justify-between gap-4 border-t border-slate-200 pt-5">
               <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border border-slate-200 bg-white">
+                <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-slate-200 bg-white">
                   <Image
                     src="/logo.png"
                     alt="ScholarGrid"
-                    width={42}
-                    height={42}
+                    width={40}
+                    height={40}
                     className="h-full w-full object-contain p-1"
                   />
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-slate-950">
-                    ScholarGrid Technical Team
-                  </p>
-                  <p className="mt-0.5 text-xs text-slate-500">
-                    Computational Research &amp; Publishing Consultants
-                  </p>
+                  <p className="text-sm font-bold text-slate-950">ScholarGrid Technical Team</p>
+                  <p className="mt-0.5 text-xs text-slate-500">Research and Manuscript Preparation</p>
                 </div>
               </div>
 
-              <button
-                onClick={openModal}
-                className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-blue-900 transition hover:border-blue-800 hover:bg-blue-50"
+              <Link
+                href="/blog"
+                className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-blue-900 transition hover:border-blue-800 hover:bg-blue-50"
               >
-                <MessageSquare size={16} />
-                Discuss your project
-              </button>
+                <BookOpen size={15} />
+                All Articles
+              </Link>
             </div>
           </div>
         </section>
@@ -470,12 +305,15 @@ export default function ManuscriptFormattingBlog() {
         {/* Article layout */}
         <div
           id="article-content"
-          className="mx-auto grid max-w-7xl gap-12 px-5 py-14 sm:px-6 lg:grid-cols-[minmax(0,1fr)_290px] lg:gap-16 lg:py-20"
+          className="mx-auto grid max-w-7xl gap-9 px-5 py-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_270px] lg:gap-12 lg:py-12"
         >
           <article className="min-w-0">
             {/* Introduction */}
-            <div className="mb-12 space-y-5 rounded-r-xl border-l-4 border-blue-800 bg-slate-50 p-6 sm:p-8">
-              <p className="text-base leading-[1.9] text-slate-700 sm:text-lg">
+            <div
+              id="introduction"
+              className="mb-7 scroll-mt-28 space-y-4 rounded-r-lg border-l-[3px] border-blue-800 bg-slate-50 px-5 py-5 sm:px-6"
+            >
+              <p className="text-[15px] leading-[1.85] text-slate-700 sm:text-base">
                 You can spend two years on a study and lose two weeks to a
                 formatting error. At Q1 and Q2 journals, where editors screen
                 a large number of submissions, manuscript formatting is often
@@ -484,11 +322,11 @@ export default function ManuscriptFormattingBlog() {
                 explains the most common formatting pitfalls and how to avoid
                 them, so your paper is judged on its science.
               </p>
-              <p className="text-base leading-[1.9] text-slate-700 sm:text-lg">
+              <p className="text-[15px] leading-[1.85] text-slate-700 sm:text-base">
                 Q1 and Q2 describe journal quartiles. A quartile is the rank
                 band a journal holds within its subject category, based on
-                indicators such as SCImago's SJR <Cite n={1} /> or
-                Clarivate's Journal Citation Reports <Cite n={2} /> (Fig. 1).
+                indicators such as SCImago&apos;s SJR <Cite n={1} /> or
+                Clarivate&apos;s Journal Citation Reports <Cite n={2} /> (Fig. 1).
                 Q1 is the top quarter and Q2 the next quarter. The rules are
                 the ones each journal publishes in its Guide for Authors{" "}
                 <Cite n={3} />. What changes is the margin for error: strong
@@ -528,7 +366,7 @@ export default function ManuscriptFormattingBlog() {
               </Check>
             </CheckList>
 
-            <p className={`${P} mt-6`}>
+            <p className={`${P} mt-5`}>
               Formatting will not rescue weak science, but poor formatting can
               hide strong science. Remember also that a submission is more
               than one file. It is a package (Fig. 2), and every part must be
@@ -546,9 +384,9 @@ export default function ManuscriptFormattingBlog() {
               The Nine Most Common Manuscript Formatting Pitfalls
             </SectionHeading>
 
-            <p className={`${P} mt-5`}>
+            <p className={`${P} mt-4`}>
               Fig. 3 ranks the pitfalls by how often they appear and how much
-              damage they do. It is our own qualitative judgment, not a
+              damage they do. It is a qualitative, illustrative judgment, not a
               measured statistic. Start with the top-right corner.
             </p>
 
@@ -560,7 +398,7 @@ export default function ManuscriptFormattingBlog() {
 
             {/* Pitfall 1 */}
             <SubHeading>Pitfall 1: Using the Wrong or Outdated Template</SubHeading>
-            <p className={`${P} mt-4`}>
+            <p className={`${P} mt-3`}>
               Templates change. Journals update them, and IEEE conferences
               replace theirs every year <Cite n={4} />. An old template is a
               quick way to look careless.
@@ -584,13 +422,13 @@ export default function ManuscriptFormattingBlog() {
               </Check>
             </CheckList>
             <Callout title="Colleague tip">
-              Copy the journal's requirements into a one-page checklist before
-              you start writing. You will use it again at the end.
+              Copy the journal&apos;s requirements into a one-page checklist
+              before you start writing. You will use it again at the end.
             </Callout>
 
             {/* Pitfall 2 */}
             <SubHeading>Pitfall 2: A Weak First Page</SubHeading>
-            <p className={`${P} mt-4`}>
+            <p className={`${P} mt-3`}>
               The title, abstract, and keywords are what editors read first
               (Fig. 4).
             </p>
@@ -610,7 +448,7 @@ export default function ManuscriptFormattingBlog() {
               </Check>
               <Check>
                 Check every author name, affiliation, and the corresponding
-                author's details.
+                author&apos;s details.
               </Check>
             </CheckList>
 
@@ -622,7 +460,7 @@ export default function ManuscriptFormattingBlog() {
 
             {/* Pitfall 3 */}
             <SubHeading>Pitfall 3: Missing Declarations and Statements</SubHeading>
-            <p className={`${P} mt-4`}>
+            <p className={`${P} mt-3`}>
               Q1 and Q2 journals usually require a set of statements.
               Forgetting one is a common reason for an administrative return.
             </p>
@@ -644,7 +482,7 @@ export default function ManuscriptFormattingBlog() {
 
             {/* Pitfall 4 */}
             <SubHeading>Pitfall 4: Skipping the Originality Check</SubHeading>
-            <p className={`${P} mt-4`}>
+            <p className={`${P} mt-3`}>
               Overlap with your own thesis, preprint, or conference paper is a
               classic trap. Editors run similarity checks, so you should run
               one first <Cite n={8} />. Rewrite overlapping passages, cite the
@@ -655,7 +493,7 @@ export default function ManuscriptFormattingBlog() {
 
             {/* Pitfall 5 */}
             <SubHeading>Pitfall 5: Low-Quality Figures</SubHeading>
-            <p className={`${P} mt-4`}>
+            <p className={`${P} mt-3`}>
               Blurry or oversized figures are the easiest formatting problem
               to spot. Export plots and diagrams as vector PDF or EPS, and use
               TIFF or PNG for photos (Fig. 5). Elsevier commonly asks for 1000
@@ -705,9 +543,9 @@ export default function ManuscriptFormattingBlog() {
 
             {/* Pitfall 7 */}
             <SubHeading>Pitfall 7: Reference Chaos</SubHeading>
-            <p className={`${P} mt-4`}>
+            <p className={`${P} mt-3`}>
               Mixed citation styles look careless (Fig. 6). Match the
-              journal's style, whether numbered or author-year, and let a
+              journal&apos;s style, whether numbered or author-year, and let a
               reference manager or BibTeX do the formatting.
             </p>
             <CheckList>
@@ -731,7 +569,7 @@ export default function ManuscriptFormattingBlog() {
 
             {/* Pitfall 8 */}
             <SubHeading>Pitfall 8: Inconsistent Details</SubHeading>
-            <p className={`${P} mt-4`}>
+            <p className={`${P} mt-3`}>
               Small inconsistencies add up to a sloppy impression. Do one
               dedicated consistency pass.
             </p>
@@ -786,7 +624,7 @@ export default function ManuscriptFormattingBlog() {
               Your Two-Week Pre-Submission Timeline
             </SectionHeading>
 
-            <p className={`${P} mt-5`}>
+            <p className={`${P} mt-4`}>
               Spread the work out instead of doing everything the night before
               (Fig. 7). Each stage has one job, and that keeps mistakes from
               piling up.
@@ -803,24 +641,19 @@ export default function ManuscriptFormattingBlog() {
               Final Manuscript Formatting Checklist
             </SectionHeading>
 
-            <p className={`${P} mt-5`}>
+            <p className={`${P} mt-4`}>
               Before submitting your manuscript, use this checklist to
               evaluate its overall quality and technical consistency.
             </p>
 
-            <div className="mt-7 space-y-3">
+            <div className="mt-5 space-y-2">
               {checklist.map((item) => (
                 <div
                   key={item}
-                  className="flex items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4"
+                  className="flex items-start gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3.5"
                 >
-                  <CheckCircle2
-                    size={20}
-                    className="mt-0.5 shrink-0 text-emerald-600"
-                  />
-                  <span className="text-sm leading-relaxed text-slate-700">
-                    {item}
-                  </span>
+                  <CheckCircle2 size={18} className="mt-0.5 shrink-0 text-emerald-600" />
+                  <span className="text-sm leading-[1.8] text-slate-700">{item}</span>
                 </div>
               ))}
             </div>
@@ -830,7 +663,7 @@ export default function ManuscriptFormattingBlog() {
               What to Do If Formatting Triggers a Return
             </SectionHeading>
 
-            <p className={`${P} mt-5`}>
+            <p className={`${P} mt-4`}>
               A technical return is not a rejection. The journal is asking you
               to fix specific items. Read the list carefully, correct every
               point, and resubmit promptly. Then add the lesson to your own
@@ -840,18 +673,18 @@ export default function ManuscriptFormattingBlog() {
             {/* References */}
             <div
               id="references"
-              className="mt-16 scroll-mt-28 border-t border-slate-200 pt-10"
+              className="mt-12 scroll-mt-28 border-t border-slate-200 pt-8"
             >
-              <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-blue-800">
+              <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.16em] text-blue-800">
                 Further Reading
               </p>
-              <h2 className="font-serif text-3xl font-bold text-slate-950">
+              <h2 className="font-serif text-2xl font-bold text-slate-950 sm:text-3xl">
                 References
               </h2>
 
-              <ol className="mt-7 list-decimal space-y-5 pl-6 text-sm leading-[1.9] text-slate-600">
+              <ol className="mt-5 list-decimal space-y-3 pl-5 text-[13px] leading-[1.8] text-slate-600 sm:text-sm">
                 {references.map((reference, index) => (
-                  <li key={index} id={`ref${index + 1}`} className="scroll-mt-28 pl-2">
+                  <li key={index} id={`ref${index + 1}`} className="scroll-mt-28 pl-1">
                     {reference}
                     <a
                       href={`#cit-ref${index + 1}`}
@@ -865,136 +698,130 @@ export default function ManuscriptFormattingBlog() {
             </div>
 
             {/* Article ending */}
-            <div className="mt-16 border-t border-slate-200 pt-8">
-              <p className="text-sm font-semibold text-blue-800">
-                ScholarGrid Technical Insights
+            <div className="mt-10 border-t border-slate-200 pt-7">
+              <p className="text-xs font-bold uppercase tracking-[0.15em] text-blue-800">
+                ScholarGrid Research Library
               </p>
-              <p className="mt-3 text-base leading-[1.9] text-slate-600">
+              <p className="mt-3 text-[15px] leading-[1.85] text-slate-600">
                 Good manuscript formatting is a habit, not a talent. Follow
                 the template, check the details, and keep your files clean,
                 and your Q1 or Q2 submission gets the fair read it deserves.
               </p>
 
-              <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
+              <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
                 <Link
-                  href="/#insights"
+                  href="/blog"
                   className="inline-flex items-center gap-2 text-sm font-semibold text-blue-800 transition hover:text-blue-950"
                 >
                   <ArrowLeft size={16} />
-                  Explore more research guides
+                  Back to Knowledge Library
                 </Link>
 
-                <button
-                  onClick={openModal}
-                  className="inline-flex items-center gap-2 rounded-lg bg-blue-800 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-950"
+                <Link
+                  href="/"
+                  className="inline-flex items-center gap-2 rounded-lg bg-blue-950 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-800"
                 >
-                  Get Consultancy <ArrowRight size={16} />
-                </button>
+                  Explore ScholarGrid
+                  <ArrowRight size={16} />
+                </Link>
               </div>
             </div>
           </article>
 
           {/* Desktop sidebar */}
           <aside className="hidden lg:block">
-            <div className="sticky top-28 space-y-7">
-              <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                <div className="flex items-center gap-2">
-                  <BookOpen size={18} className="text-blue-800" />
-                  <h3 className="font-serif text-lg font-bold text-slate-950">
-                    In this article
+            <div className="sticky top-24 space-y-5">
+              {/* Table of contents */}
+              <div className="rounded-xl border border-slate-200 bg-white p-5">
+                <div className="flex items-center gap-2 border-b border-slate-100 pb-4">
+                  <List size={17} className="text-blue-800" />
+                  <h3 className="font-serif text-base font-bold text-slate-950">
+                    In This Article
                   </h3>
                 </div>
 
-                <div className="mt-5 space-y-1">
+                <div className="mt-3 space-y-0.5">
                   {contents.map((item, index) => (
                     <a
                       key={item.id}
                       href={`#${item.id}`}
-                      className="group flex items-start gap-2 rounded-lg px-2 py-2.5 text-sm leading-relaxed text-slate-600 transition hover:bg-blue-50 hover:text-blue-900"
+                      className="group flex items-start gap-2 rounded-md px-2 py-2 text-[12px] leading-relaxed text-slate-600 transition hover:bg-blue-50 hover:text-blue-900"
                     >
-                      <span className="mt-0.5 text-xs font-bold text-slate-400 group-hover:text-blue-800">
+                      <span className="mt-0.5 text-[10px] font-bold text-slate-400 group-hover:text-blue-800">
                         {String(index + 1).padStart(2, "0")}
                       </span>
-                      <span>{item.title}</span>
+                      <span className="flex-1">{item.title}</span>
                       <ChevronRight
-                        size={14}
-                        className="ml-auto mt-1 shrink-0 opacity-0 transition group-hover:translate-x-0.5 group-hover:opacity-100"
+                        size={12}
+                        className="mt-1 shrink-0 opacity-0 transition group-hover:translate-x-0.5 group-hover:opacity-100"
                       />
                     </a>
                   ))}
                 </div>
               </div>
 
-              <div className="rounded-2xl bg-blue-950 p-6 text-white shadow-lg">
-                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-white/10 text-amber-300">
-                  <MessageSquare size={22} />
+              {/* Knowledge library card */}
+              <div className="rounded-xl border border-slate-200 bg-slate-50 p-5">
+                <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-blue-100 text-blue-900">
+                  <BookOpen size={19} />
                 </div>
-                <h3 className="font-serif text-xl font-bold">
-                  Need professional research support?
+                <h3 className="font-serif text-lg font-bold text-slate-950">
+                  Explore More Research Guides
                 </h3>
-                <p className="mt-3 text-sm leading-relaxed text-blue-100">
-                  Get assistance with manuscript formatting, submission
-                  packages, and journal-specific requirements.
+                <p className="mt-2 text-[13px] leading-[1.8] text-slate-600">
+                  Discover practical resources on academic writing, literature
+                  reviews, research methodology, and scholarly publishing.
                 </p>
-                <button
-                  onClick={openModal}
-                  className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-white px-4 py-3 text-sm font-bold text-blue-950 transition hover:bg-blue-50"
+                <Link
+                  href="/blog"
+                  className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-blue-800 transition hover:text-blue-950"
                 >
-                  Get Consultancy <ArrowRight size={16} />
-                </button>
-                <div className="mt-4 flex items-center gap-2 text-xs text-blue-200">
-                  <ShieldCheck size={14} />
-                  Confidential research support
-                </div>
+                  Browse All Articles
+                  <ArrowRight size={15} />
+                </Link>
               </div>
 
+              {/* Homepage link */}
               <Link
                 href="/"
-                className="flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-blue-800 hover:text-blue-900"
+                className="flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-blue-800 hover:text-blue-900"
               >
                 <ArrowLeft size={15} />
-                Explore ScholarGrid
+                Back to Homepage
               </Link>
             </div>
           </aside>
         </div>
 
-        {/* Final consultancy CTA */}
-        <section className="bg-blue-950">
-          <div className="mx-auto max-w-5xl px-6 py-16 text-center sm:py-20">
-            <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 text-amber-300">
-              <BookOpen size={28} />
-            </div>
-            <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-blue-200">
-              ScholarGrid Research Support
-            </p>
-            <h2 className="mx-auto max-w-3xl font-serif text-3xl font-bold leading-tight text-white sm:text-4xl">
-              Need Expert Manuscript Formatting?
-            </h2>
-            <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-blue-100">
-              Avoid desk rejections with professional editing and formatting
-              support from ScholarGrid consultants, from templates and
-              figures to references and submission packages.
-            </p>
-            <div className="mt-9">
-              <button
-                onClick={openModal}
-                className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-8 py-4 text-sm font-bold text-blue-950 shadow-lg transition hover:bg-blue-50"
+        {/* Related reading section */}
+        <section className="border-t border-slate-200 bg-slate-50">
+          <div className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
+            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-blue-800">
+                  Continue Exploring
+                </p>
+                <h2 className="mt-2 font-serif text-2xl font-bold text-slate-950">
+                  More from the Research Library
+                </h2>
+              </div>
+
+              <Link
+                href="/blog"
+                className="inline-flex items-center gap-2 text-sm font-semibold text-blue-800 transition hover:text-blue-950"
               >
-                Get Consultancy <ArrowRight size={18} />
-              </button>
+                View All Articles
+                <ArrowRight size={16} />
+              </Link>
             </div>
-            <p className="mt-5 text-xs text-blue-200">
-              Share your research requirements through your preferred
-              communication channel.
-            </p>
           </div>
         </section>
       </main>
 
       {/* Footer */}
       <footer className="border-t border-slate-800 bg-slate-950 text-slate-400">
-        <div className="mx-auto grid max-w-7xl gap-10 px-6 py-14 md:grid-cols-[1.5fr_1fr_1fr]">
+        <div className="mx-auto grid max-w-7xl gap-8 px-6 py-10 md:grid-cols-[1.5fr_1fr_1fr]">
+          {/* Brand */}
           <div>
             <Link href="/" className="inline-flex items-center gap-3">
               <Image
@@ -1008,47 +835,39 @@ export default function ManuscriptFormattingBlog() {
                 ScholarGrid
               </span>
             </Link>
-            <p className="mt-5 max-w-sm text-sm leading-relaxed">
-              Academic research and computational consultancy for
-              postgraduate scholars, engineering researchers, and
-              computational scientists targeting international journals.
+            <p className="mt-4 max-w-sm text-[13px] leading-[1.8]">
+              An academic knowledge platform sharing practical research
+              resources, scholarly writing guidance, and publishing insights
+              for researchers across disciplines.
             </p>
-            <button
-              onClick={openModal}
-              className="mt-6 inline-flex items-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-semibold text-blue-950 transition hover:bg-blue-50"
-            >
-              Get Consultancy <ArrowRight size={16} />
-            </button>
           </div>
 
+          {/* Explore */}
           <div>
-            <h3 className="text-sm font-semibold text-white">
-              Explore ScholarGrid
-            </h3>
-            <ul className="mt-5 space-y-3 text-sm">
+            <h3 className="text-sm font-semibold text-white">Explore ScholarGrid</h3>
+            <ul className="mt-4 space-y-2.5 text-[13px]">
+              <li><Link href="/" className="transition hover:text-white">Home</Link></li>
               <li><Link href="/#services" className="transition hover:text-white">Academic Services</Link></li>
               <li><Link href="/#process" className="transition hover:text-white">How It Works</Link></li>
-              <li><Link href="/#insights" className="transition hover:text-white">Research Insights</Link></li>
               <li><Link href="/#faq" className="transition hover:text-white">Frequently Asked Questions</Link></li>
             </ul>
           </div>
 
+          {/* Article links */}
           <div>
-            <h3 className="text-sm font-semibold text-white">
-              Research Resources
-            </h3>
-            <ul className="mt-5 space-y-3 text-sm">
+            <h3 className="text-sm font-semibold text-white">Research Resources</h3>
+            <ul className="mt-4 space-y-2.5 text-[13px]">
               <li><Link href="/blog/formatting-guide" className="transition hover:text-white">Manuscript Formatting</Link></li>
               <li><Link href="/blog/paper-rejection-reasons" className="transition hover:text-white">Journal Rejection Guide</Link></li>
               <li><Link href="/blog/contour-visualizations" className="transition hover:text-white">Scientific Visualization</Link></li>
               <li><Link href="/blog/systematic-literature-review-guide" className="transition hover:text-white">Literature Review Guide</Link></li>
+              <li><Link href="/blog" className="transition hover:text-white">All Articles</Link></li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-slate-800 px-6 py-6 text-center text-xs leading-relaxed text-slate-500">
-          © 2026 ScholarGrid. All rights reserved. Professional Academic and
-          Research Support.
+        <div className="border-t border-slate-800 px-6 py-5 text-center text-xs leading-relaxed text-slate-500">
+          © 2026 ScholarGrid. All rights reserved.
         </div>
       </footer>
     </div>

@@ -1,8 +1,6 @@
-
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
-import ChatBot from "@/components/Chatbot";
 import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({
@@ -128,7 +126,6 @@ export default function RootLayout({
       {/* No manual <script> tags here. Next.js manages <head> from `metadata`. */}
       <body className="min-h-full flex flex-col relative">
         {children}
-        <ChatBot />
         <Analytics /> {/* Vercel Live Traffic & Visitor Tracking Component */}
 
         {/* Google AdSense: standard script loading without Next.js data-nscript */}

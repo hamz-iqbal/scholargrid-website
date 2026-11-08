@@ -1,5 +1,7 @@
+
 "use client";
-import React, { useState, useEffect } from "react";
+
+import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -7,740 +9,1083 @@ import {
   Award,
   Cpu,
   BarChart2,
-  MessageSquare,
   CheckCircle,
   ChevronDown,
   BookOpen,
   ArrowRight,
-  Mail,
   ExternalLink,
-  ShieldCheck,
-  X,
-  Send,
+  GraduationCap,
+  Microscope,
+  Calculator,
+  Layers,
+  BookMarked,
+  Lightbulb,
+  Globe,
 } from "lucide-react";
 
-/* ------------------------------------------------------------------ */
-/*  Rotating copy (kept from your original version)                    */
-/* ------------------------------------------------------------------ */
-const announcementVariations = [
-  "Fast-track your Q1/Q2 manuscript for Elsevier and Springer",
-  "Expert MATLAB and Python numerical modeling for thesis and research support",
-  "Accelerate your scholarly publications with advanced computational simulations",
-  "Global academic consultancy for PhD scholars: IEEE and Elsevier formatting experts",
-  "Enhance your research impact with precision data analysis and PINNs modeling",
-  "Professional manuscript editing and journal submission strategy for researchers",
-];
+/* ------------------------------------------------------------------
+   Static Content
+------------------------------------------------------------------ */
 
-const badgeVariations = [
-  "Engineering and computational research specialists",
-  "Advanced numerical simulation and AI modeling experts",
-  "Q1/Q2 journal manuscript formatting and support",
-  "Python, MATLAB and LaTeX academic consultants",
-  "Rigorous editorial and data analysis partners",
-  "Empowering global scholars and PhD researchers",
-];
+const googleScholarUrl =
+  "https://scholar.google.com/citations?hl=en&user=-VGaDnoAAAAJ";
 
-const mainTitleVariations = [
-  "Accelerate your research with",
-  "Elevate your academic work to",
-  "Maximize publication success with",
-  "Optimize your scientific papers for",
-  "Transform your research drafts into",
-  "Advance your scholarly career with",
-];
-
-const gradientTitleVariations = [
-  "publication-ready precision",
-  "world-class journal standards",
-  "Q1/Q2 impact excellence",
-  "flawless academic formatting",
-  "advanced computational accuracy",
-  "top-tier editorial mastery",
-];
-
-const subtitleVariations = [
-  "End-to-end expertise for engineering manuscripts, Python/MATLAB numerical simulations, Physics-Informed Neural Networks (PINNs), and IEEE/Elsevier template formatting.",
-  "Accelerate your academic publishing journey with advanced numerical simulations, precise data visualization, and rigorous editorial support.",
-  "Empowering researchers worldwide with publication-ready formatting, custom algorithmic solvers, and expert journal submission strategies.",
-  "Professional academic consultancy specializing in high-impact Q1/Q2 journal manuscripts, computational modeling, and thesis development.",
-  "Custom computational research solutions, comprehensive MATLAB/Python simulations, and immaculate journal layout styling for ambitious scholars.",
-  "Streamline your peer-reviewed submissions with expert technical proofreading, advanced mathematical modeling, and precise manuscript formatting.",
-];
-
-const pick = (arr: string[]) => arr[Math.floor(Math.random() * arr.length)];
-
-/* ------------------------------------------------------------------ */
-/*  Static data                                                        */
-/* ------------------------------------------------------------------ */
-const faqs = [
-  { q: "What core services does ScholarGrid offer to researchers?", a: "We provide comprehensive academic research assistance, including journal manuscript formatting, custom computational modeling, numerical simulations, data visualization, and technical polishing for peer-reviewed submissions.", category: "Services" },
-  { q: "Which academic publishers do you format manuscripts for?", a: "We format manuscripts strictly according to the author guidelines of major international publishers, including IEEE, Elsevier, Springer Nature, Wiley, Taylor & Francis, and MDPI.", category: "Formatting" },
-  { q: "Can you assist with both LaTeX and MS Word templates?", a: "Yes, we handle complete document conversions and styling in both LaTeX (Overleaf) and MS Word, ensuring all figures, equations, and tables adhere to target journal specifications.", category: "Formatting" },
-  { q: "How do I get started with a consultation?", a: "Click the Get Consultancy button and choose WhatsApp or Email to share your project outline, draft, or simulation requirements directly with our technical consultancy team.", category: "Process" },
-  { q: "Is the initial manuscript review or project assessment free?", a: "Yes, our initial manuscript evaluation and preliminary project feasibility assessment are completely free of charge.", category: "Pricing" },
-  { q: "What is the typical turnaround time for a project?", a: "Turnaround times depend on project scope and complexity. Standard formatting takes 2–4 days, while complex simulation scripts and data modeling usually require 5–10 days.", category: "Process" },
-  { q: "Can you assist postgraduate students with thesis and dissertation formatting?", a: "Yes, we format Master's theses and Ph.D. dissertations according to specific institutional or university guidelines and style manuals.", category: "Services" },
-  { q: "How do you ensure the confidentiality of my research data?", a: "We treat all intellectual property with strict confidentiality. Your drafts, raw data, codes, and unpublished results remain 100% secure and private.", category: "Security" },
-  { q: "Do you offer custom coding for numerical modeling and algorithms?", a: "Yes, we develop custom, well-documented scripts in Python and MATLAB for mathematical modeling, differential equations, optimization, and data analysis.", category: "Simulations" },
-  { q: "Can you fix reference lists and citation style inconsistencies?", a: "Yes, we organize and format references using tools like EndNote and Mendeley to match the exact citation style (APA, IEEE, Harvard, Vancouver, etc.) required by your journal.", category: "Formatting" },
-  { q: "Do you generate publication-quality figures and graphics?", a: "Yes, we transform raw experimental or numerical data into high-resolution 2D/3D plots, vector graphics, and clear schematic diagrams suitable for high-impact journals.", category: "Graphics" },
-  { q: "Can you help respond to reviewer comments and revise manuscripts?", a: "Yes, we assist authors in addressing peer-review feedback, revising manuscript content, and drafting professional point-by-point response letters.", category: "Publishing" },
-  { q: "What options are available for international client payments?", a: "We accept flexible international transfer options. Detailed payment steps and invoices are provided upon project confirmation.", category: "Pricing" },
-  { q: "Do you offer language editing and technical proofreading?", a: "Yes, we refine scientific English, correct grammatical errors, improve academic phrasing, and enhance overall technical clarity.", category: "Editing" },
-  { q: "How are post-delivery revisions or corrections handled?", a: "Yes, we provide dedicated post-delivery support and complementary minor revisions to ensure complete satisfaction and journal compliance.", category: "Process" },
-  { q: "Can you convert an existing MS Word draft into a LaTeX project?", a: "Yes, we perform complete document conversions from MS Word to LaTeX, including complex mathematical equations, tables, and bibtex reference files.", category: "Formatting" },
-  { q: "Do you provide original, reproducible code files with simulations?", a: "Yes, upon project completion, clients receive all original source codes, scripts, data files, and documentation for complete transparency and reproducibility.", category: "Simulations" },
-  { q: "What fields of study do you support?", a: "While our core strength is in applied mathematics, engineering, computational sciences, and AI modeling, our manuscript formatting and publishing support applies to all quantitative research domains.", category: "Services" },
-  { q: "Can we schedule a one-on-one virtual consultation?", a: "Yes, after an initial text review, we can arrange direct communication or virtual technical discussions to review your project requirements in detail.", category: "Process" },
-  { q: "How can I submit my manuscript files for a quote?", a: "Use the Get Consultancy button and send your manuscript draft, guidelines, or simulation specs as a PDF, Word document, or ZIP file via WhatsApp or Email.", category: "Process" },
-];
+const researchGateUrl =
+  "https://www.researchgate.net/profile/Hamza-Iqbal-19?ev=hdr_xprf";
 
 const blogPosts = [
   {
     tag: "Research paper structure",
-    title: "The Master Guide to Structuring a Q1 Research Paper from Scratch: A 10-Part Blueprint",
-    desc: "A comprehensive 10-part blueprint covering research paper organization, essential manuscript sections, logical flow, and preparation for high-impact journal submission.",
+    title:
+      "The Master Guide to Structuring a Q1 Research Paper from Scratch: A 10-Part Blueprint",
+    desc:
+      "A comprehensive guide covering research paper organization, essential manuscript sections, logical flow, and preparation for high-impact journal submission.",
     href: "/blog/q1-research-paper-structure",
+    number: "01",
   },
   {
     tag: "Formatting guide",
-    title: "A Step-by-Step Guide to Formatting Engineering Manuscripts for Elsevier & IEEE",
-    desc: "Templates, section structures, equation formatting, and figure resolutions for PhD scholars.",
+    title:
+      "A Step-by-Step Guide to Formatting Engineering Manuscripts for Elsevier & IEEE",
+    desc:
+      "Understand journal templates, section structures, equation formatting, reference styles, and figure resolutions.",
     href: "/blog/formatting-guide",
+    number: "02",
   },
   {
     tag: "Publishing strategy",
-    title: "Common Reasons Engineering Manuscripts Get Rejected by Journals (And How to Avoid Them)",
-    desc: "A critical guide to bypassing desk rejections in Q1/Q2 journals.",
+    title:
+      "Common Reasons Engineering Manuscripts Get Rejected by Journals (And How to Avoid Them)",
+    desc:
+      "Explore common causes of desk rejection, methodological weaknesses, presentation issues, and publication challenges.",
     href: "/blog/paper-rejection-reasons",
+    number: "03",
   },
   {
-    tag: "Visualization",
-    title: "Mastering Contour Plots & 3D Visualizations in Python and MATLAB for Q1 Journals",
-    desc: "Build clean contour plots, color maps, and 3D surfaces for engineering papers.",
+    tag: "Scientific visualization",
+    title:
+      "Mastering Contour Plots & 3D Visualizations in Python and MATLAB for Q1 Journals",
+    desc:
+      "Learn how to create professional contour plots, color maps, and three-dimensional scientific visualizations.",
     href: "/blog/contour-visualizations",
+    number: "04",
   },
   {
     tag: "Research methodology",
-    title: "How to Conduct a Systematic Literature Review and Synthesize Prior Work Like a Senior Researcher",
-    desc: "Search protocols, PRISMA screening, concept matrices, and synthesis.",
+    title:
+      "How to Conduct a Systematic Literature Review and Synthesize Prior Work Like a Senior Researcher",
+    desc:
+      "Explore literature search protocols, PRISMA screening, concept matrices, and systematic evidence synthesis.",
     href: "/blog/systematic-literature-review-guide",
+    number: "05",
   },
   {
     tag: "Formatting & publishing",
-    title: "Mastering Q1/Q2 Manuscript Formatting: Common Pitfalls and How to Avoid Rejection",
-    desc: "Avoid outdated templates, weak first pages, low-quality figures, and reference chaos.",
+    title:
+      "Mastering Q1/Q2 Manuscript Formatting: Common Pitfalls and How to Avoid Rejection",
+    desc:
+      "Understand common formatting mistakes, journal requirements, figure quality, and reference management.",
     href: "/blog/q1-q2-manuscript-formatting-avoid-rejection",
+    number: "06",
   },
 ];
 
-const steps = [
-  { t: "Share your draft or requirements", d: "Send a manuscript, thesis, or simulation brief through WhatsApp or Email." },
-  { t: "Receive a free assessment", d: "We review scope, target journal, and feasibility before any commitment." },
-  { t: "Delivery with revision support", d: "Get publication-ready files, source code, and complementary minor revisions." },
+/* ------------------------------------------------------------------
+   Research Areas
+------------------------------------------------------------------ */
+
+const researchAreas = [
+  {
+    icon: BookOpen,
+    title: "Research Design & Methodology",
+    description:
+      "Explore research approaches, study design, methodological frameworks, and systematic investigation across academic disciplines.",
+    topics: [
+      "Research design",
+      "Methodological frameworks",
+      "Study planning",
+    ],
+  },
+  {
+    icon: Layers,
+    title: "Literature Review & Analysis",
+    description:
+      "Learn how to identify relevant literature, evaluate existing studies, synthesize findings, and establish research gaps.",
+    topics: [
+      "Literature reviews",
+      "Critical analysis",
+      "Research gaps",
+    ],
+  },
+  {
+    icon: BarChart2,
+    title: "Data Analysis & Interpretation",
+    description:
+      "Understand approaches to collecting, organizing, analyzing, and interpreting research data using appropriate analytical methods.",
+    topics: [
+      "Data analysis",
+      "Statistical methods",
+      "Results interpretation",
+    ],
+  },
+  {
+    icon: FileText,
+    title: "Academic Writing",
+    description:
+      "Develop effective academic writing practices for research proposals, dissertations, theses, journal articles, and scholarly reports.",
+    topics: [
+      "Scientific writing",
+      "Thesis preparation",
+      "Academic communication",
+    ],
+  },
+  {
+    icon: Award,
+    title: "Scholarly Publishing",
+    description:
+      "Explore journal selection, manuscript preparation, peer review, publication ethics, and scholarly communication.",
+    topics: [
+      "Journal selection",
+      "Peer review",
+      "Publication ethics",
+    ],
+  },
+  {
+    icon: Lightbulb,
+    title: "Research Ethics & Integrity",
+    description:
+      "Understand responsible research practices, academic integrity, reproducibility, proper attribution, and ethical standards.",
+    topics: [
+      "Research ethics",
+      "Academic integrity",
+      "Reproducibility",
+    ],
+  },
 ];
 
-const googleScholarUrl = "https://scholar.google.com/citations?hl=en&user=-VGaDnoAAAAJ";
-const researchGateUrl = "https://www.researchgate.net/profile/Hamza-Iqbal-19?ev=hdr_xprf";
+/* ------------------------------------------------------------------
+   Frequently Asked Questions
+------------------------------------------------------------------ */
 
-/* ------------------------------------------------------------------ */
-/*  Consultancy modal (WhatsApp / Email live only in here)             */
-/* ------------------------------------------------------------------ */
-function ConsultModal({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const whatsappNumber = "923147982032";
-  const whatsappMsg = encodeURIComponent(
-    "Hello ScholarGrid team! I need expert support for my research manuscript / thesis simulation & formatting."
-  );
-  const emailAddress = "scholargrid030@gmail.com";
+const faqs = [
+  {
+    q: "What is ScholarGrid?",
+    a:
+      "ScholarGrid is an academic knowledge platform providing educational resources, practical research guides, academic writing guidance, methodological insights, and scholarly publishing information for students, researchers, and academic professionals across different disciplines.",
+    category: "About",
+  },
+  {
+    q: "Which academic disciplines does ScholarGrid cover?",
+    a:
+      "ScholarGrid aims to support researchers across a wide range of academic disciplines, including natural sciences, social sciences, engineering, medicine, computer science, business, education, arts, and humanities. Its resources focus on research practices and academic knowledge that can be applied across different fields.",
+    category: "Research",
+  },
+  {
+    q: "What research topics are covered on ScholarGrid?",
+    a:
+      "Our content covers research design, literature reviews, academic writing, data analysis, research methodology, scholarly communication, publication standards, research ethics, and other essential aspects of academic work.",
+    category: "Learning",
+  },
+  {
+    q: "Which tools and software are discussed?",
+    a:
+      "Our educational resources may cover a variety of research tools and software, including data analysis applications, statistical packages, reference management tools, academic writing software, programming environments, and digital research platforms.",
+    category: "Technology",
+  },
+  {
+    q: "Does ScholarGrid provide guidance on Q1 and Q2 journal publications?",
+    a:
+      "Yes. ScholarGrid publishes educational material about journal selection, manuscript organization, formatting requirements, peer-review processes, publication ethics, scientific presentation, and common publication challenges.",
+    category: "Publishing",
+  },
+  {
+    q: "Can ScholarGrid help with literature reviews and research methodology?",
+    a:
+      "Yes. Our research guides explore literature search strategies, systematic reviews, research design, methodological frameworks, critical evaluation of previous studies, identification of research gaps, and evidence synthesis.",
+    category: "Methodology",
+  },
+  {
+    q: "Are the resources suitable for postgraduate and doctoral researchers?",
+    a:
+      "Yes. ScholarGrid is designed for undergraduate and postgraduate students, master's scholars, PhD candidates, research associates, university faculty, and academic professionals seeking to improve their research and scholarly communication skills.",
+    category: "Education",
+  },
+  {
+    q: "How frequently are new research articles published?",
+    a:
+      "New educational articles and research resources are added periodically. Readers can explore the Insights section and knowledge library to discover the latest available publications and academic guides.",
+    category: "Content",
+  },
+  {
+    q: "Can I explore academic researcher profiles?",
+    a:
+      "Yes. ScholarGrid provides links to academic research profiles where readers can explore scholarly publications, citations, research contributions, and academic activities.",
+    category: "Profiles",
+  },
+];
 
-  const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${emailAddress}&su=${encodeURIComponent(
-    "Manuscript Review Inquiry"
-  )}&body=${encodeURIComponent(
-    "Hello ScholarGrid team, I would like to get assistance with my research manuscript."
-  )}`;
+/* ------------------------------------------------------------------
+   Reusable Section Heading
+------------------------------------------------------------------ */
 
-  useEffect(() => {
-    if (!open) return;
-
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-
-    document.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prev;
-    };
-  }, [open, onClose]);
-
-  if (!open) return null;
-
+function SectionHeading({
+  eyebrow,
+  title,
+  description,
+}: {
+  eyebrow: string;
+  title: string;
+  description: string;
+}) {
   return (
-    <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm"
-      onClick={onClose}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="consult-title"
-    >
-      <div
-        className="relative w-full max-w-md rounded-2xl bg-white p-7 shadow-2xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button
-          onClick={onClose}
-          aria-label="Close"
-          className="absolute right-4 top-4 rounded-full p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700"
-        >
-          <X size={18} />
-        </button>
-
-        <h2 id="consult-title" className="font-serif text-2xl font-bold text-slate-900">
-          Get consultancy
-        </h2>
-
-        <p className="mt-2 text-sm leading-relaxed text-slate-600">
-          Choose how you would like to reach us. Your first manuscript assessment is free, and we usually reply the same day.
-        </p>
-
-        <div className="mt-6 space-y-3">
-          <a
-            href={`https://wa.me/${whatsappNumber}?text=${whatsappMsg}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group flex items-center gap-4 rounded-xl border border-slate-200 p-4 transition hover:border-emerald-600 hover:bg-emerald-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-700"
-          >
-            <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-600 text-white">
-              <MessageSquare size={20} />
-            </span>
-
-            <span className="flex-1">
-              <span className="block font-semibold text-slate-900">Continue on WhatsApp</span>
-              <span className="block text-xs text-slate-500">Fastest way to share drafts and files</span>
-            </span>
-
-            <ArrowRight size={18} className="text-slate-400 transition group-hover:translate-x-0.5 group-hover:text-emerald-700" />
-          </a>
-
-          <a
-            href={gmailUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group flex items-center gap-4 rounded-xl border border-slate-200 p-4 transition hover:border-blue-700 hover:bg-blue-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700"
-          >
-            <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-800 text-white">
-              <Mail size={20} />
-            </span>
-
-            <span className="flex-1">
-              <span className="block font-semibold text-slate-900">Send an email</span>
-              <span className="block text-xs text-slate-500">Best for detailed project briefs</span>
-            </span>
-
-            <ArrowRight size={18} className="text-slate-400 transition group-hover:translate-x-0.5 group-hover:text-blue-800" />
-          </a>
-        </div>
-
-        <p className="mt-5 flex items-center gap-2 text-xs text-slate-500">
-          <ShieldCheck size={14} className="text-emerald-600" />
-          Your drafts and data stay strictly confidential.
-        </p>
+    <div className="mb-12 max-w-2xl">
+      <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-blue-800">
+        <span className="h-px w-7 bg-blue-700" />
+        {eyebrow}
       </div>
+
+      <h2 className="font-serif text-3xl font-bold leading-tight tracking-tight text-slate-900 sm:text-4xl">
+        {title}
+      </h2>
+
+      <p className="mt-4 text-base leading-7 text-slate-600">
+        {description}
+      </p>
     </div>
   );
 }
 
-/* ------------------------------------------------------------------ */
-/*  Page                                                               */
-/* ------------------------------------------------------------------ */
-export default function ScholarGridLandingPage() {
-  const [modalOpen, setModalOpen] = useState(false);
-  const openModal = () => setModalOpen(true);
-  const closeModal = () => setModalOpen(false);
+/* ------------------------------------------------------------------
+   Main Page
+------------------------------------------------------------------ */
 
+export default function ScholarGridLandingPage() {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
   const [showAllFaqs, setShowAllFaqs] = useState(false);
 
-  const [announcement, setAnnouncement] = useState(announcementVariations[0]);
-  const [badge, setBadge] = useState(badgeVariations[0]);
-  const [mainTitle, setMainTitle] = useState(mainTitleVariations[0]);
-  const [gradientTitle, setGradientTitle] = useState(gradientTitleVariations[0]);
-  const [subtitle, setSubtitle] = useState(subtitleVariations[0]);
-
-  useEffect(() => {
-    setAnnouncement(pick(announcementVariations));
-    setBadge(pick(badgeVariations));
-    setMainTitle(pick(mainTitleVariations));
-    setGradientTitle(pick(gradientTitleVariations));
-    setSubtitle(pick(subtitleVariations));
-  }, []);
-
-  const visibleFaqs = showAllFaqs ? faqs : faqs.slice(0, 6);
+  const visibleFaqs = showAllFaqs ? faqs : faqs.slice(0, 5);
 
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: faqs.map((f) => ({
+    mainEntity: faqs.map((faq) => ({
       "@type": "Question",
-      name: f.q,
-      acceptedAnswer: { "@type": "Answer", text: f.a },
+      name: faq.q,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.a,
+      },
     })),
   };
 
-  /* One button style, used everywhere */
-  const ConsultButton = ({
-    className = "",
-    variant = "solid",
-  }: {
-    className?: string;
-    variant?: "solid" | "light";
-  }) => (
-    <button
-      onClick={openModal}
-      className={`inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 ${
-        variant === "solid"
-          ? "bg-blue-800 text-white shadow-sm hover:bg-blue-900"
-          : "bg-white text-blue-900 hover:bg-blue-50"
-      } ${className}`}
-    >
-      Get Consultancy <ArrowRight size={16} />
-    </button>
-  );
-
   return (
-    <div className="min-h-screen bg-white font-sans text-slate-800 antialiased selection:bg-blue-200">
+    <div className="min-h-screen overflow-x-hidden bg-white font-sans text-slate-800 antialiased selection:bg-blue-100">
+
+      {/* SEO Structured Data */}
+
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(faqSchema),
+        }}
       />
 
-      <ConsultModal open={modalOpen} onClose={closeModal} />
+      {/* Announcement Strip */}
 
-      {/* Announcement bar */}
-      <div className="bg-blue-950 px-4 py-2 text-center text-xs text-blue-100 sm:text-sm">
-        {announcement}
+      <div className="bg-slate-950 px-4 py-2 text-center text-xs font-medium tracking-wide text-slate-200 sm:text-sm">
+        Academic Knowledge · Research Methodology · Scholarly Publishing
       </div>
 
-      {/* Responsive Navigation */}
+      {/* Navigation */}
+
       <nav
         aria-label="Main navigation"
-        className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur"
+        className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/95 backdrop-blur-md"
       >
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-3.5">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-3 sm:px-8">
 
-          {/* Logo */}
-          <Link href="/" className="flex shrink-0 items-center gap-2 sm:gap-3">
+          <Link
+            href="/"
+            className="flex shrink-0 items-center gap-2.5"
+          >
             <Image
               src="/logo.png"
-              alt="ScholarGrid - Academic Research & Consultancy Logo"
-              width={38}
-              height={38}
+              alt="ScholarGrid Academic Research Logo"
+              width={40}
+              height={40}
               priority
-              className="h-8 w-8 object-contain sm:h-9 sm:w-9"
+              className="h-9 w-9 object-contain"
             />
 
-            <span className="font-serif text-lg font-bold tracking-tight text-slate-900 sm:text-xl">
+            <span className="font-serif text-xl font-bold tracking-tight text-slate-950">
               ScholarGrid
             </span>
           </Link>
 
-          {/* Desktop Navigation Links */}
-          <div className="hidden items-center gap-6 text-sm font-medium text-slate-600 lg:flex xl:gap-8">
-            <a href="#services" className="whitespace-nowrap hover:text-blue-800">Services</a>
-            <a href="#process" className="whitespace-nowrap hover:text-blue-800">How it works</a>
-            <a href="#insights" className="whitespace-nowrap hover:text-blue-800">Insights</a>
-            <a href="#profiles" className="whitespace-nowrap hover:text-blue-800">Publications</a>
-            <a href="#faq" className="whitespace-nowrap hover:text-blue-800">FAQ</a>
+          <div className="hidden items-center gap-7 text-sm font-medium text-slate-600 lg:flex">
+            <a href="#about" className="transition hover:text-blue-800">
+              About
+            </a>
+
+            <a href="#research" className="transition hover:text-blue-800">
+              Research Areas
+            </a>
+
+            <a href="#insights" className="transition hover:text-blue-800">
+              Insights
+            </a>
+
+            <a href="#profiles" className="transition hover:text-blue-800">
+              Researchers
+            </a>
+
+            <a href="#faq" className="transition hover:text-blue-800">
+              FAQ
+            </a>
           </div>
 
-          {/* Consultancy Button */}
-          <ConsultButton className="shrink-0 whitespace-nowrap !px-3 !py-2 !text-xs sm:!px-5 sm:!py-2.5 sm:!text-sm" />
+          <Link
+            href="/blog"
+            className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-blue-900 px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-blue-950 sm:px-5 sm:text-sm"
+          >
+            Explore Articles
+            <ArrowRight size={15} />
+          </Link>
 
         </div>
       </nav>
 
       <main>
-        {/* Hero */}
-        <section className="border-b border-slate-200 bg-gradient-to-b from-slate-50 to-white">
-          <div className="mx-auto grid max-w-7xl items-center gap-14 px-6 py-20 lg:grid-cols-[1.15fr_0.85fr] lg:py-28">
-            <div>
-              <p className="mb-5 inline-block rounded-full border border-blue-200 bg-blue-50 px-4 py-1.5 text-sm font-medium text-blue-900">
-                {badge}
-              </p>
 
-              <h1 className="font-serif text-4xl font-bold leading-[1.15] tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
-                {mainTitle}
+        {/* Hero Section */}
+
+        <section
+          id="about"
+          className="relative overflow-hidden border-b border-slate-200 bg-gradient-to-br from-slate-50 via-white to-blue-50/60"
+        >
+          <div className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full bg-blue-100/40 blur-3xl" />
+
+          <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-6 py-16 sm:px-8 sm:py-20 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16 lg:py-24">
+
+            {/* Hero Content */}
+
+            <div>
+
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white px-4 py-2 text-xs font-semibold tracking-wide text-blue-900 shadow-sm">
+                <BookOpen size={15} />
+                AN ACADEMIC KNOWLEDGE PLATFORM
+              </div>
+
+              <h1 className="max-w-2xl font-serif text-4xl font-bold leading-[1.15] tracking-tight text-slate-950 sm:text-5xl lg:text-[3.65rem]">
+                Discover Research.
                 <br />
-                <span className="text-blue-800">{gradientTitle}</span>
+                <span className="text-blue-800">
+                  Understand Knowledge.
+                </span>
+                <br />
+                Advance Your Ideas.
               </h1>
 
-              <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-600">
-                {subtitle}
+              <p className="mt-6 max-w-xl text-base leading-8 text-slate-600 sm:text-lg">
+                Exploring the world of academic research through
+                practical learning resources, research methodologies,
+                scholarly insights, and guidance for researchers
+                across all academic disciplines.
               </p>
 
-              <div className="mt-9 flex flex-wrap items-center gap-5">
-                <ConsultButton className="!px-8 !py-3.5 !text-base" />
+              <div className="mt-8 flex flex-wrap items-center gap-4">
 
-                <span className="flex items-center gap-2 text-sm text-slate-500">
-                  <CheckCircle size={16} className="text-emerald-600" />
-                  Free initial manuscript assessment
+                <Link
+                  href="/blog"
+                  className="inline-flex items-center gap-2 rounded-lg bg-blue-900 px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-blue-950"
+                >
+                  Explore Research Articles
+                  <ArrowRight size={17} />
+                </Link>
+
+                <a
+                  href="#research"
+                  className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-6 py-3.5 text-sm font-semibold text-slate-700 transition hover:border-blue-800 hover:text-blue-900"
+                >
+                  Research Topics
+                </a>
+
+              </div>
+
+              <div className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs font-medium text-slate-500">
+                <span className="flex items-center gap-2">
+                  <CheckCircle size={15} className="text-blue-800" />
+                  Resources for all disciplines
+                </span>
+
+                <span className="flex items-center gap-2">
+                  <CheckCircle size={15} className="text-blue-800" />
+                  Practical research guidance
                 </span>
               </div>
+
             </div>
 
-            {/* Process card */}
-            <div
-              id="process"
-              className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-8 shadow-xl shadow-slate-200/60"
-            >
-              <h2 className="font-serif text-xl font-bold text-slate-900">
-                How a project starts
-              </h2>
+            {/* Featured Article Panel */}
 
-              <ol className="mt-6 space-y-6">
-                {steps.map((s, i) => (
-                  <li key={s.t} className="flex gap-4">
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-800 text-sm font-semibold text-white">
-                      {i + 1}
-                    </span>
+            <div className="relative">
 
-                    <div>
-                      <p className="font-semibold text-slate-900">{s.t}</p>
-                      <p className="mt-1 text-sm leading-relaxed text-slate-600">{s.d}</p>
-                    </div>
-                  </li>
-                ))}
-              </ol>
+              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xl shadow-slate-200/60 sm:p-7">
+
+                <div className="mb-5 flex items-center justify-between gap-3">
+
+                  <div className="flex items-center gap-2 text-xs font-bold tracking-widest text-blue-900">
+                    <BookMarked size={16} />
+                    FEATURED READING
+                  </div>
+
+                  <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-800">
+                    Research Guide
+                  </span>
+
+                </div>
+
+                <div className="relative mb-6 flex aspect-[16/9] items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-slate-900 via-blue-950 to-blue-800">
+
+                  <div className="absolute inset-0 opacity-20">
+                    <div className="absolute left-1/4 top-1/4 h-40 w-40 rounded-full border border-white" />
+                    <div className="absolute left-1/3 top-1/3 h-28 w-28 rounded-full border border-white" />
+                    <div className="absolute bottom-5 right-8 h-32 w-32 rounded-full border border-white" />
+                  </div>
+
+                  <div className="relative text-center text-white">
+                    <GraduationCap
+                      size={55}
+                      strokeWidth={1.2}
+                      className="mx-auto mb-3"
+                    />
+                    <p className="font-serif text-2xl font-bold">
+                      Research Excellence
+                    </p>
+                    <p className="mt-2 text-xs tracking-[0.2em] text-blue-200">
+                      KNOWLEDGE • METHODS • DISCOVERY
+                    </p>
+                  </div>
+
+                </div>
+
+                <p className="text-xs font-semibold uppercase tracking-widest text-blue-800">
+                  Research Paper Structure
+                </p>
+
+                <h2 className="mt-3 font-serif text-2xl font-bold leading-snug text-slate-950">
+                  The Master Guide to Structuring a Q1 Research Paper
+                </h2>
+
+                <p className="mt-3 text-sm leading-7 text-slate-600">
+                  Explore the essential elements of a scientific
+                  manuscript, from research objectives and methodology
+                  to results, discussion, and conclusions.
+                </p>
+
+                <Link
+                  href="/blog/q1-research-paper-structure"
+                  className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-blue-900 transition hover:gap-3"
+                >
+                  Read the featured guide
+                  <ArrowRight size={16} />
+                </Link>
+
+              </div>
+
+              <div className="absolute -bottom-4 -right-3 -z-10 h-full w-full rounded-2xl border border-blue-100 bg-blue-50/70" />
+
             </div>
+
           </div>
         </section>
 
-        {/* Stats */}
-        <section aria-label="Track record" className="border-b border-slate-200 bg-white">
-          <div className="mx-auto grid max-w-7xl grid-cols-2 divide-x divide-slate-200 px-6 md:grid-cols-4">
+        {/* Statistics Strip */}
+
+        <section
+          aria-label="Academic statistics"
+          className="border-b border-slate-200 bg-white"
+        >
+          <div className="mx-auto grid max-w-7xl grid-cols-2 divide-x divide-y divide-slate-200 sm:grid-cols-4 sm:divide-y-0">
+
             {[
               ["18+", "Q1/Q2 journal papers"],
               ["100+", "Manuscripts processed"],
               ["100%", "Publisher compliance"],
-              ["1-on-1", "Direct author support"],
-            ].map(([n, l]) => (
-              <div key={l} className="px-4 py-9 text-center">
-                <div className="font-serif text-3xl font-bold text-blue-900 md:text-4xl">
-                  {n}
-                </div>
-                <div className="mt-1 text-sm text-slate-600">{l}</div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Publishers strip */}
-        <section aria-label="Supported publishers" className="bg-slate-50 py-8">
-          <p className="mx-auto max-w-4xl px-6 text-center text-sm text-slate-500">
-            Formatting aligned to the author guidelines of IEEE, Elsevier, Springer Nature, Wiley, Taylor &amp; Francis and MDPI
-          </p>
-        </section>
-
-        {/* Services */}
-        <section id="services" className="mx-auto max-w-7xl scroll-mt-24 px-6 py-24">
-          <div className="mx-auto mb-14 max-w-2xl text-center">
-            <h2 className="font-serif text-3xl font-bold text-slate-900 md:text-4xl">
-              Comprehensive academic services
-            </h2>
-
-            <p className="mt-4 text-slate-600">
-              Built for postgraduate students, PhD scholars, and engineering authors aiming for top-tier international publications.
-            </p>
-          </div>
-
-          <div className="grid gap-8 md:grid-cols-3">
-            {[
-              {
-                icon: FileText,
-                title: "Manuscript layout & formatting",
-                desc: "Complete layout overhaul following the target journal's style guide in LaTeX or MS Word.",
-                items: ["IEEE, Elsevier, Springer & MDPI templates", "Vector figures & TikZ graphics", "Reference management (EndNote / Mendeley)"],
-                featured: false,
-              },
-              {
-                icon: Cpu,
-                title: "Computational solvers & AI",
-                desc: "Custom Python and MATLAB development for differential equations and fluid dynamics models.",
-                items: ["Physics-Informed Neural Networks (PINNs)", "Levenberg-Marquardt & PSO algorithms", "ODEs, PDEs & boundary value solvers"],
-                featured: true,
-              },
-              {
-                icon: BarChart2,
-                title: "Data graphics & analysis",
-                desc: "Raw simulation and experimental datasets turned into publication-standard 2D/3D plots.",
-                items: ["High-resolution contour & line plots", "Result interpretation & drafting", "Abstract & technical section polish"],
-                featured: false,
-              },
-            ].map(({ icon: Icon, title, desc, items, featured }) => (
-              <article
-                key={title}
-                className={`relative flex flex-col rounded-2xl p-8 ${
-                  featured
-                    ? "border-2 border-blue-800 bg-white shadow-xl shadow-blue-900/10"
-                    : "border border-slate-200 bg-white shadow-sm"
-                }`}
+              ["6", "Research guides"],
+            ].map(([number, label]) => (
+              <div
+                key={label}
+                className="px-3 py-6 text-center sm:py-7"
               >
-                {featured && (
-                  <span className="absolute -top-3 left-8 rounded-full bg-blue-800 px-3 py-1 text-xs font-semibold text-white">
-                    Most requested
-                  </span>
-                )}
-
-                <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-800">
-                  <Icon size={24} />
+                <div className="font-serif text-3xl font-bold tracking-tight text-blue-900 sm:text-4xl">
+                  {number}
                 </div>
 
-                <h3 className="font-serif text-xl font-bold text-slate-900">{title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-slate-600">{desc}</p>
-
-                <ul className="mt-6 space-y-3 text-sm text-slate-700">
-                  {items.map((it) => (
-                    <li key={it} className="flex items-start gap-2.5">
-                      <CheckCircle size={16} className="mt-0.5 shrink-0 text-emerald-600" />
-                      {it}
-                    </li>
-                  ))}
-                </ul>
-              </article>
+                <p className="mt-1.5 text-xs font-medium text-slate-500 sm:text-sm">
+                  {label}
+                </p>
+              </div>
             ))}
-          </div>
 
-          <div className="mt-12 text-center">
-            <ConsultButton />
           </div>
         </section>
 
-        {/* Insights / Blog */}
-        <section id="insights" className="scroll-mt-24 border-y border-slate-200 bg-slate-50 py-24">
-          <div className="mx-auto max-w-6xl px-6">
-            <div className="mb-12 flex flex-wrap items-end justify-between gap-4">
-              <div>
-                <p className="mb-2 flex items-center gap-2 text-sm font-medium text-blue-800">
-                  <BookOpen size={16} />
-                  Technical insights
-                </p>
+        {/* Publisher Strip */}
 
-                <h2 className="font-serif text-3xl font-bold text-slate-900 md:text-4xl">
-                  Expert guides for researchers
-                </h2>
+        <section className="border-b border-slate-200 bg-slate-50/80 py-5">
+          <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-7 gap-y-3 px-6 text-xs font-semibold tracking-wide text-slate-500 sm:text-sm">
+            <span className="text-slate-400">PUBLISHING LANDSCAPE</span>
+            <span>IEEE</span>
+            <span>Elsevier</span>
+            <span>Springer Nature</span>
+            <span>Wiley</span>
+            <span>Taylor & Francis</span>
+            <span>MDPI</span>
+          </div>
+        </section>
 
-                <p className="mt-3 max-w-xl text-slate-600">
-                  Practical walkthroughs on manuscript formatting, simulation workflows, and journal publication strategy.
-                </p>
-              </div>
-            </div>
+        {/* Research Areas */}
 
-            <div className="grid gap-6 md:grid-cols-2">
-              {blogPosts.map((p, i) => (
+        <section
+          id="research"
+          className="mx-auto max-w-7xl scroll-mt-24 px-6 py-20 sm:px-8 lg:py-24"
+        >
+
+          <SectionHeading
+            eyebrow="AREAS OF KNOWLEDGE"
+            title="Explore Our Research Domains"
+            description="Discover practical academic resources and educational insights covering the essential aspects of research, from study design and data analysis to academic writing and scholarly publishing."
+          />
+
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+
+            {researchAreas.map((area, index) => {
+              const Icon = area.icon;
+
+              return (
                 <article
-                  key={p.href}
-                  className={`flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-7 transition hover:border-blue-700 hover:shadow-md ${
-                    i === blogPosts.length - 1 && blogPosts.length % 2 === 1 ? "md:col-span-2" : ""
-                  }`}
+                  key={area.title}
+                  className="group rounded-xl border border-slate-200 bg-white p-6 transition duration-300 hover:-translate-y-1 hover:border-blue-300 hover:shadow-lg hover:shadow-blue-900/5"
                 >
-                  <div>
-                    <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-900">
-                      {p.tag}
+
+                  <div className="mb-5 flex items-center justify-between">
+
+                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-blue-900 transition group-hover:bg-blue-900 group-hover:text-white">
+                      <Icon size={22} />
+                    </div>
+
+                    <span className="font-serif text-sm font-semibold text-slate-300">
+                      0{index + 1}
                     </span>
 
-                    <h3 className="mt-4 font-serif text-xl font-bold leading-snug text-slate-900">
-                      {p.title}
-                    </h3>
-
-                    <p className="mt-3 text-sm leading-relaxed text-slate-600">
-                      {p.desc}
-                    </p>
                   </div>
 
-                  <Link
-                    href={p.href}
-                    className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-blue-800 hover:text-blue-950"
-                  >
-                    Read article <ArrowRight size={16} />
-                  </Link>
+                  <h3 className="font-serif text-xl font-bold text-slate-900">
+                    {area.title}
+                  </h3>
+
+                  <p className="mt-3 text-sm leading-7 text-slate-600">
+                    {area.description}
+                  </p>
+
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    {area.topics.map((topic) => (
+                      <span
+                        key={topic}
+                        className="rounded-md bg-slate-50 px-2.5 py-1.5 text-xs font-medium text-slate-600"
+                      >
+                        {topic}
+                      </span>
+                    ))}
+                  </div>
+
                 </article>
-              ))}
-            </div>
+              );
+            })}
+
           </div>
         </section>
 
-        {/* Profiles */}
-        <section id="profiles" className="mx-auto max-w-5xl scroll-mt-24 px-6 py-24">
-          <div className="rounded-2xl border border-slate-200 bg-white p-10 text-center shadow-sm md:p-14">
-            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-blue-900 text-amber-300">
-              <Award size={28} />
+        {/* Editorial Divider */}
+
+        <section className="border-y border-slate-200 bg-slate-50 py-12">
+          <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-5 px-6 text-center sm:px-8 md:flex-row md:text-left">
+
+            <div className="flex items-center gap-4">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white text-blue-900 shadow-sm">
+                <Lightbulb size={24} />
+              </div>
+
+              <div>
+                <h2 className="font-serif text-xl font-bold text-slate-900">
+                  Knowledge begins with curiosity.
+                </h2>
+
+                <p className="mt-1 text-sm text-slate-500">
+                  Explore ideas, methods, and academic discoveries.
+                </p>
+              </div>
             </div>
 
-            <h2 className="font-serif text-2xl font-bold text-slate-900 md:text-3xl">
-              Explore the full scientific portfolio
-            </h2>
+            <Link
+              href="/blog"
+              className="inline-flex items-center gap-2 text-sm font-bold text-blue-900 transition hover:gap-3"
+            >
+              Browse the knowledge library
+              <ArrowRight size={17} />
+            </Link>
 
-            <p className="mx-auto mt-3 max-w-xl text-sm text-slate-600 md:text-base">
-              Browse peer-reviewed publications, citations, and research metrics on our official academic profiles.
-            </p>
+          </div>
+        </section>
 
-            <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <a
-                href={googleScholarUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-7 py-3 text-sm font-semibold text-slate-800 transition hover:border-blue-800 hover:text-blue-900 sm:w-auto"
-              >
-                Google Scholar profile <ExternalLink size={16} />
-              </a>
+        {/* Blog / Insights */}
 
-              <a
-                href={researchGateUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-7 py-3 text-sm font-semibold text-slate-800 transition hover:border-blue-800 hover:text-blue-900 sm:w-auto"
-              >
-                ResearchGate profile <ExternalLink size={16} />
-              </a>
+        <section
+          id="insights"
+          className="mx-auto max-w-7xl scroll-mt-24 px-6 py-20 sm:px-8 lg:py-24"
+        >
+
+          <div className="mb-12 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+
+            <div>
+              <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-blue-800">
+                <BookOpen size={17} />
+                THE KNOWLEDGE LIBRARY
+              </div>
+
+              <h2 className="font-serif text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
+                Latest Research Insights
+              </h2>
+
+              <p className="mt-4 max-w-xl text-sm leading-7 text-slate-600 sm:text-base">
+                Practical academic guides, research resources, and
+                educational articles to support students, scholars,
+                and researchers across different disciplines.
+              </p>
             </div>
+
+            <Link
+              href="/blog"
+              className="inline-flex shrink-0 items-center gap-2 text-sm font-bold text-blue-900 transition hover:gap-3"
+            >
+              View all articles
+              <ArrowRight size={17} />
+            </Link>
+
+          </div>
+
+          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+
+            {blogPosts.map((post) => (
+              <article
+                key={post.href}
+                className="group flex flex-col rounded-xl border border-slate-200 bg-white p-6 transition duration-300 hover:-translate-y-1 hover:border-blue-300 hover:shadow-lg hover:shadow-slate-200/70"
+              >
+
+                <div className="mb-5 flex items-center justify-between">
+
+                  <span className="rounded-full bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-900">
+                    {post.tag}
+                  </span>
+
+                  <span className="font-serif text-lg font-bold text-slate-200">
+                    {post.number}
+                  </span>
+
+                </div>
+
+                <h3 className="font-serif text-xl font-bold leading-snug text-slate-900 transition group-hover:text-blue-900">
+                  {post.title}
+                </h3>
+
+                <p className="mt-4 flex-1 text-sm leading-7 text-slate-600">
+                  {post.desc}
+                </p>
+
+                <div className="mt-6 border-t border-slate-100 pt-5">
+
+                  <Link
+                    href={post.href}
+                    className="inline-flex items-center gap-2 text-sm font-bold text-blue-900 transition group-hover:gap-3"
+                  >
+                    Read article
+                    <ArrowRight size={16} />
+                  </Link>
+
+                </div>
+
+              </article>
+            ))}
+
+          </div>
+
+          <div className="mt-10 text-center">
+            <Link
+              href="/blog"
+              className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-7 py-3 text-sm font-semibold text-slate-800 transition hover:border-blue-800 hover:text-blue-900"
+            >
+              Explore All Research Articles
+              <ArrowRight size={16} />
+            </Link>
+          </div>
+
+        </section>
+
+        {/* Academic Profiles */}
+
+        <section
+          id="profiles"
+          className="scroll-mt-24 border-y border-slate-200 bg-slate-50 py-20 lg:py-24"
+        >
+
+          <div className="mx-auto max-w-7xl px-6 sm:px-8">
+
+            <div className="grid items-center gap-10 lg:grid-cols-[1fr_0.9fr]">
+
+              <div>
+
+                <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-blue-800">
+                  <Award size={18} />
+                  SCHOLARLY CONTRIBUTIONS
+                </div>
+
+                <h2 className="font-serif text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
+                  Research Beyond the Pages
+                </h2>
+
+                <p className="mt-5 max-w-xl text-base leading-8 text-slate-600">
+                  Academic research is an ongoing process of
+                  investigation, discovery, and knowledge sharing.
+                  Explore scholarly publications, research
+                  contributions, academic achievements, and citation
+                  records through researcher profiles.
+                </p>
+
+                <div className="mt-7 flex flex-wrap gap-3">
+
+                  <a
+                    href={googleScholarUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-lg bg-blue-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-950"
+                  >
+                    Google Scholar
+                    <ExternalLink size={15} />
+                  </a>
+
+                  <a
+                    href={researchGateUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-800 transition hover:border-blue-800 hover:text-blue-900"
+                  >
+                    ResearchGate
+                    <ExternalLink size={15} />
+                  </a>
+
+                </div>
+
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+
+                <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+                  <GraduationCap
+                    size={25}
+                    className="mb-5 text-blue-900"
+                  />
+
+                  <h3 className="font-serif text-lg font-bold text-slate-900">
+                    Academic Research
+                  </h3>
+
+                  <p className="mt-2 text-sm leading-6 text-slate-500">
+                    Scholarly contributions and academic achievements.
+                  </p>
+                </div>
+
+                <div className="mt-8 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+                  <Globe
+                    size={25}
+                    className="mb-5 text-blue-900"
+                  />
+
+                  <h3 className="font-serif text-lg font-bold text-slate-900">
+                    Global Knowledge
+                  </h3>
+
+                  <p className="mt-2 text-sm leading-6 text-slate-500">
+                    Connecting researchers, ideas, and academic communities.
+                  </p>
+                </div>
+
+                <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+                  <FileText
+                    size={25}
+                    className="mb-5 text-blue-900"
+                  />
+
+                  <h3 className="font-serif text-lg font-bold text-slate-900">
+                    Publications
+                  </h3>
+
+                  <p className="mt-2 text-sm leading-6 text-slate-500">
+                    Peer-reviewed research and scholarly publications.
+                  </p>
+                </div>
+
+                <div className="mt-8 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+                  <BookOpen
+                    size={25}
+                    className="mb-5 text-blue-900"
+                  />
+
+                  <h3 className="font-serif text-lg font-bold text-slate-900">
+                    Research Learning
+                  </h3>
+
+                  <p className="mt-2 text-sm leading-6 text-slate-500">
+                    Educational resources for students and researchers.
+                  </p>
+                </div>
+
+              </div>
+
+            </div>
+
           </div>
         </section>
 
         {/* FAQ */}
-        <section id="faq" className="mx-auto max-w-4xl scroll-mt-24 px-6 pb-24">
-          <div className="mb-12 text-center">
-            <h2 className="font-serif text-3xl font-bold text-slate-900 md:text-4xl">
-              Frequently asked questions
+
+        <section
+          id="faq"
+          className="mx-auto max-w-4xl scroll-mt-24 px-6 py-20 sm:px-8 lg:py-24"
+        >
+
+          <div className="mb-10 text-center">
+
+            <div className="mb-3 flex items-center justify-center gap-2 text-sm font-semibold text-blue-800">
+              <BookOpen size={17} />
+              KNOWLEDGE & INFORMATION
+            </div>
+
+            <h2 className="font-serif text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
+              Frequently Asked Questions
             </h2>
 
-            <p className="mx-auto mt-3 max-w-xl text-slate-600">
-              Everything you need to know about manuscript preparation, simulation solvers, and our consultancy process.
+            <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-slate-600 sm:text-base">
+              Find answers about ScholarGrid, its academic resources,
+              research guidance, and educational content.
             </p>
+
           </div>
 
-          <div className="divide-y divide-slate-200 overflow-hidden rounded-2xl border border-slate-200 bg-white">
+          <div className="overflow-hidden rounded-xl border border-slate-200 bg-white divide-y divide-slate-200">
+
             {visibleFaqs.map((faq, index) => {
+
               const isOpen = openFaqIndex === index;
 
               return (
                 <div key={faq.q}>
+
                   <button
-                    onClick={() => setOpenFaqIndex(isOpen ? null : index)}
+                    type="button"
+                    onClick={() =>
+                      setOpenFaqIndex(isOpen ? null : index)
+                    }
                     aria-expanded={isOpen}
-                    className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-700"
+                    className="flex w-full items-center justify-between gap-5 px-5 py-5 text-left transition hover:bg-slate-50 sm:px-7"
                   >
-                    <span className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-4">
-                      <span className="w-24 shrink-0 text-xs font-medium text-blue-700">
+
+                    <span className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
+
+                      <span className="w-fit rounded-md bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-800">
                         {faq.category}
                       </span>
 
-                      <span className="font-semibold text-slate-900">
+                      <span className="text-sm font-semibold leading-6 text-slate-900 sm:text-base">
                         {faq.q}
                       </span>
+
                     </span>
 
                     <ChevronDown
-                      size={20}
+                      size={19}
                       className={`shrink-0 text-slate-500 transition-transform duration-200 ${
-                        isOpen ? "rotate-180 text-blue-800" : ""
+                        isOpen ? "rotate-180 text-blue-900" : ""
                       }`}
                     />
+
                   </button>
 
                   {isOpen && (
-                    <div className="bg-slate-50 px-6 pb-6 pt-1 text-sm leading-relaxed text-slate-600 sm:pl-[10.5rem] sm:text-base">
+                    <div className="bg-slate-50 px-5 pb-6 pt-1 text-sm leading-7 text-slate-600 sm:px-7">
                       {faq.a}
                     </div>
                   )}
+
                 </div>
               );
             })}
+
           </div>
 
           {!showAllFaqs && (
-            <div className="mt-6 text-center">
+            <div className="mt-7 text-center">
+
               <button
+                type="button"
                 onClick={() => setShowAllFaqs(true)}
-                className="text-sm font-semibold text-blue-800 hover:text-blue-950"
+                className="inline-flex items-center gap-2 text-sm font-semibold text-blue-900 transition hover:gap-3"
               >
                 Show all {faqs.length} questions
+                <ArrowRight size={15} />
               </button>
+
             </div>
           )}
+
         </section>
 
-        {/* Final CTA */}
-        <section className="bg-blue-950">
-          <div className="mx-auto max-w-4xl px-6 py-20 text-center">
-            <h2 className="font-serif text-3xl font-bold text-white md:text-4xl">
-              Ready to get your manuscript publication-ready?
-            </h2>
+        {/* Knowledge Section */}
 
-            <p className="mx-auto mt-4 max-w-xl text-blue-100">
-              Share your draft or project brief and receive a free assessment from our technical consultancy team.
-            </p>
+        <section className="border-y border-slate-200 bg-blue-950">
 
-            <div className="mt-8">
-              <ConsultButton variant="light" className="!px-9 !py-3.5 !text-base" />
+          <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-6 py-12 text-center sm:px-8 md:flex-row md:text-left">
+
+            <div>
+              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-blue-300">
+                EXPLORE. LEARN. DISCOVER.
+              </p>
+
+              <h2 className="font-serif text-2xl font-bold text-white sm:text-3xl">
+                Continue Your Research Journey
+              </h2>
+
+              <p className="mt-2 max-w-xl text-sm leading-7 text-blue-100/80">
+                Discover practical academic resources, develop
+                research skills, and explore new perspectives
+                across different fields of knowledge.
+              </p>
             </div>
+
+            <Link
+              href="/blog"
+              className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-white px-6 py-3.5 text-sm font-bold text-blue-950 transition hover:bg-blue-50"
+            >
+              Visit Knowledge Library
+              <ArrowRight size={17} />
+            </Link>
+
           </div>
+
         </section>
+
       </main>
 
-      {/* Footer (no phone / email shown) */}
-      <footer className="border-t border-slate-200 bg-slate-950 text-slate-400">
-        <div className="mx-auto grid max-w-7xl gap-10 px-6 py-14 md:grid-cols-[1.5fr_1fr_1fr]">
+      {/* Footer */}
+
+      <footer className="bg-slate-950 text-slate-400">
+
+        <div className="mx-auto grid max-w-7xl gap-10 px-6 py-12 sm:px-8 md:grid-cols-[1.5fr_1fr_1fr]">
+
+          {/* Brand */}
+
           <div>
-            <div className="flex items-center gap-3">
+
+            <Link
+              href="/"
+              className="inline-flex items-center gap-3"
+            >
               <Image
                 src="/logo.png"
                 alt="ScholarGrid Logo"
-                width={32}
-                height={32}
-                className="h-8 w-8 object-contain"
+                width={36}
+                height={36}
+                className="h-9 w-9 object-contain"
               />
 
               <span className="font-serif text-xl font-bold text-white">
                 ScholarGrid
               </span>
-            </div>
+            </Link>
 
-            <p className="mt-4 max-w-sm text-sm leading-relaxed">
-              Global academic consultancy for PhD scholars, engineering researchers, and computational scientists targeting Q1/Q2 journals.
+            <p className="mt-4 max-w-sm text-sm leading-7 text-slate-400">
+              An academic knowledge platform providing educational
+              resources, research guidance, academic writing
+              insights, methodological resources, and scholarly
+              publishing information for researchers across
+              different disciplines.
             </p>
 
-            <button
-              onClick={openModal}
-              className="mt-6 inline-flex items-center gap-2 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-blue-950 transition hover:bg-blue-50"
-            >
-              Get Consultancy <ArrowRight size={16} />
-            </button>
           </div>
 
-          <div>
-            <h3 className="text-sm font-semibold text-white">Explore</h3>
+          {/* Explore */}
 
-            <ul className="mt-4 space-y-2.5 text-sm">
-              <li><a href="#services" className="hover:text-white">Services</a></li>
-              <li><a href="#process" className="hover:text-white">How it works</a></li>
-              <li><a href="#insights" className="hover:text-white">Insights</a></li>
-              <li><a href="#faq" className="hover:text-white">FAQ</a></li>
+          <div>
+
+            <h3 className="text-sm font-bold text-white">
+              Explore
+            </h3>
+
+            <ul className="mt-5 space-y-3 text-sm">
+
+              <li>
+                <Link href="/" className="transition hover:text-white">
+                  Home
+                </Link>
+              </li>
+
+              <li>
+                <Link href="/blog" className="transition hover:text-white">
+                  Research Articles
+                </Link>
+              </li>
+
+              <li>
+                <a href="#research" className="transition hover:text-white">
+                  Research Areas
+                </a>
+              </li>
+
+              <li>
+                <a href="#insights" className="transition hover:text-white">
+                  Latest Insights
+                </a>
+              </li>
+
+              <li>
+                <a href="#faq" className="transition hover:text-white">
+                  FAQ
+                </a>
+              </li>
+
             </ul>
+
           </div>
 
-          <div>
-            <h3 className="text-sm font-semibold text-white">Research profiles</h3>
+          {/* Academic Profiles */}
 
-            <ul className="mt-4 space-y-2.5 text-sm">
+          <div>
+
+            <h3 className="text-sm font-bold text-white">
+              Academic Profiles
+            </h3>
+
+            <ul className="mt-5 space-y-3 text-sm">
+
               <li>
                 <a
                   href={googleScholarUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 hover:text-white"
+                  className="inline-flex items-center gap-2 transition hover:text-white"
                 >
-                  Google Scholar <ExternalLink size={13} />
+                  Google Scholar
+                  <ExternalLink size={13} />
                 </a>
               </li>
 
@@ -749,19 +1094,39 @@ export default function ScholarGridLandingPage() {
                   href={researchGateUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 hover:text-white"
+                  className="inline-flex items-center gap-2 transition hover:text-white"
                 >
-                  ResearchGate <ExternalLink size={13} />
+                  ResearchGate
+                  <ExternalLink size={13} />
                 </a>
               </li>
+
             </ul>
+
           </div>
+
         </div>
 
-        <div className="border-t border-slate-800 px-6 py-6 text-center text-xs text-slate-500">
-          &copy; 2026 ScholarGrid. All rights reserved. Professional academic and research support.
+        {/* Copyright */}
+
+        <div className="border-t border-slate-800 px-6 py-6 sm:px-8">
+
+          <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 text-center text-xs text-slate-500 sm:flex-row sm:text-left">
+
+            <p>
+              © 2026 ScholarGrid. All rights reserved.
+            </p>
+
+            <p>
+              Advancing Academic Knowledge Through Research & Innovation.
+            </p>
+
+          </div>
+
         </div>
+
       </footer>
+
     </div>
   );
 }
