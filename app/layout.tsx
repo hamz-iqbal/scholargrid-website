@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
+import ChatBotGate from "@/components/Chatbot";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -126,6 +127,10 @@ export default function RootLayout({
       {/* No manual <script> tags here. Next.js manages <head> from `metadata`. */}
       <body className="min-h-full flex flex-col relative">
         {children}
+
+        {/* Chatbot: shown on all pages except /blog and blog articles */}
+        <ChatBotGate />
+
         <Analytics /> {/* Vercel Live Traffic & Visitor Tracking Component */}
 
         {/* Google AdSense: standard script loading without Next.js data-nscript */}
