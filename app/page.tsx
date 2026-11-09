@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState } from "react";
@@ -87,6 +86,15 @@ const blogPosts = [
       "Understand common formatting mistakes, journal requirements, figure quality, and reference management.",
     href: "/blog/q1-q2-manuscript-formatting-avoid-rejection",
     number: "06",
+  },
+  {
+    tag: "Journal selection",
+    title:
+      "How to Find Fast-Review Q1/Q2 Journals in Engineering & Applied Sciences Without Sacrificing Impact",
+    desc:
+      "Follow a practical workflow to shortlist, verify, and rank fast-review journals by checking quartiles, real review times, and legitimacy.",
+    href: "/blog/fast-review-q1-q2-journals",
+    number: "07",
   },
 ];
 
@@ -512,7 +520,7 @@ export default function ScholarGridLandingPage() {
               ["18+", "Q1/Q2 journal papers"],
               ["100+", "Manuscripts processed"],
               ["100%", "Publisher compliance"],
-              ["6", "Research guides"],
+              ["7", "Research guides"],
             ].map(([number, label]) => (
               <div
                 key={label}
