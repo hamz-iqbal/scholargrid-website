@@ -1,4 +1,3 @@
-
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, ArrowUpRight, BookOpen, Search } from "lucide-react";
@@ -57,6 +56,15 @@ const articles = [
     description:
       "Learn about common manuscript formatting problems and practical ways to prepare your research paper for journal submission.",
     href: "/blog/q1-q2-manuscript-formatting-avoid-rejection",
+  },
+  {
+    number: "07",
+    category: "Journal Selection",
+    title:
+      "How to Find Fast-Review Q1/Q2 Journals in Engineering & Applied Sciences Without Sacrificing Impact",
+    description:
+      "Follow a practical workflow to shortlist, verify, and rank fast-review Q1 and Q2 journals, from checking quartiles and real review times to avoiding predatory outlets.",
+    href: "/blog/fast-review-q1-q2-journals",
   },
 ];
 
