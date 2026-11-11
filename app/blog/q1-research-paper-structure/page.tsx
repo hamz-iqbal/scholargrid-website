@@ -1,6 +1,5 @@
-"use client";
-
-import React, { useState } from "react";
+import React from "react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -11,32 +10,199 @@ import {
   CheckCircle2,
   BookOpen,
   ChevronRight,
+  ChevronDown,
   Menu,
   X,
   List,
 } from "lucide-react";
+type Faq = { q: string; a: string };
+
+const faqs: Faq[] = [
+  {
+    q: "What is the standard structure of a Q1 research paper?",
+    a: "Most Q1 papers follow an IMRaD-style flow: title, abstract, keywords, introduction with a clear research gap, problem formulation or study design, methodology, results and discussion, conclusion, declarations (CRediT, funding, competing interests, data availability) and references. Exact headings and order vary by discipline and journal, so always check the target journal's author guidelines.",
+  },
+  {
+    q: "How long should the abstract of a Q1 journal paper be?",
+    a: "Most journals ask for roughly 150 to 250 words, although limits differ. A strong abstract states the context, the research gap, the aim, the method, two or three quantified findings and the implication of the work, in that order.",
+  },
+  {
+    q: "How do I write a strong research gap?",
+    a: "Synthesise the literature into themes, then state precisely what existing studies measure and what they do not. A strong gap names the missing knowledge, explains why it matters and connects directly to your contribution, for example: existing studies measure A but not B, so decisions about the application rest on incomplete evidence.",
+  },
+  {
+    q: "How many references does a Q1 paper need?",
+    a: "There is no universal number. It depends on the discipline, article type and journal. Many authors aim for a focused list of primary sources, with a healthy share from the last five years, but every reference must be relevant, read and verified against the publisher page.",
+  },
+  {
+    q: "What is the difference between verification and validation?",
+    a: "Verification checks that the model, code or procedure is implemented correctly, for example through convergence or grid-independence tests. Validation checks that the model represents reality, which means comparing your results with a published benchmark, experimental data or an independent dataset.",
+  },
+  {
+    q: "What is CRediT and do I need it in my manuscript?",
+    a: "CRediT (Contributor Roles Taxonomy) is a standard list of 14 contributor roles, such as conceptualisation, methodology, software, validation and supervision. Many publishers now ask for a CRediT statement, so prepare one that accurately reflects each author's actual work.",
+  },
+  {
+    q: "Can I use AI tools when preparing a manuscript?",
+    a: "Journal policies differ, so read the target journal's current policy before using any AI tool. Most publishers require disclosure of AI-assisted writing, editing or analysis, and do not accept AI tools as authors, because authors remain fully responsible for the content.",
+  },
+  {
+    q: "How do I check whether a journal is really Q1?",
+    a: "Quartiles are assigned per subject category, not per journal overall. Check the journal's rank in your category on Scimago Journal & Country Rank or in Clarivate's Journal Citation Reports, and confirm that the journal is indexed in Scopus or Web of Science.",
+  },
+  {
+    q: "Why are manuscripts rejected before peer review?",
+    a: "Common reasons are a scope mismatch with the journal, an unclear or weak research gap, insufficient novelty, missing validation, poor reproducibility, and non-compliance with the author guidelines. A clear structure that follows this blueprint addresses most of these issues.",
+  },
+];
+
+/* TODO: set NEXT_PUBLIC_SITE_URL in .env (e.g. https://www.yourdomain.com) */
+const SITE_URL = (
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.scholargrid.org"
+).replace(/\/$/, "");
+
+const SLUG = "/blog/q1-research-paper-structure";
+const URL = `${SITE_URL}${SLUG}`;
+
+const TITLE =
+  "How to Structure a Q1 Research Paper: 10-Part Blueprint (2026 Guide)";
+const DESCRIPTION =
+  "Learn how to structure a Q1 research paper step by step: abstract, methodology, results, conclusion, CRediT and a final submission checklist for any discipline.";
+
+export const metadata: Metadata = {
+  /* If your root layout already uses title.template "%s | ScholarGrid",
+     keep this plain string; otherwise append " | ScholarGrid". */
+  title: TITLE,
+  description: DESCRIPTION,
+  keywords: [
+    "Q1 research paper structure",
+    "how to structure a research paper",
+    "Q1 journal manuscript",
+    "research paper format",
+    "how to write a research gap",
+    "research methodology section",
+    "CRediT author contributions",
+    "manuscript submission checklist",
+  ],
+  alternates: { canonical: URL },
+  robots: { index: true, follow: true },
+  openGraph: {
+    type: "article",
+    url: URL,
+    siteName: "ScholarGrid",
+    title: `${TITLE} | ScholarGrid`,
+    description: DESCRIPTION,
+    publishedTime: "2026-11-12T00:00:00Z",
+    modifiedTime: "2026-11-12T00:00:00Z",
+    authors: ["ScholarGrid Technical Team"],
+  },
+  twitter: {
+    card: "summary",
+    title: TITLE,
+    description: DESCRIPTION,
+  },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "@id": `${URL}#article`,
+      headline: "How to Structure a Q1 Research Paper from Scratch",
+      alternativeHeadline:
+        "A 10-Part Blueprint for Any Discipline",
+      description: DESCRIPTION,
+      datePublished: "2026-11-12",
+      dateModified: "2026-11-12",
+      inLanguage: "en",
+      mainEntityOfPage: URL,
+      author: { "@type": "Organization", name: "ScholarGrid Technical Team" },
+      publisher: {
+        "@type": "Organization",
+        name: "ScholarGrid",
+        logo: { "@type": "ImageObject", url: `${SITE_URL}/logo.png` },
+      },
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Knowledge Library",
+          item: `${SITE_URL}/blog`,
+        },
+        {
+          "@type": "ListItem",
+          position: 3,
+          name: "Q1 Research Paper Structure",
+          item: URL,
+        },
+      ],
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: faqs.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    },
+  ],
+};
+
 
 /* ------------------------------------------------------------------ */
 /* Table of contents                                                   */
 /* ------------------------------------------------------------------ */
 
 const contents = [
-  { id: "overview", title: "Overview" },
+  { id: "overview", title: "Overview: Q1 Paper Structure at a Glance" },
   { id: "abstract", title: "Abstract, Keywords and Nomenclature" },
-  { id: "introduction", title: "Introduction and Research Model" },
+  { id: "introduction", title: "Introduction and Research Gap" },
   { id: "formulation", title: "Problem Formulation" },
   { id: "methodology", title: "Research Methodology" },
   { id: "results", title: "Results and Discussion" },
-  { id: "conclusion", title: "Conclusion and Future Outlook" },
-  { id: "contributions", title: "CRediT Author Contributions" },
+  { id: "conclusion", title: "Conclusion and Future Research" },
+  { id: "contributions", title: "CRediT and Declarations" },
   { id: "references", title: "References and Literature" },
   { id: "checklist", title: "Final Manuscript Checklist" },
   { id: "submission-readiness", title: "Submission Readiness" },
+  { id: "faq", title: "FAQs" },
+  { id: "final-thoughts", title: "Conclusion" },
 ];
 
 /* ------------------------------------------------------------------ */
 /* Reusable components                                                 */
 /* ------------------------------------------------------------------ */
+
+const linkClass =
+  "font-medium text-blue-800 underline decoration-blue-300 underline-offset-2 transition hover:text-blue-950";
+
+/** Internal link to another ScholarGrid page */
+function Int({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <Link href={href} className={linkClass}>
+      {children}
+    </Link>
+  );
+}
+
+/** External authoritative link (opens in new tab, no referrer leakage) */
+function Ext({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={linkClass}
+    >
+      {children}
+    </a>
+  );
+}
 
 function SectionHeading({
   id,
@@ -105,18 +271,22 @@ function Callout({
 function ArticleTable({
   headers,
   rows,
+  caption,
 }: {
   headers: string[];
   rows: React.ReactNode[][];
+  caption?: string;
 }) {
   return (
     <div className="my-6 overflow-x-auto rounded-xl border border-slate-200">
       <table className="w-full min-w-[560px] border-collapse text-left text-sm">
+        {caption && <caption className="sr-only">{caption}</caption>}
         <thead className="bg-blue-950 text-white">
           <tr>
             {headers.map((header, index) => (
               <th
                 key={index}
+                scope="col"
                 className="px-4 py-3.5 font-semibold leading-relaxed"
               >
                 {header}
@@ -166,12 +336,37 @@ function NumberedSteps({ items }: { items: React.ReactNode[] }) {
 const P = "text-[15px] leading-[1.85] text-slate-700";
 
 /* ------------------------------------------------------------------ */
+/* Related reading data                                                */
+/* ------------------------------------------------------------------ */
+
+const related = [
+  {
+    href: "/blog/systematic-literature-review-guide",
+    title: "Systematic Literature Review Guide",
+    text: "Build the literature matrix and research gap that this blueprint depends on.",
+  },
+  {
+    href: "/blog/formatting-guide",
+    title: "Manuscript Formatting Guide",
+    text: "Format your paper to match journal templates and author instructions.",
+  },
+  {
+    href: "/blog/paper-rejection-reasons",
+    title: "Why Journals Reject Papers",
+    text: "Learn the most common rejection reasons and how to avoid them.",
+  },
+  {
+    href: "/blog/contour-visualizations",
+    title: "Scientific Visualization Guide",
+    text: "Design clear, publication-ready figures for your results section.",
+  },
+];
+
+/* ------------------------------------------------------------------ */
 /* Main blog page                                                      */
 /* ------------------------------------------------------------------ */
 
-export default function Q1ResearchPaperStructureBlog() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
+function ArticleBody() {
   const checklist = [
     "The research gap is specific, meaningful, and supported by a literature matrix.",
     "Objectives are measurable and match the conclusions one by one.",
@@ -200,22 +395,28 @@ export default function Q1ResearchPaperStructureBlog() {
     <>
       Page, M. J., McKenzie, J. E., Bossuyt, P. M., et al. (2021). The PRISMA
       2020 statement: An updated guideline for reporting systematic reviews.
-      <i> BMJ</i>, 372, n71.
+      <i> BMJ</i>, 372, n71.{" "}
+      <Ext href="https://doi.org/10.1136/bmj.n71">doi:10.1136/bmj.n71</Ext>
     </>,
     <>
       Schulz, K. F., Altman, D. G., & Moher, D. (2010). CONSORT 2010
       statement: Updated guidelines for reporting parallel group randomised
-      trials. <i>BMJ</i>, 340, c332.
+      trials. <i>BMJ</i>, 340, c332.{" "}
+      <Ext href="https://doi.org/10.1136/bmj.c332">doi:10.1136/bmj.c332</Ext>
     </>,
     <>
       Wilkinson, M. D., Dumontier, M., Aalbersberg, I. J., et al. (2016).
       The FAIR Guiding Principles for scientific data management and
-      stewardship. <i>Scientific Data</i>, 3, 160018.
+      stewardship. <i>Scientific Data</i>, 3, 160018.{" "}
+      <Ext href="https://doi.org/10.1038/sdata.2016.18">
+        doi:10.1038/sdata.2016.18
+      </Ext>
     </>,
     <>
       Brand, A., Allen, L., Altman, M., Hlava, M., & Scott, J. (2015).
       Beyond authorship: Attribution, contribution, collaboration, and
-      credit. <i>Learned Publishing</i>, 28(2), 151–155.
+      credit. <i>Learned Publishing</i>, 28(2), 151–155.{" "}
+      <Ext href="https://doi.org/10.1087/20150211">doi:10.1087/20150211</Ext>
     </>,
     <>
       Roache, P. J. (1998). <i>Verification and Validation in Computational
@@ -239,7 +440,7 @@ export default function Q1ResearchPaperStructureBlog() {
           <Link href="/" className="flex items-center gap-2.5">
             <Image
               src="/logo.png"
-              alt="ScholarGrid Logo"
+              alt="ScholarGrid logo"
               width={40}
               height={40}
               priority
@@ -260,68 +461,74 @@ export default function Q1ResearchPaperStructureBlog() {
             </Link>
           </div>
 
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle navigation"
-            aria-expanded={mobileMenuOpen}
-            className="rounded-lg border border-slate-200 p-2 text-slate-700 transition hover:bg-slate-50 md:hidden"
-          >
-            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
+          <details className="group md:hidden">
+            <summary
+              aria-label="Toggle navigation"
+              className="flex cursor-pointer list-none items-center rounded-lg border border-slate-200 p-2 text-slate-700 transition hover:bg-slate-50 [&::-webkit-details-marker]:hidden"
+            >
+              <Menu size={20} className="group-open:hidden" />
+              <X size={20} className="hidden group-open:block" />
+            </summary>
+            <div className="absolute left-0 right-0 top-full border-t border-slate-200 bg-white px-6 py-4 shadow-sm">
+              <div className="flex flex-col gap-4 text-sm font-medium text-slate-700">
+                <Link href="/">Home</Link>
+                <Link href="/#services">Services</Link>
+                <Link href="/#process">How it works</Link>
+                <Link href="/#insights">Insights</Link>
+                <Link href="/blog">Knowledge Library</Link>
+              </div>
+            </div>
+          </details>
         </div>
 
-        {mobileMenuOpen && (
-          <div className="border-t border-slate-200 bg-white px-6 py-4 md:hidden">
-            <div className="flex flex-col gap-4 text-sm font-medium text-slate-700">
-              <Link href="/" onClick={() => setMobileMenuOpen(false)}>Home</Link>
-              <Link href="/#services" onClick={() => setMobileMenuOpen(false)}>Services</Link>
-              <Link href="/#process" onClick={() => setMobileMenuOpen(false)}>How it works</Link>
-              <Link href="/#insights" onClick={() => setMobileMenuOpen(false)}>Insights</Link>
-              <Link href="/blog" onClick={() => setMobileMenuOpen(false)}>Knowledge Library</Link>
-            </div>
-          </div>
-        )}
       </nav>
 
       <main>
         {/* Article header */}
-        <section className="border-b border-slate-200 bg-gradient-to-b from-slate-50 to-white">
+        <header className="border-b border-slate-200 bg-gradient-to-b from-slate-50 to-white">
           <div className="mx-auto max-w-5xl px-6 pb-10 pt-9 sm:pb-12 sm:pt-12">
             {/* Breadcrumb */}
-            <div className="mb-7 flex flex-wrap items-center gap-2 text-sm">
+            <nav
+              aria-label="Breadcrumb"
+              className="mb-7 flex flex-wrap items-center gap-2 text-sm"
+            >
               <Link href="/" className="font-medium text-slate-500 transition hover:text-blue-800">
                 Home
               </Link>
-              <ChevronRight size={14} className="text-slate-400" />
+              <ChevronRight size={14} className="text-slate-400" aria-hidden="true" />
               <Link href="/blog" className="font-medium text-slate-500 transition hover:text-blue-800">
                 Knowledge Library
               </Link>
-              <ChevronRight size={14} className="text-slate-400" />
-              <span className="font-medium text-blue-800">Research Methods</span>
-            </div>
+              <ChevronRight size={14} className="text-slate-400" aria-hidden="true" />
+              <span aria-current="page" className="font-medium text-blue-800">
+                Q1 Research Paper Structure
+              </span>
+            </nav>
 
             <div className="mb-5 flex flex-wrap items-center gap-3">
               <span className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-blue-900">
                 Research Methods &amp; Publishing Guide
               </span>
               <span className="flex items-center gap-1.5 text-xs text-slate-500">
-                <Calendar size={14} />
-                November 2026
+                <Calendar size={14} aria-hidden="true" />
+                <time dateTime="2026-11-12">November 2026</time>
               </span>
               <span className="flex items-center gap-1.5 text-xs text-slate-500">
-                <Clock size={14} />
+                <Clock size={14} aria-hidden="true" />
                 20 min read
               </span>
             </div>
 
             <h1 className="max-w-4xl font-serif text-3xl font-bold leading-[1.2] tracking-tight text-slate-950 sm:text-4xl lg:text-[44px]">
-              The Master Guide to Structuring a Q1 Research Paper from Scratch: A 10-Part Blueprint for Any Discipline
+              How to Structure a Q1 Research Paper from Scratch: A 10-Part
+              Blueprint for Any Discipline
             </h1>
 
             <p className="mt-5 max-w-3xl text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">
-              A practical, discipline-neutral blueprint for planning,
-              structuring, writing, and validating a research manuscript for
-              high-ranking academic journals.
+              Learn how to plan, structure, write, and validate a Q1 research
+              paper for high-ranking journals. This step-by-step guide covers
+              the abstract, introduction, methodology, results, conclusion,
+              declarations, references, and a final submission checklist.
             </p>
 
             <div className="mt-7 flex flex-wrap items-center justify-between gap-4 border-t border-slate-200 pt-5">
@@ -329,7 +536,7 @@ export default function Q1ResearchPaperStructureBlog() {
                 <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-slate-200 bg-white">
                   <Image
                     src="/logo.png"
-                    alt="ScholarGrid"
+                    alt="ScholarGrid Technical Team"
                     width={40}
                     height={40}
                     className="h-full w-full object-contain p-1"
@@ -345,12 +552,12 @@ export default function Q1ResearchPaperStructureBlog() {
                 href="/blog"
                 className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-blue-900 transition hover:border-blue-800 hover:bg-blue-50"
               >
-                <BookOpen size={15} />
+                <BookOpen size={15} aria-hidden="true" />
                 All Articles
               </Link>
             </div>
           </div>
-        </section>
+        </header>
 
         {/* Article layout */}
         <div
@@ -359,46 +566,78 @@ export default function Q1ResearchPaperStructureBlog() {
         >
           <article className="min-w-0">
             {/* Overview */}
-            <div
+            <section
               id="overview"
-              className="mb-7 scroll-mt-28 space-y-4 rounded-r-lg border-l-[3px] border-blue-800 bg-slate-50 px-5 py-5 sm:px-6"
+              aria-labelledby="overview-heading"
+              className="mb-7 scroll-mt-28"
             >
-              <p className="text-[15px] leading-[1.85] text-slate-700 sm:text-base">
-                A high-quality Q1 research paper is not simply a collection of
-                experiments, equations, statistical results, or numerical
-                simulations. It is a structured scientific argument. It
-                identifies a meaningful research gap, develops a defensible
-                model or research design, explains a reproducible methodology,
-                presents evidence, and interprets findings without exceeding
-                what the evidence can support.
-              </p>
+              <h2 id="overview-heading" className="sr-only">
+                Overview: What Is the Structure of a Q1 Research Paper?
+              </h2>
+              <div className="space-y-4 rounded-r-lg border-l-[3px] border-blue-800 bg-slate-50 px-5 py-5 sm:px-6">
+                <p className="text-[15px] leading-[1.85] text-slate-700 sm:text-base">
+                  A high-quality Q1 research paper is not simply a collection
+                  of experiments, equations, statistical results, or numerical
+                  simulations. It is a structured scientific argument. It
+                  identifies a meaningful research gap, develops a defensible
+                  model or research design, explains a reproducible
+                  methodology, presents evidence, and interprets findings
+                  without exceeding what the evidence can support. A{" "}
+                  <strong>Q1 journal</strong> is one ranked in the top 25
+                  percent of its subject category, for example on{" "}
+                  <Ext href="https://www.scimagojr.com/">
+                    Scimago Journal &amp; Country Rank
+                  </Ext>
+                  , so editors and reviewers expect rigorous structure.
+                </p>
 
-              <p className="text-[15px] leading-[1.85] text-slate-700 sm:text-base">
-                For many researchers, especially MS and PhD scholars,
-                structuring a manuscript is one of the most challenging stages
-                of academic writing. A paper may contain valuable results but
-                still lack a clear research narrative, a reproducible
-                methodology, or a convincing discussion. This guide provides a
-                ten-part blueprint that can be adapted to engineering, natural
-                sciences, computing and AI, medicine, health, social sciences,
-                and management.
-              </p>
+                <p className="text-[15px] leading-[1.85] text-slate-700 sm:text-base">
+                  For many researchers, especially MS and PhD scholars,
+                  structuring a manuscript is one of the most challenging
+                  stages of academic writing. A paper may contain valuable
+                  results but still lack a clear research narrative, a
+                  reproducible methodology, or a convincing discussion. This
+                  guide provides a ten-part blueprint that can be adapted to
+                  engineering, natural sciences, computing and AI, medicine,
+                  health, social sciences, and management.
+                </p>
 
-              <p className="text-[15px] leading-[1.85] text-slate-700 sm:text-base">
-                Each part explains what the section must achieve, provides
-                practical writing templates, discusses discipline-specific
-                adaptations, and identifies common mistakes. Use it to plan a
-                new manuscript, audit an existing draft, or supervise students
-                developing their first journal paper.
-              </p>
-            </div>
+                <p className="text-[15px] leading-[1.85] text-slate-700 sm:text-base">
+                  Each part explains what the section must achieve, provides
+                  practical writing templates, discusses discipline-specific
+                  adaptations, and identifies common mistakes. Use it to plan a
+                  new manuscript, audit an existing draft, or supervise
+                  students developing their first journal paper. If you are
+                  still collecting sources, start with our{" "}
+                  <Int href="/blog/systematic-literature-review-guide">
+                    systematic literature review guide
+                  </Int>
+                  .
+                </p>
+              </div>
+
+
+              <ArticleTable
+                caption="Standard sections of a research paper and what each must achieve"
+                headers={["Paper section", "Question it answers", "Covered in"]}
+                rows={[
+                  ["Abstract and keywords", "What did you do, and why does it matter?", <a key="a" href="#abstract" className={linkClass}>Part 01</a>],
+                  ["Introduction", "What is the gap, and what is your contribution?", <a key="b" href="#introduction" className={linkClass}>Part 02</a>],
+                  ["Problem formulation", "What exactly is being solved or tested?", <a key="c" href="#formulation" className={linkClass}>Part 03</a>],
+                  ["Methodology", "Why should readers trust your findings?", <a key="d" href="#methodology" className={linkClass}>Part 04</a>],
+                  ["Results and discussion", "What did you find, and why did it happen?", <a key="e" href="#results" className={linkClass}>Part 05</a>],
+                  ["Conclusion", "What do the findings mean and what comes next?", <a key="f" href="#conclusion" className={linkClass}>Part 06</a>],
+                  ["Declarations and references", "Is the work transparent and verifiable?", <a key="g" href="#contributions" className={linkClass}>Parts 07–08</a>],
+                ]}
+              />
+            </section>
 
             {/* PART 01: ABSTRACT */}
             <SectionHeading id="abstract" number="01">
-              Abstract, Keywords and Nomenclature
+              How to Write the Abstract, Keywords and Nomenclature
             </SectionHeading>
 
-            <SubHeading>1.1 Writing a Strong Research Abstract</SubHeading>
+            <SubHeading>1.1 How to Write a Strong Research Abstract</SubHeading>
 
             <p className={`${P} mt-4`}>
               The abstract is the shortest complete representation of your
@@ -410,8 +649,8 @@ export default function Q1ResearchPaperStructureBlog() {
 
             <p className={`${P} mt-3`}>
               A practical target is approximately 150 to 250 words, subject to
-              the target journal&apos;s instructions. The following
-              six-sentence structure provides a useful starting point.
+              the target journal’s instructions. The following six-sentence
+              structure provides a useful starting point.
             </p>
 
             <NumberedSteps
@@ -436,15 +675,21 @@ export default function Q1ResearchPaperStructureBlog() {
               provide insights into [theoretical or practical implication].
             </Callout>
 
-            <SubHeading>1.2 Selecting Research Keywords</SubHeading>
+            <SubHeading>1.2 How to Select Research Keywords</SubHeading>
 
             <p className={`${P} mt-3`}>
               Keywords improve the discoverability of a manuscript in academic
-              databases. Choose approximately five to six terms that represent
-              the phenomenon, methodology, and application area of your study.
+              databases such as{" "}
+              <Ext href="https://www.elsevier.com/products/scopus">Scopus</Ext>{" "}
+              and{" "}
+              <Ext href="https://clarivate.com/academia-government/scientific-and-academic-research/research-discovery-and-referencing/web-of-science/">
+                Web of Science
+              </Ext>
+              . Choose approximately five to six terms that represent the
+              phenomenon, methodology, and application area of your study.
             </p>
 
-            <div className="my-5 flex flex-wrap gap-2">
+            <ul className="my-5 flex flex-wrap gap-2" aria-label="Example keywords">
               {[
                 "Research Design",
                 "Q1 Journal Publishing",
@@ -453,24 +698,24 @@ export default function Q1ResearchPaperStructureBlog() {
                 "Results Interpretation",
                 "Academic Writing",
               ].map((keyword) => (
-                <span
+                <li
                   key={keyword}
                   className="rounded-full border border-blue-200 bg-blue-50 px-3.5 py-1.5 text-[13px] font-medium text-blue-900"
                 >
                   {keyword}
-                </span>
+                </li>
               ))}
-            </div>
+            </ul>
 
             <CheckList>
               <Check>Include the main research phenomenon.</Check>
               <Check>Identify the principal method or approach.</Check>
               <Check>Include the relevant application or research domain.</Check>
               <Check>Avoid generic terms such as analysis and study.</Check>
-              <Check>Check the journal&apos;s required keyword count.</Check>
+              <Check>Check the journal’s required keyword count.</Check>
             </CheckList>
 
-            <SubHeading>1.3 Preparing the Nomenclature</SubHeading>
+            <SubHeading>1.3 How to Prepare the Nomenclature Table</SubHeading>
 
             <p className={`${P} mt-3`}>
               Every research discipline uses symbols, variables, or
@@ -480,6 +725,7 @@ export default function Q1ResearchPaperStructureBlog() {
             </p>
 
             <ArticleTable
+              caption="Example nomenclature table for a research manuscript"
               headers={["Symbol", "Description", "Unit or type", "Examples"]}
               rows={[
                 ["S", "Control or intervention parameter", "As defined", "Suction rate, dosage, learning rate"],
@@ -503,7 +749,7 @@ export default function Q1ResearchPaperStructureBlog() {
 
             {/* PART 02: INTRODUCTION */}
             <SectionHeading id="introduction" number="02">
-              Introduction and Research Model
+              How to Write the Introduction and Research Gap
             </SectionHeading>
 
             <SubHeading>2.1 What a Strong Q1 Introduction Must Achieve</SubHeading>
@@ -513,7 +759,11 @@ export default function Q1ResearchPaperStructureBlog() {
               research. It should take readers from the broader research
               problem to the specific gap addressed by your study. Instead of
               listing previous papers individually, synthesise existing
-              literature into meaningful research themes.
+              literature into meaningful research themes. Swales’ classic
+              “create a research space” model and{" "}
+              <i>The Craft of Research</i> (see{" "}
+              <a href="#references" className={linkClass}>references</a>) are
+              both useful frameworks.
             </p>
 
             <NumberedSteps
@@ -526,7 +776,7 @@ export default function Q1ResearchPaperStructureBlog() {
               ]}
             />
 
-            <SubHeading>2.2 Weak Gap Versus Strong Gap</SubHeading>
+            <SubHeading>2.2 How to Write a Research Gap: Weak Versus Strong</SubHeading>
 
             <div className="my-5 rounded-lg border border-red-100 bg-red-50/50 p-4">
               <p className="text-[11px] font-bold uppercase tracking-wider text-red-800">
@@ -556,16 +806,26 @@ export default function Q1ResearchPaperStructureBlog() {
               </p>
             </div>
 
-            <SubHeading>2.3 Building a Literature Matrix</SubHeading>
+            <SubHeading>2.3 How to Build a Literature Matrix</SubHeading>
 
             <p className={`${P} mt-3`}>
               A literature matrix makes research gaps easier to identify.
               Prepare one row for each important study. Aim for approximately
               15 to 30 key papers as a starting point, depending on the
-              discipline and scope of your research.
+              discipline and scope of your research. For a fully structured
+              search and screening process, follow our{" "}
+              <Int href="/blog/systematic-literature-review-guide">
+                systematic literature review guide
+              </Int>{" "}
+              and the{" "}
+              <Ext href="https://www.prisma-statement.org/">
+                PRISMA 2020 reporting guideline
+              </Ext>
+              .
             </p>
 
             <ArticleTable
+              caption="Literature matrix template for identifying research gaps"
               headers={[
                 "Reference",
                 "Year",
@@ -580,6 +840,7 @@ export default function Q1ResearchPaperStructureBlog() {
                 ["[Author 3]", "2025", "[Method]", "[Finding]", "[Limitation]", "[Research gap]"],
               ]}
             />
+
 
             <Callout title="Practical research tip">
               Read the limitations and future research sections of relevant
@@ -618,6 +879,7 @@ export default function Q1ResearchPaperStructureBlog() {
             </p>
 
             <ArticleTable
+              caption="What the research model represents in different disciplines"
               headers={["Discipline", "What the model represents", "Boundary or baseline conditions"]}
               rows={[
                 ["Engineering and physics", "Physical setup, geometry, and governing physics", "Boundary and initial conditions"],
@@ -685,10 +947,10 @@ export default function Q1ResearchPaperStructureBlog() {
 
             {/* PART 03: FORMULATION */}
             <SectionHeading id="formulation" number="03">
-              Problem Formulation
+              Problem Formulation: Turning a Research Idea into a Reproducible Problem
             </SectionHeading>
 
-            <SubHeading>3.1 Turning a Research Idea into a Reproducible Problem</SubHeading>
+            <SubHeading>3.1 What the Problem Formulation Section Must Contain</SubHeading>
 
             <p className={`${P} mt-4`}>
               The problem formulation converts the research idea into a precise
@@ -732,6 +994,7 @@ export default function Q1ResearchPaperStructureBlog() {
             </p>
 
             <ArticleTable
+              caption="Model, conditions and reported outputs across research fields"
               headers={["Field", "Model F", "Conditions C", "Reported outputs"]}
               rows={[
                 ["Physics and engineering", "Governing equations and conservation laws", "Boundary and initial conditions", "Profiles, coefficients, efficiency"],
@@ -742,7 +1005,7 @@ export default function Q1ResearchPaperStructureBlog() {
               ]}
             />
 
-            <SubHeading>3.3 Writing Equations and Research Designs</SubHeading>
+            <SubHeading>3.3 How to Write Equations and Research Designs</SubHeading>
 
             <CheckList>
               <Check>Number every equation referenced later in the manuscript.</Check>
@@ -775,12 +1038,13 @@ export default function Q1ResearchPaperStructureBlog() {
             </p>
 
             <ArticleTable
+              caption="Example reported quantities by research area"
               headers={["Research area", "Example quantities"]}
               rows={[
                 ["Engineering", "Skin-friction coefficient, Nusselt number, efficiency"],
                 ["Computing and AI", "Accuracy, precision, recall, F1-score"],
                 ["Medicine", "Hazard ratio, risk ratio, confidence interval"],
-                ["Social science", "Cronbach's alpha, path coefficients, fit indices"],
+                ["Social science", "Cronbach’s alpha, path coefficients, fit indices"],
                 ["Thermodynamics", "Entropy generation and Bejan number"],
               ]}
             />
@@ -820,30 +1084,43 @@ export default function Q1ResearchPaperStructureBlog() {
 
             {/* PART 04: METHODOLOGY */}
             <SectionHeading id="methodology" number="04">
-              Research Methodology
+              Research Methodology: How to Make Your Study Reproducible
             </SectionHeading>
 
-            <SubHeading>4.1 Selecting and Justifying the Method</SubHeading>
+            <SubHeading>4.1 How to Select and Justify Your Research Method</SubHeading>
 
             <p className={`${P} mt-4`}>
               The methodology section answers one important question: why
               should readers trust your findings? Naming a method is not
               enough. Explain why it is appropriate for the research problem
               and provide sufficient information for independent reproduction.
+              Reporting guidelines from the{" "}
+              <Ext href="https://www.equator-network.org/">EQUATOR Network</Ext>{" "}
+              help you choose the right checklist for your study design.
             </p>
 
             <ArticleTable
+              caption="Typical methods and reporting requirements by research field"
               headers={["Research field", "Typical methods", "What to report"]}
               rows={[
                 ["Computational science and engineering", "Finite difference, finite volume, Runge-Kutta, collocation, CFD", "Software, version, tolerance, grid, domain, convergence"],
                 ["Experimental sciences", "Controlled experiments and instrumentation", "Apparatus, uncertainty, repeats, calibration"],
                 ["Computing and AI", "Model training, benchmarking, ablation", "Dataset, split, hyperparameters, seeds, hardware, code"],
-                ["Medical and health", "RCT, cohort, case-control, systematic review", "Protocol, ethics, sample size, CONSORT, STROBE, PRISMA"],
+                [
+                  "Medical and health",
+                  "RCT, cohort, case-control, systematic review",
+                  <>
+                    Protocol, ethics, sample size,{" "}
+                    <Ext href="https://www.consort-statement.org/">CONSORT</Ext>,{" "}
+                    <Ext href="https://www.strobe-statement.org/">STROBE</Ext>,{" "}
+                    <Ext href="https://www.prisma-statement.org/">PRISMA</Ext>
+                  </>,
+                ],
                 ["Social science and management", "Survey, interviews, SEM, mixed methods", "Sampling, instrument validation, reliability, ethics"],
               ]}
             />
 
-            <SubHeading>4.2 Writing the Methodology as Numbered Steps</SubHeading>
+            <SubHeading>4.2 How to Write the Methodology as Numbered Steps</SubHeading>
 
             <p className={`${P} mt-3`}>
               A numbered procedure makes the methodology easier to understand,
@@ -864,11 +1141,12 @@ export default function Q1ResearchPaperStructureBlog() {
               ]}
             />
 
-            <SubHeading>4.3 Verification and Reproducibility</SubHeading>
+            <SubHeading>4.3 Verification, Validation and Reproducibility</SubHeading>
 
             <p className={`${P} mt-3`}>
               Verification establishes whether the computational or analytical
-              procedure is implemented correctly. Reproducibility allows other
+              procedure is implemented correctly. Validation establishes
+              whether it represents reality. Reproducibility allows other
               researchers to understand and repeat the work.
             </p>
 
@@ -876,8 +1154,22 @@ export default function Q1ResearchPaperStructureBlog() {
               <Check>Reduce the model to a known limiting case and compare it with published findings.</Check>
               <Check>Demonstrate that results remain stable after refining the grid, domain, or sample.</Check>
               <Check>Report software versions, numerical settings, and random seeds.</Check>
-              <Check>Share code and data in an accessible repository where possible, following FAIR principles.</Check>
-              <Check>For human or animal research, report ethics approval and consent where applicable.</Check>
+              <Check>
+                Share code and data in an accessible repository where
+                possible, following the{" "}
+                <Ext href="https://www.go-fair.org/fair-principles/">
+                  FAIR principles
+                </Ext>
+                .
+              </Check>
+              <Check>
+                For human or animal research, report ethics approval and
+                consent where applicable, in line with{" "}
+                <Ext href="https://www.icmje.org/recommendations/">
+                  ICMJE recommendations
+                </Ext>
+                .
+              </Check>
             </CheckList>
 
             <Callout title="Important distinction">
@@ -896,9 +1188,17 @@ export default function Q1ResearchPaperStructureBlog() {
               <Check>Providing insufficient detail for independent reproduction.</Check>
             </CheckList>
 
+            <p className={`${P} mt-4`}>
+              These are also among the leading causes of desk rejection. Read{" "}
+              <Int href="/blog/paper-rejection-reasons">
+                why journals reject research papers
+              </Int>{" "}
+              to see how editors judge methodology and novelty.
+            </p>
+
             {/* PART 05: RESULTS */}
             <SectionHeading id="results" number="05">
-              Results and Discussion
+              Results and Discussion: How to Validate and Interpret Your Findings
             </SectionHeading>
 
             <Callout title="The central rule for discussing every result">
@@ -915,7 +1215,7 @@ export default function Q1ResearchPaperStructureBlog() {
               argument of a paper.
             </p>
 
-            <SubHeading>5.1 Validation and Comparison with Literature</SubHeading>
+            <SubHeading>5.1 Validation and Comparison with Published Literature</SubHeading>
 
             <p className={`${P} mt-3`}>
               Validation should appear before the discussion of new results.
@@ -925,6 +1225,7 @@ export default function Q1ResearchPaperStructureBlog() {
             </p>
 
             <ArticleTable
+              caption="Validation table template comparing present results with published values"
               headers={[
                 "Quantity or metric",
                 "Condition",
@@ -945,7 +1246,8 @@ export default function Q1ResearchPaperStructureBlog() {
               established reference results.
             </Callout>
 
-            <SubHeading>5.2 Presenting the Main Results</SubHeading>
+
+            <SubHeading>5.2 How to Present the Main Results</SubHeading>
 
             <p className={`${P} mt-3`}>
               Include a main results table containing the core numerical
@@ -955,6 +1257,7 @@ export default function Q1ResearchPaperStructureBlog() {
             </p>
 
             <ArticleTable
+              caption="Main results table template"
               headers={["Case", "S", "γ₁", "γ₂", "Metric A", "Metric B", "Metric C"]}
               rows={[
                 ["Baseline", "0", "0", "1", "[Value]", "[Value]", "[Value]"],
@@ -964,7 +1267,7 @@ export default function Q1ResearchPaperStructureBlog() {
               ]}
             />
 
-            <SubHeading>5.3 Discussing Parameter Effects</SubHeading>
+            <SubHeading>5.3 How to Discuss Parameter Effects</SubHeading>
 
             <p className={`${P} mt-3`}>
               A parametric investigation should change one parameter at a time
@@ -995,7 +1298,7 @@ export default function Q1ResearchPaperStructureBlog() {
               moderation and robustness analysis.
             </p>
 
-            <SubHeading>5.4 Discussing the Main Novelty Metric</SubHeading>
+            <SubHeading>5.4 How to Discuss the Main Novelty Metric</SubHeading>
 
             <p className={`${P} mt-3`}>
               Every research paper should clearly explain its central
@@ -1015,6 +1318,7 @@ export default function Q1ResearchPaperStructureBlog() {
             />
 
             <ArticleTable
+              caption="Template for discussing the effect of parameters on the novelty metric"
               headers={[
                 "Parameter increased",
                 "Effect on component 1",
@@ -1035,7 +1339,7 @@ export default function Q1ResearchPaperStructureBlog() {
               own model and conditions.
             </p>
 
-            <SubHeading>5.5 Uncertainty and Statistical Significance</SubHeading>
+            <SubHeading>5.5 Reporting Uncertainty and Statistical Significance</SubHeading>
 
             <CheckList>
               <Check>Report confidence intervals, standard deviations, or numerical error estimates.</Check>
@@ -1044,13 +1348,18 @@ export default function Q1ResearchPaperStructureBlog() {
               <Check>Report alternative solution branches or subgroups when results are not unique.</Check>
             </CheckList>
 
-            <SubHeading>5.6 Choosing Effective Figures and Tables</SubHeading>
+            <SubHeading>5.6 How to Choose Effective Figures and Tables</SubHeading>
 
             <p className={`${P} mt-3`}>
               Figures should answer specific research questions rather than
               simply increase the number of visual elements in a manuscript. A
               practical starting point is four to eight well-designed figures,
-              depending on the study and journal requirements.
+              depending on the study and journal requirements. For plotting
+              techniques, see our{" "}
+              <Int href="/blog/contour-visualizations">
+                scientific visualization guide
+              </Int>
+              .
             </p>
 
             <CheckList>
@@ -1073,7 +1382,7 @@ export default function Q1ResearchPaperStructureBlog() {
 
             {/* PART 06: CONCLUSION */}
             <SectionHeading id="conclusion" number="06">
-              Conclusion and Future Outlook
+              Conclusion and Future Research Directions
             </SectionHeading>
 
             <SubHeading>6.1 What a Research Conclusion Must Achieve</SubHeading>
@@ -1118,6 +1427,7 @@ export default function Q1ResearchPaperStructureBlog() {
             </p>
 
             <ArticleTable
+              caption="Potential application areas by research field"
               headers={["Research field", "Potential application areas"]}
               rows={[
                 ["Engineering", "Thermal management, aerospace components, energy systems, manufacturing and coating processes"],
@@ -1128,7 +1438,7 @@ export default function Q1ResearchPaperStructureBlog() {
               ]}
             />
 
-            <SubHeading>6.4 Acknowledging Research Limitations</SubHeading>
+            <SubHeading>6.4 How to Acknowledge Research Limitations</SubHeading>
 
             <p className={`${P} mt-3`}>
               A credible manuscript acknowledges its limitations. Discussing
@@ -1143,7 +1453,7 @@ export default function Q1ResearchPaperStructureBlog() {
               <Check>Generalisability limitations and the conditions under which the findings may not apply.</Check>
             </CheckList>
 
-            <SubHeading>6.5 Identifying Future Research Directions</SubHeading>
+            <SubHeading>6.5 How to Identify Future Research Directions</SubHeading>
 
             <CheckList>
               <Check>Relax the principal simplifying assumption and quantify its effect.</Check>
@@ -1154,9 +1464,9 @@ export default function Q1ResearchPaperStructureBlog() {
             </CheckList>
 
             <Callout title="Avoid generic future-work statements">
-              Instead of ending with only &quot;more research is needed&quot;,
-              identify a specific limitation, explain how it could be
-              addressed, and describe the expected scientific benefit.
+              Instead of ending with only “more research is needed”, identify a
+              specific limitation, explain how it could be addressed, and
+              describe the expected scientific benefit.
             </Callout>
 
             {/* PART 07: DECLARATIONS */}
@@ -1164,17 +1474,21 @@ export default function Q1ResearchPaperStructureBlog() {
               CRediT Author Contributions and Research Declarations
             </SectionHeading>
 
-            <SubHeading>7.1 Preparing CRediT Author Contributions</SubHeading>
+            <SubHeading>7.1 How to Prepare CRediT Author Contributions</SubHeading>
 
             <p className={`${P} mt-4`}>
-              Research contributions should be described transparently. The
-              CRediT taxonomy provides a structured way to identify the
-              different roles performed by each author. Use the journal&apos;s
-              required format and ensure that the contribution statements
-              accurately reflect the work completed.
+              Research contributions should be described transparently. The{" "}
+              <Ext href="https://credit.niso.org/">
+                CRediT (Contributor Roles Taxonomy)
+              </Ext>{" "}
+              provides a structured way to identify the different roles
+              performed by each author. Use the journal’s required format and
+              ensure that the contribution statements accurately reflect the
+              work completed.
             </p>
 
             <ArticleTable
+              caption="Example CRediT author contribution allocation"
               headers={["CRediT role", "Example author allocation"]}
               rows={[
                 ["Conceptualisation", "[Author 1]"],
@@ -1223,9 +1537,14 @@ export default function Q1ResearchPaperStructureBlog() {
             <p className={`${P} mt-3`}>
               If generative AI or other AI-assisted tools were used during
               manuscript preparation, disclose their use according to the
-              target journal&apos;s current policy. Follow the journal&apos;s
+              target journal’s current policy. Follow the journal’s
               instructions on writing, editing, coding, data analysis, and
-              other AI-assisted activities.
+              other AI-assisted activities. The{" "}
+              <Ext href="https://publicationethics.org/guidance/cope-position/authorship-and-ai-tools">
+                COPE position statement
+              </Ext>{" "}
+              notes that AI tools cannot be listed as authors, because authors
+              remain accountable for the work.
             </p>
 
             {/* PART 08: REFERENCES */}
@@ -1233,7 +1552,7 @@ export default function Q1ResearchPaperStructureBlog() {
               References and Literature Management
             </SectionHeading>
 
-            <SubHeading>8.1 Building a Strong Reference List</SubHeading>
+            <SubHeading>8.1 How to Build a Strong Reference List</SubHeading>
 
             <p className={`${P} mt-4`}>
               References establish the scientific context of a manuscript and
@@ -1258,7 +1577,7 @@ export default function Q1ResearchPaperStructureBlog() {
               ))}
             </ol>
 
-            <SubHeading>8.3 Finding Recent Literature (2024–2026)</SubHeading>
+            <SubHeading>8.3 How to Find Recent Literature (2024–2026)</SubHeading>
 
             <p className={`${P} mt-3`}>
               Recent literature should be selected according to the specific
@@ -1274,7 +1593,12 @@ export default function Q1ResearchPaperStructureBlog() {
                 <>Select approximately 10 to 15 relevant papers from strong journals in your field.</>,
                 <>Prioritise studies that are closely related to your research question and target journal.</>,
                 <>Verify each DOI, article title, volume, issue, and page range on the publisher website.</>,
-                <>Format all entries according to the target journal&apos;s reference style.</>,
+                <>
+                  Format all entries according to the target journal’s
+                  reference style (see our{" "}
+                  <Int href="/blog/formatting-guide">manuscript formatting guide</Int>
+                  ).
+                </>,
               ]}
             />
 
@@ -1288,12 +1612,12 @@ export default function Q1ResearchPaperStructureBlog() {
               <Check>Cite primary research sources rather than relying only on review articles.</Check>
               <Check>Aim for approximately 40 to 60 percent of references from the last five years where suitable for your field.</Check>
               <Check>Never cite a paper that you have not read and verified.</Check>
-              <Check>Follow the journal&apos;s citation and reference formatting instructions.</Check>
+              <Check>Follow the journal’s citation and reference formatting instructions.</Check>
             </CheckList>
 
             {/* PART 09: FINAL CHECKLIST */}
             <SectionHeading id="checklist" number="09">
-              The Complete Q1 Manuscript Checklist
+              The Complete Q1 Manuscript Checklist Before Submission
             </SectionHeading>
 
             <p className={`${P} mt-4`}>
@@ -1303,17 +1627,18 @@ export default function Q1ResearchPaperStructureBlog() {
               checklist to identify missing elements.
             </p>
 
-            <div className="mt-5 space-y-2">
+            <ul className="mt-5 space-y-2">
               {checklist.map((item) => (
-                <div
+                <li
                   key={item}
                   className="flex items-start gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3.5"
                 >
-                  <CheckCircle2 size={18} className="mt-0.5 shrink-0 text-emerald-600" />
+                  <CheckCircle2 size={18} className="mt-0.5 shrink-0 text-emerald-600" aria-hidden="true" />
                   <span className="text-sm leading-[1.8] text-slate-700">{item}</span>
-                </div>
+                </li>
               ))}
-            </div>
+            </ul>
+
 
             {/* PART 10: SUBMISSION READINESS */}
             <SectionHeading id="submission-readiness" number="10">
@@ -1323,14 +1648,14 @@ export default function Q1ResearchPaperStructureBlog() {
             <p className={`${P} mt-4`}>
               A well-structured manuscript is the foundation of a professional
               journal submission. Once the scientific argument is complete,
-              review the target journal&apos;s instructions and ensure that
-              all submission requirements are satisfied.
+              review the target journal’s instructions and ensure that all
+              submission requirements are satisfied.
             </p>
 
-            <SubHeading>10.1 Final Submission Preparation</SubHeading>
+            <SubHeading>10.1 Final Submission Preparation Steps</SubHeading>
 
             <CheckList>
-              <Check>Confirm that the journal publishes the type of research presented in your manuscript.</Check>
+              <Check>Confirm that the journal publishes the type of research presented in your manuscript, and verify its quartile on <Ext href="https://www.scimagojr.com/">Scimago</Ext>.</Check>
               <Check>Check the latest author instructions and manuscript template.</Check>
               <Check>Ensure that the title, abstract, keywords, and author information are consistent.</Check>
               <Check>Prepare the cover letter and required supplementary files.</Check>
@@ -1347,21 +1672,60 @@ export default function Q1ResearchPaperStructureBlog() {
               formatting according to the target journal.
             </Callout>
 
-            {/* Article ending */}
-            <div className="mt-10 border-t border-slate-200 pt-7">
+            {/* FAQ */}
+            <SectionHeading id="faq">
+              Frequently Asked Questions About Q1 Research Paper Structure
+            </SectionHeading>
+
+            <div className="mt-6 divide-y divide-slate-200 overflow-hidden rounded-xl border border-slate-200">
+              {faqs.map((faq, index) => (
+                <details key={faq.q} className="group bg-white open:bg-slate-50" {...(index === 0 ? { open: true } : {})}>
+                  <summary className="flex cursor-pointer list-none items-start justify-between gap-4 px-5 py-4 text-left">
+                    <h3 className="font-serif text-base font-bold leading-snug text-slate-950">
+                      {faq.q}
+                    </h3>
+                    <ChevronDown
+                      size={18}
+                      aria-hidden="true"
+                      className="mt-1 shrink-0 text-blue-800 transition group-open:rotate-180"
+                    />
+                  </summary>
+                  <p className="px-5 pb-5 text-[15px] leading-[1.8] text-slate-700">
+                    {faq.a}
+                  </p>
+                </details>
+              ))}
+            </div>
+
+            <p className={`${P} mt-4`}>
+              Still have questions? Browse more{" "}
+              <Int href="/blog">research guides in the ScholarGrid Knowledge Library</Int>{" "}
+              or read our{" "}
+              <Int href="/blog/paper-rejection-reasons">journal rejection guide</Int>.
+            </p>
+
+            {/* Conclusion + CTA */}
+            <section
+              id="final-thoughts"
+              aria-labelledby="final-thoughts-heading"
+              className="mt-10 scroll-mt-28 border-t border-slate-200 pt-7"
+            >
               <p className="text-xs font-bold uppercase tracking-[0.15em] text-blue-800">
                 ScholarGrid Research Library
               </p>
 
-              <h2 className="mt-2 font-serif text-2xl font-bold text-slate-950 sm:text-[28px]">
-                Build Your Next Research Paper with a Clear Scientific Structure
+              <h2
+                id="final-thoughts-heading"
+                className="mt-2 font-serif text-2xl font-bold text-slate-950 sm:text-[28px]"
+              >
+                Conclusion: Build Your Next Q1 Research Paper with a Clear Scientific Structure
               </h2>
 
               <p className={`${P} mt-3`}>
                 Writing a competitive research paper requires more than
                 collecting results. It requires a coherent scientific
                 argument, transparent methodology, reliable validation, and
-                careful interpretation. By following this blueprint,
+                careful interpretation. By following this ten-part blueprint,
                 researchers can develop manuscripts that communicate their
                 contributions clearly across different academic disciplines.
               </p>
@@ -1374,36 +1738,49 @@ export default function Q1ResearchPaperStructureBlog() {
                 evaluating its scientific contribution.
               </p>
 
-              <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
-                <Link
-                  href="/blog"
-                  className="inline-flex items-center gap-2 text-sm font-semibold text-blue-800 transition hover:text-blue-950"
-                >
-                  <ArrowLeft size={16} />
-                  Back to Knowledge Library
-                </Link>
-
-                <Link
-                  href="/"
-                  className="inline-flex items-center gap-2 rounded-lg bg-blue-950 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-800"
-                >
-                  Explore ScholarGrid
-                  <ArrowRight size={16} />
-                </Link>
+              <div className="mt-6 rounded-xl border border-blue-100 bg-blue-50/60 p-6">
+                <p className="font-serif text-lg font-bold text-blue-950">
+                  Need expert support with your manuscript?
+                </p>
+                <p className="mt-2 text-sm leading-[1.8] text-slate-700">
+                  ScholarGrid helps researchers plan, structure, format, and
+                  prepare manuscripts for journal submission. Explore our
+                  academic services or continue learning in the Knowledge
+                  Library.
+                </p>
+                <div className="mt-4 flex flex-wrap items-center gap-4">
+                  <Link
+                    href="/#services"
+                    className="inline-flex items-center gap-2 rounded-lg bg-blue-950 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-800"
+                  >
+                    Explore ScholarGrid Services
+                    <ArrowRight size={16} aria-hidden="true" />
+                  </Link>
+                  <Link
+                    href="/blog"
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-blue-800 transition hover:text-blue-950"
+                  >
+                    <ArrowLeft size={16} aria-hidden="true" />
+                    Back to Knowledge Library
+                  </Link>
+                </div>
               </div>
-            </div>
+            </section>
           </article>
 
           {/* Desktop sidebar */}
-          <aside className="hidden lg:block">
+          <aside className="hidden lg:block" aria-label="Article sidebar">
             <div className="sticky top-24 space-y-5">
               {/* Table of contents */}
-              <div className="rounded-xl border border-slate-200 bg-white p-5">
+              <nav
+                aria-label="Table of contents"
+                className="rounded-xl border border-slate-200 bg-white p-5"
+              >
                 <div className="flex items-center gap-2 border-b border-slate-100 pb-4">
-                  <List size={17} className="text-blue-800" />
-                  <h3 className="font-serif text-base font-bold text-slate-950">
+                  <List size={17} className="text-blue-800" aria-hidden="true" />
+                  <p className="font-serif text-base font-bold text-slate-950">
                     In This Article
-                  </h3>
+                  </p>
                 </div>
 
                 <div className="mt-3 space-y-0.5">
@@ -1419,21 +1796,22 @@ export default function Q1ResearchPaperStructureBlog() {
                       <span className="flex-1">{item.title}</span>
                       <ChevronRight
                         size={12}
+                        aria-hidden="true"
                         className="mt-1 shrink-0 opacity-0 transition group-hover:translate-x-0.5 group-hover:opacity-100"
                       />
                     </a>
                   ))}
                 </div>
-              </div>
+              </nav>
 
               {/* Knowledge library card */}
               <div className="rounded-xl border border-slate-200 bg-slate-50 p-5">
                 <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-blue-100 text-blue-900">
-                  <BookOpen size={19} />
+                  <BookOpen size={19} aria-hidden="true" />
                 </div>
-                <h3 className="font-serif text-lg font-bold text-slate-950">
+                <p className="font-serif text-lg font-bold text-slate-950">
                   Explore More Research Guides
-                </h3>
+                </p>
                 <p className="mt-2 text-[13px] leading-[1.8] text-slate-600">
                   Discover practical resources on academic writing, literature
                   reviews, research methodology, and scholarly publishing.
@@ -1443,7 +1821,7 @@ export default function Q1ResearchPaperStructureBlog() {
                   className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-blue-800 transition hover:text-blue-950"
                 >
                   Browse All Articles
-                  <ArrowRight size={15} />
+                  <ArrowRight size={15} aria-hidden="true" />
                 </Link>
               </div>
 
@@ -1452,7 +1830,7 @@ export default function Q1ResearchPaperStructureBlog() {
                 href="/"
                 className="flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-blue-800 hover:text-blue-900"
               >
-                <ArrowLeft size={15} />
+                <ArrowLeft size={15} aria-hidden="true" />
                 Back to Homepage
               </Link>
             </div>
@@ -1460,15 +1838,21 @@ export default function Q1ResearchPaperStructureBlog() {
         </div>
 
         {/* Related reading section */}
-        <section className="border-t border-slate-200 bg-slate-50">
+        <section
+          aria-labelledby="related-heading"
+          className="border-t border-slate-200 bg-slate-50"
+        >
           <div className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
             <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
               <div>
                 <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-blue-800">
                   Continue Exploring
                 </p>
-                <h2 className="mt-2 font-serif text-2xl font-bold text-slate-950">
-                  More from the Research Library
+                <h2
+                  id="related-heading"
+                  className="mt-2 font-serif text-2xl font-bold text-slate-950"
+                >
+                  Related Research Guides from ScholarGrid
                 </h2>
               </div>
 
@@ -1477,8 +1861,29 @@ export default function Q1ResearchPaperStructureBlog() {
                 className="inline-flex items-center gap-2 text-sm font-semibold text-blue-800 transition hover:text-blue-950"
               >
                 View All Articles
-                <ArrowRight size={16} />
+                <ArrowRight size={16} aria-hidden="true" />
               </Link>
+            </div>
+
+            <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {related.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="group rounded-xl border border-slate-200 bg-white p-5 transition hover:border-blue-800 hover:shadow-sm"
+                >
+                  <h3 className="font-serif text-base font-bold leading-snug text-slate-950 group-hover:text-blue-900">
+                    {item.title}
+                  </h3>
+                  <p className="mt-2 text-[13px] leading-[1.7] text-slate-600">
+                    {item.text}
+                  </p>
+                  <span className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-blue-800">
+                    Read guide
+                    <ArrowRight size={13} aria-hidden="true" />
+                  </span>
+                </Link>
+              ))}
             </div>
           </div>
         </section>
@@ -1492,7 +1897,7 @@ export default function Q1ResearchPaperStructureBlog() {
             <Link href="/" className="inline-flex items-center gap-3">
               <Image
                 src="/logo.png"
-                alt="ScholarGrid Logo"
+                alt="ScholarGrid logo"
                 width={36}
                 height={36}
                 className="h-9 w-9 object-contain"
@@ -1509,19 +1914,19 @@ export default function Q1ResearchPaperStructureBlog() {
           </div>
 
           {/* Explore */}
-          <div>
-            <h3 className="text-sm font-semibold text-white">Explore ScholarGrid</h3>
+          <nav aria-label="Explore ScholarGrid">
+            <p className="text-sm font-semibold text-white">Explore ScholarGrid</p>
             <ul className="mt-4 space-y-2.5 text-[13px]">
               <li><Link href="/" className="transition hover:text-white">Home</Link></li>
               <li><Link href="/#services" className="transition hover:text-white">Academic Services</Link></li>
               <li><Link href="/#process" className="transition hover:text-white">How It Works</Link></li>
               <li><Link href="/#faq" className="transition hover:text-white">Frequently Asked Questions</Link></li>
             </ul>
-          </div>
+          </nav>
 
           {/* Article links */}
-          <div>
-            <h3 className="text-sm font-semibold text-white">Research Resources</h3>
+          <nav aria-label="Research resources">
+            <p className="text-sm font-semibold text-white">Research Resources</p>
             <ul className="mt-4 space-y-2.5 text-[13px]">
               <li><Link href="/blog/formatting-guide" className="transition hover:text-white">Manuscript Formatting</Link></li>
               <li><Link href="/blog/paper-rejection-reasons" className="transition hover:text-white">Journal Rejection Guide</Link></li>
@@ -1530,7 +1935,7 @@ export default function Q1ResearchPaperStructureBlog() {
               <li><Link href="/blog/q1-research-paper-structure" className="transition hover:text-white">Q1 Research Paper Structure</Link></li>
               <li><Link href="/blog" className="transition hover:text-white">All Articles</Link></li>
             </ul>
-          </div>
+          </nav>
         </div>
 
         <div className="border-t border-slate-800 px-6 py-5 text-center text-xs leading-relaxed text-slate-500">
@@ -1538,5 +1943,17 @@ export default function Q1ResearchPaperStructureBlog() {
         </div>
       </footer>
     </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <ArticleBody />
+    </>
   );
 }
