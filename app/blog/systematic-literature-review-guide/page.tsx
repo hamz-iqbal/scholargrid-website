@@ -1,6 +1,5 @@
-"use client";
-
-import React, { useState } from "react";
+import React from "react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -11,10 +10,147 @@ import {
   CheckCircle2,
   BookOpen,
   ChevronRight,
+  ChevronDown,
   Menu,
   X,
   List,
 } from "lucide-react";
+
+/* ------------------------------------------------------------------ */
+/* SEO: metadata, FAQs and structured data                             */
+/* ------------------------------------------------------------------ */
+
+/* Set NEXT_PUBLIC_SITE_URL in .env if your domain differs (no trailing slash) */
+const SITE_URL = (
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.scholargrid.org"
+).replace(/\/$/, "");
+
+const SLUG = "/blog/systematic-literature-review-guide";
+const PAGE_URL = `${SITE_URL}${SLUG}`;
+
+const TITLE =
+  "How to Write a Systematic Literature Review: 6-Step Guide for Engineers (2026)";
+const DESCRIPTION =
+  "Learn how to write a systematic literature review in six steps: define the question, search databases, screen with PRISMA, extract data, synthesize and report.";
+
+export const metadata: Metadata = {
+  /* If your root layout already uses title.template "%s | ScholarGrid",
+     keep this plain string; otherwise append " | ScholarGrid". */
+  title: TITLE,
+  description: DESCRIPTION,
+  keywords: [
+    "systematic literature review",
+    "how to write a systematic review",
+    "PRISMA 2020 flow diagram",
+    "literature review search string",
+    "inclusion and exclusion criteria",
+    "research gap identification",
+    "thematic analysis literature review",
+    "Kitchenham guidelines",
+  ],
+  alternates: { canonical: PAGE_URL },
+  robots: { index: true, follow: true },
+  openGraph: {
+    type: "article",
+    url: PAGE_URL,
+    siteName: "ScholarGrid",
+    title: `${TITLE} | ScholarGrid`,
+    description: DESCRIPTION,
+    publishedTime: "2026-11-01T00:00:00Z",
+    modifiedTime: "2026-11-12T00:00:00Z",
+    authors: ["ScholarGrid Technical Team"],
+  },
+  twitter: {
+    card: "summary",
+    title: TITLE,
+    description: DESCRIPTION,
+  },
+};
+
+type Faq = { q: string; a: string };
+
+const faqs: Faq[] = [
+  {
+    q: "What is a systematic literature review and how is it different from a narrative review?",
+    a: "A systematic literature review follows a documented, repeatable method: a written protocol, defined databases and search strings, fixed inclusion and exclusion criteria, and transparent screening and synthesis. A narrative review is a selective overview that gives background or an expert view without a reproducible search.",
+  },
+  {
+    q: "How many databases should I search for a systematic review?",
+    a: "Use at least two or three major databases that cover your field, such as Scopus, Web of Science, and IEEE Xplore or ScienceDirect for engineering topics. Add backward and forward snowballing to catch papers the databases missed, and record the database, date, string, filters and hit count for every search.",
+  },
+  {
+    q: "Can I rely on Google Scholar alone?",
+    a: "It is not recommended. Google Scholar results are hard to reproduce and cannot be exported cleanly, which conflicts with the transparency a systematic review requires. It can be a useful supplement alongside structured databases.",
+  },
+  {
+    q: "What is the PRISMA 2020 flow diagram and do I need it?",
+    a: "PRISMA 2020 is a reporting guideline for systematic reviews. Its flow diagram shows how many records you identified, screened, excluded and included at each stage. Most journals expect something equivalent for a systematic review, so it is good practice to include one.",
+  },
+  {
+    q: "How many reviewers do I need for screening?",
+    a: "Ideally two reviewers screen independently, or at least a sample of the records, and disagreements are settled by discussion. Agreement can be measured with Cohen’s kappa. If you work alone, say so as a limitation and explain how you reduced bias, for example by re-screening a sample after a break.",
+  },
+  {
+    q: "How do I find a research gap from the literature?",
+    a: "Build a concept matrix of papers against themes, then cross two dimensions such as method and application and count the studies in each cell. Thin cells are candidate gaps. Check that a gap matters and is not merely empty, then write it as a specific sentence a future paper could answer.",
+  },
+  {
+    q: "How do I make my literature review reproducible?",
+    a: "Date-stamp a protocol before searching, record every search string with its database and date, document the reason for each full-text exclusion, keep your extraction and quality sheets, and share the search strings and sheets as supplementary files.",
+  },
+  {
+    q: "What are the most common mistakes in systematic reviews?",
+    a: "Common mistakes include searching only one database, changing criteria halfway without recording it, listing papers instead of synthesizing them, skipping quality appraisal, submitting with a stale search, and ending with vague gaps such as “more research is needed”.",
+  },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "@id": `${PAGE_URL}#article`,
+      headline: "A Practical Guide to Systematic Literature Reviews",
+      description: DESCRIPTION,
+      datePublished: "2026-11-01",
+      dateModified: "2026-11-12",
+      inLanguage: "en",
+      mainEntityOfPage: PAGE_URL,
+      author: { "@type": "Organization", name: "ScholarGrid Technical Team" },
+      publisher: {
+        "@type": "Organization",
+        name: "ScholarGrid",
+        logo: { "@type": "ImageObject", url: `${SITE_URL}/logo.png` },
+      },
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Knowledge Library",
+          item: `${SITE_URL}/blog`,
+        },
+        {
+          "@type": "ListItem",
+          position: 3,
+          name: "Systematic Literature Review Guide",
+          item: PAGE_URL,
+        },
+      ],
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: faqs.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    },
+  ],
+};
 
 /* ------------------------------------------------------------------ */
 /* Table of contents                                                   */
@@ -30,12 +166,63 @@ const contents = [
   { id: "step-6", title: "Write It Up and Report It" },
   { id: "common-mistakes", title: "Common Mistakes" },
   { id: "final-checklist", title: "Final Checklist" },
+  { id: "faq", title: "FAQs" },
+  { id: "conclusion", title: "Conclusion" },
   { id: "references", title: "References" },
+];
+
+const related = [
+  {
+    href: "/blog/q1-research-paper-structure",
+    title: "How to Structure a Q1 Research Paper",
+    text: "A 10-part blueprint from abstract to submission readiness.",
+  },
+  {
+    href: "/blog/fast-review-q1-q2-journals",
+    title: "Fast-Review Q1/Q2 Journals",
+    text: "Find, verify and rank fast-review journals in engineering.",
+  },
+  {
+    href: "/blog/paper-rejection-reasons",
+    title: "Why Journals Reject Papers",
+    text: "The most common rejection reasons and how to avoid them.",
+  },
+  {
+    href: "/blog/formatting-guide",
+    title: "Manuscript Formatting Guide",
+    text: "Templates, equations, figures and references for Elsevier and IEEE.",
+  },
 ];
 
 /* ------------------------------------------------------------------ */
 /* Reusable pieces                                                     */
 /* ------------------------------------------------------------------ */
+
+const linkClass =
+  "font-medium text-blue-800 underline decoration-blue-300 underline-offset-2 transition hover:text-blue-950";
+
+/** Internal link to another ScholarGrid page */
+function Int({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <Link href={href} className={linkClass}>
+      {children}
+    </Link>
+  );
+}
+
+/** External authoritative link */
+function Ext({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={linkClass}
+    >
+      {children}
+    </a>
+  );
+}
 
 function ArticleFigure({
   src,
@@ -113,7 +300,10 @@ function Cite({ n }: { n: number }) {
 function Check({ children }: { children: React.ReactNode }) {
   return (
     <li className="flex gap-3">
-      <CheckCircle2 className="mt-1 h-[18px] w-[18px] shrink-0 text-blue-800" />
+      <CheckCircle2
+        className="mt-1 h-[18px] w-[18px] shrink-0 text-blue-800"
+        aria-hidden="true"
+      />
       <span>{children}</span>
     </li>
   );
@@ -158,9 +348,11 @@ function CodeBlock({ label, code }: { label: string; code: string }) {
 }
 
 function DataTable({
+  caption,
   headers,
   rows,
 }: {
+  caption: string;
   headers: string[];
   rows: string[][];
 }) {
@@ -168,10 +360,11 @@ function DataTable({
     <div className="my-6 overflow-hidden rounded-xl border border-slate-200">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[560px] border-collapse text-left text-sm">
+          <caption className="sr-only">{caption}</caption>
           <thead>
             <tr className="bg-blue-950 text-white">
               {headers.map((header) => (
-                <th key={header} className="px-4 py-3.5 font-semibold">
+                <th key={header} scope="col" className="px-4 py-3.5 font-semibold">
                   {header}
                 </th>
               ))}
@@ -209,12 +402,10 @@ function DataTable({
 const P = "text-[15px] leading-[1.85] text-slate-700";
 
 /* ------------------------------------------------------------------ */
-/* Main blog page                                                      */
+/* Article body                                                        */
 /* ------------------------------------------------------------------ */
 
-export default function SystematicLiteratureReviewBlog() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
+function ArticleBody() {
   const reviewTypes = [
     ["Narrative review", "You need background or an expert view", "Selective overview"],
     ["Mapping study", "You want to chart a broad area", "Counts and categories"],
@@ -263,16 +454,34 @@ print(len(df), '->', len(dedup))`;
   ];
 
   const references: React.ReactNode[] = [
-    <>B. Kitchenham and S. Charters, &quot;Guidelines for performing systematic literature reviews in software engineering,&quot; Keele Univ. and Durham Univ., Tech. Rep. EBSE-2007-01, 2007.</>,
-    <>M. J. Page et al., &quot;The PRISMA 2020 statement: An updated guideline for reporting systematic reviews,&quot; <i>BMJ</i>, vol. 372, Art. no. n71, 2021.</>,
+    <>B. Kitchenham and S. Charters, “Guidelines for performing systematic literature reviews in software engineering,” Keele Univ. and Durham Univ., Tech. Rep. EBSE-2007-01, 2007.</>,
+    <>
+      M. J. Page et al., “The PRISMA 2020 statement: An updated guideline for reporting systematic reviews,” <i>BMJ</i>, vol. 372, Art. no. n71, 2021.{" "}
+      <Ext href="https://doi.org/10.1136/bmj.n71">doi:10.1136/bmj.n71</Ext>
+    </>,
     <>M. Petticrew and H. Roberts, <i>Systematic Reviews in the Social Sciences: A Practical Guide</i>. Malden, MA, USA: Blackwell, 2006.</>,
-    <>M. Gusenbauer and N. R. Haddaway, &quot;Which academic search systems are suitable for systematic reviews or meta-analyses?&quot; <i>Research Synthesis Methods</i>, vol. 11, no. 2, pp. 181–217, 2020.</>,
-    <>C. Wohlin, &quot;Guidelines for snowballing in systematic literature studies and a replication in software engineering,&quot; in <i>Proc. 18th Int. Conf. Eval. Assessment Softw. Eng. (EASE)</i>, 2014, Art. no. 38.</>,
-    <>M. Ouzzani, H. Hammady, Z. Fedorowicz, and A. Elmagarmid, &quot;Rayyan: A web and mobile app for systematic reviews,&quot; <i>Systematic Reviews</i>, vol. 5, Art. no. 210, 2016.</>,
-    <>J. Cohen, &quot;A coefficient of agreement for nominal scales,&quot; <i>Educational and Psychological Measurement</i>, vol. 20, no. 1, pp. 37–46, 1960.</>,
-    <>J. Webster and R. T. Watson, &quot;Analyzing the past to prepare for the future: Writing a literature review,&quot; <i>MIS Quarterly</i>, vol. 26, no. 2, pp. xiii–xxiii, 2002.</>,
-    <>V. Braun and V. Clarke, &quot;Using thematic analysis in psychology,&quot; <i>Qualitative Research in Psychology</i>, vol. 3, no. 2, pp. 77–101, 2006.</>,
-    <>N. J. van Eck and L. Waltman, &quot;Software survey: VOSviewer, a computer program for bibliometric mapping,&quot; <i>Scientometrics</i>, vol. 84, no. 2, pp. 523–538, 2010.</>,
+    <>M. Gusenbauer and N. R. Haddaway, “Which academic search systems are suitable for systematic reviews or meta-analyses?” <i>Research Synthesis Methods</i>, vol. 11, no. 2, pp. 181–217, 2020.</>,
+    <>
+      C. Wohlin, “Guidelines for snowballing in systematic literature studies and a replication in software engineering,” in <i>Proc. 18th Int. Conf. Eval. Assessment Softw. Eng. (EASE)</i>, 2014, Art. no. 38.{" "}
+      <Ext href="https://doi.org/10.1145/2601248.2601268">doi:10.1145/2601248.2601268</Ext>
+    </>,
+    <>
+      M. Ouzzani, H. Hammady, Z. Fedorowicz, and A. Elmagarmid, “Rayyan: A web and mobile app for systematic reviews,” <i>Systematic Reviews</i>, vol. 5, Art. no. 210, 2016.{" "}
+      <Ext href="https://doi.org/10.1186/s13643-016-0384-4">doi:10.1186/s13643-016-0384-4</Ext>
+    </>,
+    <>
+      J. Cohen, “A coefficient of agreement for nominal scales,” <i>Educational and Psychological Measurement</i>, vol. 20, no. 1, pp. 37–46, 1960.{" "}
+      <Ext href="https://doi.org/10.1177/001316446002000104">doi:10.1177/001316446002000104</Ext>
+    </>,
+    <>J. Webster and R. T. Watson, “Analyzing the past to prepare for the future: Writing a literature review,” <i>MIS Quarterly</i>, vol. 26, no. 2, pp. xiii–xxiii, 2002.</>,
+    <>
+      V. Braun and V. Clarke, “Using thematic analysis in psychology,” <i>Qualitative Research in Psychology</i>, vol. 3, no. 2, pp. 77–101, 2006.{" "}
+      <Ext href="https://doi.org/10.1191/1478088706qp063oa">doi:10.1191/1478088706qp063oa</Ext>
+    </>,
+    <>
+      N. J. van Eck and L. Waltman, “Software survey: VOSviewer, a computer program for bibliometric mapping,” <i>Scientometrics</i>, vol. 84, no. 2, pp. 523–538, 2010.{" "}
+      <Ext href="https://doi.org/10.1007/s11192-009-0146-3">doi:10.1007/s11192-009-0146-3</Ext>
+    </>,
   ];
 
   return (
@@ -312,56 +521,59 @@ print(len(df), '->', len(dedup))`;
             </Link>
           </div>
 
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle navigation"
-            aria-expanded={mobileMenuOpen}
-            className="rounded-lg border border-slate-200 p-2 text-slate-700 transition hover:bg-slate-50 md:hidden"
-          >
-            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-        </div>
-
-        {mobileMenuOpen && (
-          <div className="border-t border-slate-200 bg-white px-6 py-4 md:hidden">
-            <div className="flex flex-col gap-4 text-sm font-medium text-slate-700">
-              <Link href="/" onClick={() => setMobileMenuOpen(false)}>Home</Link>
-              <Link href="/#services" onClick={() => setMobileMenuOpen(false)}>Services</Link>
-              <Link href="/#process" onClick={() => setMobileMenuOpen(false)}>How it works</Link>
-              <Link href="/#insights" onClick={() => setMobileMenuOpen(false)}>Insights</Link>
-              <Link href="/blog" onClick={() => setMobileMenuOpen(false)}>Knowledge Library</Link>
+          <details className="group md:hidden">
+            <summary
+              aria-label="Toggle navigation"
+              className="flex cursor-pointer list-none items-center rounded-lg border border-slate-200 p-2 text-slate-700 transition hover:bg-slate-50 [&::-webkit-details-marker]:hidden"
+            >
+              <Menu size={20} className="group-open:hidden" />
+              <X size={20} className="hidden group-open:block" />
+            </summary>
+            <div className="absolute left-0 right-0 top-full border-t border-slate-200 bg-white px-6 py-4 shadow-sm">
+              <div className="flex flex-col gap-4 text-sm font-medium text-slate-700">
+                <Link href="/">Home</Link>
+                <Link href="/#services">Services</Link>
+                <Link href="/#process">How it works</Link>
+                <Link href="/#insights">Insights</Link>
+                <Link href="/blog">Knowledge Library</Link>
+              </div>
             </div>
-          </div>
-        )}
+          </details>
+        </div>
       </nav>
 
       <main>
         {/* Article header */}
-        <section className="border-b border-slate-200 bg-gradient-to-b from-slate-50 to-white">
+        <header className="border-b border-slate-200 bg-gradient-to-b from-slate-50 to-white">
           <div className="mx-auto max-w-5xl px-6 pb-10 pt-9 sm:pb-12 sm:pt-12">
             {/* Breadcrumb */}
-            <div className="mb-7 flex flex-wrap items-center gap-2 text-sm">
+            <nav
+              aria-label="Breadcrumb"
+              className="mb-7 flex flex-wrap items-center gap-2 text-sm"
+            >
               <Link href="/" className="font-medium text-slate-500 transition hover:text-blue-800">
                 Home
               </Link>
-              <ChevronRight size={14} className="text-slate-400" />
+              <ChevronRight size={14} className="text-slate-400" aria-hidden="true" />
               <Link href="/blog" className="font-medium text-slate-500 transition hover:text-blue-800">
                 Knowledge Library
               </Link>
-              <ChevronRight size={14} className="text-slate-400" />
-              <span className="font-medium text-blue-800">Literature Review</span>
-            </div>
+              <ChevronRight size={14} className="text-slate-400" aria-hidden="true" />
+              <span aria-current="page" className="font-medium text-blue-800">
+                Literature Review
+              </span>
+            </nav>
 
             <div className="mb-5 flex flex-wrap items-center gap-3">
               <span className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-blue-900">
                 Literature Review Guide
               </span>
               <span className="flex items-center gap-1.5 text-xs text-slate-500">
-                <Calendar size={14} />
-                November 2026
+                <Calendar size={14} aria-hidden="true" />
+                <time dateTime="2026-11-01">November 2026</time>
               </span>
               <span className="flex items-center gap-1.5 text-xs text-slate-500">
-                <Clock size={14} />
+                <Clock size={14} aria-hidden="true" />
                 10 min read
               </span>
             </div>
@@ -396,12 +608,12 @@ print(len(df), '->', len(dedup))`;
                 href="/blog"
                 className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-blue-900 transition hover:border-blue-800 hover:bg-blue-50"
               >
-                <BookOpen size={15} />
+                <BookOpen size={15} aria-hidden="true" />
                 All Articles
               </Link>
             </div>
           </div>
-        </section>
+        </header>
 
         {/* Article layout */}
         <div
@@ -410,28 +622,38 @@ print(len(df), '->', len(dedup))`;
         >
           <article className="min-w-0">
             {/* Overview */}
-            <div
+            <section
               id="overview"
-              className="mb-7 scroll-mt-28 space-y-4 rounded-r-lg border-l-[3px] border-blue-800 bg-slate-50 px-5 py-5 sm:px-6"
+              aria-labelledby="overview-heading"
+              className="mb-7 scroll-mt-28"
             >
-              <p className="text-[15px] leading-[1.85] text-slate-700 sm:text-base">
-                A literature review that lists papers one after another is easy
-                to write and easy to reject. A <strong>systematic literature
-                review (SLR)</strong> does something harder. It follows a
-                documented method, so another researcher could repeat your
-                search and arrive at the same set of papers. Journals value this
-                because it makes the review fair, transparent, and checkable.
-                Guidelines such as Kitchenham and Charters <Cite n={1} /> and
-                the PRISMA 2020 statement <Cite n={2} /> describe the process,
-                and Fig. 1 shows it in six steps.
-              </p>
-              <p className="text-[15px] leading-[1.85] text-slate-700 sm:text-base">
-                Senior researchers add one more thing: they synthesize. They do
-                not report what each paper did. They show patterns, conflicts,
-                and gaps across the whole body of work. This guide covers both
-                the method and the thinking.
-              </p>
-            </div>
+              <h2 id="overview-heading" className="sr-only">
+                Overview: What Is a Systematic Literature Review?
+              </h2>
+              <div className="space-y-4 rounded-r-lg border-l-[3px] border-blue-800 bg-slate-50 px-5 py-5 sm:px-6">
+                <p className="text-[15px] leading-[1.85] text-slate-700 sm:text-base">
+                  A literature review that lists papers one after another is easy
+                  to write and easy to reject. A <strong>systematic literature
+                  review (SLR)</strong> does something harder. It follows a
+                  documented method, so another researcher could repeat your
+                  search and arrive at the same set of papers. Journals value this
+                  because it makes the review fair, transparent, and checkable.
+                  Guidelines such as Kitchenham and Charters <Cite n={1} /> and
+                  the{" "}
+                  <Ext href="https://www.prisma-statement.org/">
+                    PRISMA 2020 statement
+                  </Ext>{" "}
+                  <Cite n={2} /> describe the process, and Fig. 1 shows it in
+                  six steps.
+                </p>
+                <p className="text-[15px] leading-[1.85] text-slate-700 sm:text-base">
+                  Senior researchers add one more thing: they synthesize. They do
+                  not report what each paper did. They show patterns, conflicts,
+                  and gaps across the whole body of work. This guide covers both
+                  the method and the thinking.
+                </p>
+              </div>
+            </section>
 
             <ArticleFigure
               src="/blogs/fig21.png"
@@ -440,9 +662,22 @@ print(len(df), '->', len(dedup))`;
               priority
             />
 
+            <p className={`${P} mb-2`}>
+              Once your review is complete, you will still need to turn it into
+              a publishable paper. Our guides on{" "}
+              <Int href="/blog/q1-research-paper-structure">
+                structuring a Q1 research paper
+              </Int>{" "}
+              and{" "}
+              <Int href="/blog/fast-review-q1-q2-journals">
+                choosing a fast-review journal
+              </Int>{" "}
+              cover the next stages.
+            </p>
+
             {/* Step 1 */}
             <SectionHeading id="step-1" number="01">
-              Define the Question and Write a Protocol
+              How to Define the Research Question and Write a Protocol
             </SectionHeading>
 
             <p className={`${P} mt-4`}>
@@ -454,7 +689,10 @@ print(len(df), '->', len(dedup))`;
               review.
             </p>
 
+            <SubHeading>Which Type of Literature Review Do You Need?</SubHeading>
+
             <DataTable
+              caption="Types of literature review and when to use each"
               headers={["Review type", "Use it when", "Output"]}
               rows={reviewTypes}
             />
@@ -471,8 +709,9 @@ print(len(df), '->', len(dedup))`;
                 disagreements are resolved.
               </Check>
               <Check>
-                Date-stamp the protocol in a repository or on OSF. It proves you
-                did not change the criteria after seeing the results.
+                Date-stamp the protocol in a repository or on{" "}
+                <Ext href="https://osf.io/">OSF</Ext>. It proves you did not
+                change the criteria after seeing the results.
               </Check>
             </CheckList>
 
@@ -483,13 +722,18 @@ print(len(df), '->', len(dedup))`;
 
             {/* Step 2 */}
             <SectionHeading id="step-2" number="02">
-              Search Systematically
+              How to Search Databases Systematically
             </SectionHeading>
 
             <CheckList>
               <Check>
-                Use at least two or three major databases, such as Scopus, Web
-                of Science, and IEEE Xplore or ScienceDirect.
+                Use at least two or three major databases, such as{" "}
+                <Ext href="https://www.elsevier.com/products/scopus">Scopus</Ext>,{" "}
+                <Ext href="https://clarivate.com/academia-government/scientific-and-academic-research/research-discovery-and-referencing/web-of-science/">
+                  Web of Science
+                </Ext>
+                , and <Ext href="https://ieeexplore.ieee.org/">IEEE Xplore</Ext>{" "}
+                or <Ext href="https://www.sciencedirect.com/">ScienceDirect</Ext>.
               </Check>
               <Check>
                 Do not rely on Google Scholar alone. Its results are hard to
@@ -523,7 +767,7 @@ print(len(df), '->', len(dedup))`;
 
             {/* Step 3 */}
             <SectionHeading id="step-3" number="03">
-              Screen Studies Transparently
+              How to Screen Studies and Create a PRISMA Flow Diagram
             </SectionHeading>
 
             <p className={`${P} mt-4`}>
@@ -531,7 +775,10 @@ print(len(df), '->', len(dedup))`;
               apply them the same way to every paper.
             </p>
 
+            <SubHeading>Example Inclusion and Exclusion Criteria</SubHeading>
+
             <DataTable
+              caption="Example inclusion and exclusion criteria"
               headers={["Criterion", "Include", "Exclude"]}
               rows={criteria}
             />
@@ -546,8 +793,10 @@ print(len(df), '->', len(dedup))`;
                 Record the reason for every full-text exclusion.
               </Check>
               <Check>
-                Tools such as Rayyan <Cite n={6} /> and Zotero make this much
-                easier.
+                Tools such as{" "}
+                <Ext href="https://www.rayyan.ai/">Rayyan</Ext> <Cite n={6} />{" "}
+                and <Ext href="https://www.zotero.org/">Zotero</Ext> make this
+                much easier.
               </Check>
               <Check>
                 Have two reviewers screen at least a sample independently.
@@ -571,7 +820,7 @@ print(len(df), '->', len(dedup))`;
 
             {/* Step 4 */}
             <SectionHeading id="step-4" number="04">
-              Extract Data and Judge Quality
+              How to Extract Data and Assess Study Quality
             </SectionHeading>
 
             <CheckList>
@@ -606,7 +855,7 @@ print(len(df), '->', len(dedup))`;
 
             {/* Step 5 */}
             <SectionHeading id="step-5" number="05">
-              Synthesize Like a Senior Researcher
+              How to Synthesize Literature and Find Research Gaps
             </SectionHeading>
 
             <p className={`${P} mt-4`}>
@@ -644,7 +893,8 @@ print(len(df), '->', len(dedup))`;
                 settings, or definitions.
               </Check>
               <Check>
-                For large sets, keyword and co-citation maps from VOSviewer can
+                For large sets, keyword and co-citation maps from{" "}
+                <Ext href="https://www.vosviewer.com/">VOSviewer</Ext> can
                 reveal clusters you did not expect <Cite n={10} />.
               </Check>
             </CheckList>
@@ -661,13 +911,18 @@ print(len(df), '->', len(dedup))`;
               caption="Fig. 6. A taxonomy built from the themes found in the reviewed papers."
             />
 
-            <SubHeading>Find the Gap</SubHeading>
+            <SubHeading>How to Find a Research Gap</SubHeading>
 
             <p className={`${P} mt-3`}>
               Cross two dimensions, such as method and application, and count
               the studies in each cell (Fig. 7). Thin cells are candidate gaps.
               Check that a gap matters and is not just empty. A real gap is one
-              a reviewer would agree is worth filling.
+              a reviewer would agree is worth filling. For how to present the
+              gap in a paper, see our{" "}
+              <Int href="/blog/q1-research-paper-structure">
+                Q1 research paper structure guide
+              </Int>
+              .
             </p>
 
             <ArticleFigure
@@ -684,7 +939,7 @@ print(len(df), '->', len(dedup))`;
 
             {/* Step 6 */}
             <SectionHeading id="step-6" number="06">
-              Write It Up and Report It
+              How to Write and Report a Systematic Review
             </SectionHeading>
 
             <CheckList>
@@ -710,11 +965,20 @@ print(len(df), '->', len(dedup))`;
                 Share search strings and the extraction sheet as supplementary
                 files so others can reproduce your work.
               </Check>
+              <Check>
+                Before you submit, check the template and declarations with our{" "}
+                <Int href="/blog/formatting-guide">manuscript formatting guide</Int>
+                , and review the{" "}
+                <Int href="/blog/paper-rejection-reasons">
+                  common reasons journals reject papers
+                </Int>
+                .
+              </Check>
             </CheckList>
 
             {/* Common mistakes */}
             <SectionHeading id="common-mistakes">
-              Common Mistakes
+              Common Systematic Review Mistakes to Avoid
             </SectionHeading>
 
             <p className={`${P} mt-4`}>
@@ -722,23 +986,26 @@ print(len(df), '->', len(dedup))`;
               following points before you write up.
             </p>
 
-            <div className="mt-5 space-y-2.5">
+            <ol className="mt-5 space-y-2.5">
               {mistakes.map((mistake, index) => (
-                <div
+                <li
                   key={index}
                   className="flex gap-3 rounded-lg border border-slate-200 bg-white p-3.5"
                 >
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-100 text-[11px] font-bold text-slate-600">
+                  <span
+                    aria-hidden="true"
+                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-100 text-[11px] font-bold text-slate-600"
+                  >
                     {index + 1}
                   </span>
-                  <p className="text-sm leading-[1.8] text-slate-700">{mistake}</p>
-                </div>
+                  <span className="text-sm leading-[1.8] text-slate-700">{mistake}</span>
+                </li>
               ))}
-            </div>
+            </ol>
 
             {/* Final checklist */}
             <SectionHeading id="final-checklist">
-              Final Checklist
+              Final Systematic Review Checklist
             </SectionHeading>
 
             <p className={`${P} mt-4`}>
@@ -746,27 +1013,124 @@ print(len(df), '->', len(dedup))`;
               overall quality and transparency.
             </p>
 
-            <div className="mt-5 space-y-2">
+            <ul className="mt-5 space-y-2">
               {checklist.map((item) => (
-                <div
+                <li
                   key={item}
                   className="flex items-start gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3.5"
                 >
-                  <CheckCircle2 size={18} className="mt-0.5 shrink-0 text-emerald-600" />
+                  <CheckCircle2
+                    size={18}
+                    className="mt-0.5 shrink-0 text-emerald-600"
+                    aria-hidden="true"
+                  />
                   <span className="text-sm leading-[1.8] text-slate-700">{item}</span>
-                </div>
+                </li>
+              ))}
+            </ul>
+
+            {/* FAQ */}
+            <SectionHeading id="faq">
+              Frequently Asked Questions About Systematic Literature Reviews
+            </SectionHeading>
+
+            <div className="mt-6 divide-y divide-slate-200 overflow-hidden rounded-xl border border-slate-200">
+              {faqs.map((faq, index) => (
+                <details
+                  key={faq.q}
+                  className="group bg-white open:bg-slate-50"
+                  {...(index === 0 ? { open: true } : {})}
+                >
+                  <summary className="flex cursor-pointer list-none items-start justify-between gap-4 px-5 py-4 text-left [&::-webkit-details-marker]:hidden">
+                    <h3 className="font-serif text-base font-bold leading-snug text-slate-950">
+                      {faq.q}
+                    </h3>
+                    <ChevronDown
+                      size={18}
+                      aria-hidden="true"
+                      className="mt-1 shrink-0 text-blue-800 transition group-open:rotate-180"
+                    />
+                  </summary>
+                  <p className="px-5 pb-5 text-[15px] leading-[1.8] text-slate-700">
+                    {faq.a}
+                  </p>
+                </details>
               ))}
             </div>
 
+            <p className={`${P} mt-4`}>
+              Looking for more? Browse the{" "}
+              <Int href="/blog">ScholarGrid Knowledge Library</Int> for guides
+              on structure, formatting, journal selection and visualization,
+              including our{" "}
+              <Int href="/blog/contour-visualizations">
+                scientific visualization guide
+              </Int>
+              .
+            </p>
+
+            {/* Conclusion + CTA */}
+            <section
+              id="conclusion"
+              aria-labelledby="conclusion-heading"
+              className="mt-10 scroll-mt-28 border-t border-slate-200 pt-7"
+            >
+              <p className="text-xs font-bold uppercase tracking-[0.15em] text-blue-800">
+                ScholarGrid Research Library
+              </p>
+              <h2
+                id="conclusion-heading"
+                className="mt-2 font-serif text-2xl font-bold text-slate-950 sm:text-[28px]"
+              >
+                Conclusion: Build a Review Readers Can Trust
+              </h2>
+              <p className="mt-3 text-[15px] leading-[1.85] text-slate-600">
+                A strong review is not the one with the most papers. It is the
+                one a reader can trust, repeat, and build on. Follow the method,
+                show your work, and let the synthesis carry your argument.
+              </p>
+
+              <div className="mt-6 rounded-xl border border-blue-100 bg-blue-50/60 p-6">
+                <p className="font-serif text-lg font-bold text-blue-950">
+                  Need help with your literature review?
+                </p>
+                <p className="mt-2 text-sm leading-[1.8] text-slate-700">
+                  ScholarGrid helps researchers plan searches, structure
+                  reviews and prepare complete submission packages. Explore our
+                  academic services or keep learning in the Knowledge Library.
+                </p>
+                <div className="mt-4 flex flex-wrap items-center gap-4">
+                  <Link
+                    href="/#services"
+                    className="inline-flex items-center gap-2 rounded-lg bg-blue-950 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-800"
+                  >
+                    Explore ScholarGrid Services
+                    <ArrowRight size={16} aria-hidden="true" />
+                  </Link>
+                  <Link
+                    href="/blog"
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-blue-800 transition hover:text-blue-950"
+                  >
+                    <ArrowLeft size={16} aria-hidden="true" />
+                    Back to Knowledge Library
+                  </Link>
+                </div>
+              </div>
+            </section>
+
             {/* References */}
-            <div
+            <section
               id="references"
+              aria-labelledby="references-heading"
               className="mt-12 scroll-mt-28 border-t border-slate-200 pt-8"
             >
               <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.16em] text-blue-800">
                 Further Reading
               </p>
-              <h2 className="font-serif text-2xl font-bold text-slate-950 sm:text-3xl">
+              <h2
+                id="references-heading"
+                className="font-serif text-2xl font-bold text-slate-950 sm:text-3xl"
+              >
                 References
               </h2>
 
@@ -777,49 +1141,22 @@ print(len(df), '->', len(dedup))`;
                   </li>
                 ))}
               </ol>
-            </div>
-
-            {/* Article ending */}
-            <div className="mt-10 border-t border-slate-200 pt-7">
-              <p className="text-xs font-bold uppercase tracking-[0.15em] text-blue-800">
-                ScholarGrid Research Library
-              </p>
-              <p className="mt-3 text-[15px] leading-[1.85] text-slate-600">
-                A strong review is not the one with the most papers. It is the
-                one a reader can trust, repeat, and build on. Follow the method,
-                show your work, and let the synthesis carry your argument.
-              </p>
-
-              <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
-                <Link
-                  href="/blog"
-                  className="inline-flex items-center gap-2 text-sm font-semibold text-blue-800 transition hover:text-blue-950"
-                >
-                  <ArrowLeft size={16} />
-                  Back to Knowledge Library
-                </Link>
-
-                <Link
-                  href="/"
-                  className="inline-flex items-center gap-2 rounded-lg bg-blue-950 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-800"
-                >
-                  Explore ScholarGrid
-                  <ArrowRight size={16} />
-                </Link>
-              </div>
-            </div>
+            </section>
           </article>
 
           {/* Desktop sidebar */}
-          <aside className="hidden lg:block">
+          <aside className="hidden lg:block" aria-label="Article sidebar">
             <div className="sticky top-24 space-y-5">
               {/* Table of contents */}
-              <div className="rounded-xl border border-slate-200 bg-white p-5">
+              <nav
+                aria-label="Table of contents"
+                className="rounded-xl border border-slate-200 bg-white p-5"
+              >
                 <div className="flex items-center gap-2 border-b border-slate-100 pb-4">
-                  <List size={17} className="text-blue-800" />
-                  <h3 className="font-serif text-base font-bold text-slate-950">
+                  <List size={17} className="text-blue-800" aria-hidden="true" />
+                  <p className="font-serif text-base font-bold text-slate-950">
                     In This Article
-                  </h3>
+                  </p>
                 </div>
 
                 <div className="mt-3 space-y-0.5">
@@ -835,21 +1172,22 @@ print(len(df), '->', len(dedup))`;
                       <span className="flex-1">{item.title}</span>
                       <ChevronRight
                         size={12}
+                        aria-hidden="true"
                         className="mt-1 shrink-0 opacity-0 transition group-hover:translate-x-0.5 group-hover:opacity-100"
                       />
                     </a>
                   ))}
                 </div>
-              </div>
+              </nav>
 
               {/* Knowledge library card */}
               <div className="rounded-xl border border-slate-200 bg-slate-50 p-5">
                 <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-blue-100 text-blue-900">
-                  <BookOpen size={19} />
+                  <BookOpen size={19} aria-hidden="true" />
                 </div>
-                <h3 className="font-serif text-lg font-bold text-slate-950">
+                <p className="font-serif text-lg font-bold text-slate-950">
                   Explore More Research Guides
-                </h3>
+                </p>
                 <p className="mt-2 text-[13px] leading-[1.8] text-slate-600">
                   Discover practical resources on academic writing, literature
                   reviews, research methodology, and scholarly publishing.
@@ -859,7 +1197,7 @@ print(len(df), '->', len(dedup))`;
                   className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-blue-800 transition hover:text-blue-950"
                 >
                   Browse All Articles
-                  <ArrowRight size={15} />
+                  <ArrowRight size={15} aria-hidden="true" />
                 </Link>
               </div>
 
@@ -868,7 +1206,7 @@ print(len(df), '->', len(dedup))`;
                 href="/"
                 className="flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-blue-800 hover:text-blue-900"
               >
-                <ArrowLeft size={15} />
+                <ArrowLeft size={15} aria-hidden="true" />
                 Back to Homepage
               </Link>
             </div>
@@ -876,15 +1214,21 @@ print(len(df), '->', len(dedup))`;
         </div>
 
         {/* Related reading section */}
-        <section className="border-t border-slate-200 bg-slate-50">
+        <section
+          aria-labelledby="related-heading"
+          className="border-t border-slate-200 bg-slate-50"
+        >
           <div className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
             <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
               <div>
                 <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-blue-800">
                   Continue Exploring
                 </p>
-                <h2 className="mt-2 font-serif text-2xl font-bold text-slate-950">
-                  More from the Research Library
+                <h2
+                  id="related-heading"
+                  className="mt-2 font-serif text-2xl font-bold text-slate-950"
+                >
+                  Related Research Guides from ScholarGrid
                 </h2>
               </div>
 
@@ -893,8 +1237,29 @@ print(len(df), '->', len(dedup))`;
                 className="inline-flex items-center gap-2 text-sm font-semibold text-blue-800 transition hover:text-blue-950"
               >
                 View All Articles
-                <ArrowRight size={16} />
+                <ArrowRight size={16} aria-hidden="true" />
               </Link>
+            </div>
+
+            <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {related.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="group rounded-xl border border-slate-200 bg-white p-5 transition hover:border-blue-800 hover:shadow-sm"
+                >
+                  <h3 className="font-serif text-base font-bold leading-snug text-slate-950 group-hover:text-blue-900">
+                    {item.title}
+                  </h3>
+                  <p className="mt-2 text-[13px] leading-[1.7] text-slate-600">
+                    {item.text}
+                  </p>
+                  <span className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-blue-800">
+                    Read guide
+                    <ArrowRight size={13} aria-hidden="true" />
+                  </span>
+                </Link>
+              ))}
             </div>
           </div>
         </section>
@@ -925,28 +1290,29 @@ print(len(df), '->', len(dedup))`;
           </div>
 
           {/* Explore */}
-          <div>
-            <h3 className="text-sm font-semibold text-white">Explore ScholarGrid</h3>
+          <nav aria-label="Explore ScholarGrid">
+            <p className="text-sm font-semibold text-white">Explore ScholarGrid</p>
             <ul className="mt-4 space-y-2.5 text-[13px]">
               <li><Link href="/" className="transition hover:text-white">Home</Link></li>
               <li><Link href="/#services" className="transition hover:text-white">Academic Services</Link></li>
               <li><Link href="/#process" className="transition hover:text-white">How It Works</Link></li>
               <li><Link href="/#faq" className="transition hover:text-white">Frequently Asked Questions</Link></li>
             </ul>
-          </div>
+          </nav>
 
           {/* Article links */}
-          <div>
-            <h3 className="text-sm font-semibold text-white">Research Resources</h3>
+          <nav aria-label="Research resources">
+            <p className="text-sm font-semibold text-white">Research Resources</p>
             <ul className="mt-4 space-y-2.5 text-[13px]">
               <li><Link href="/blog/formatting-guide" className="transition hover:text-white">Manuscript Formatting</Link></li>
               <li><Link href="/blog/paper-rejection-reasons" className="transition hover:text-white">Journal Rejection Guide</Link></li>
+              <li><Link href="/blog/fast-review-q1-q2-journals" className="transition hover:text-white">Fast-Review Q1/Q2 Journals</Link></li>
               <li><Link href="/blog/contour-visualizations" className="transition hover:text-white">Scientific Visualization</Link></li>
               <li><Link href="/blog/systematic-literature-review-guide" className="transition hover:text-white">Literature Review Guide</Link></li>
               <li><Link href="/blog/q1-research-paper-structure" className="transition hover:text-white">Q1 Research Paper Structure</Link></li>
               <li><Link href="/blog" className="transition hover:text-white">All Articles</Link></li>
             </ul>
-          </div>
+          </nav>
         </div>
 
         <div className="border-t border-slate-800 px-6 py-5 text-center text-xs leading-relaxed text-slate-500">
@@ -954,5 +1320,21 @@ print(len(df), '->', len(dedup))`;
         </div>
       </footer>
     </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Page (server component: exports metadata and renders JSON-LD)       */
+/* ------------------------------------------------------------------ */
+
+export default function Page() {
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <ArticleBody />
+    </>
   );
 }

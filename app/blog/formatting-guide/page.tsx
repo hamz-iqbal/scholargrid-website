@@ -1,6 +1,5 @@
-"use client";
-
-import React, { useState } from "react";
+import React from "react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -11,10 +10,148 @@ import {
   CheckCircle2,
   BookOpen,
   ChevronRight,
+  ChevronDown,
   Menu,
   X,
   List,
 } from "lucide-react";
+
+/* ------------------------------------------------------------------ */
+/* SEO: metadata, FAQs and structured data                             */
+/* ------------------------------------------------------------------ */
+
+/* Set NEXT_PUBLIC_SITE_URL in .env if your domain differs (no trailing slash) */
+const SITE_URL = (
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.scholargrid.org"
+).replace(/\/$/, "");
+
+const SLUG = "/blog/formatting-guide";
+const PAGE_URL = `${SITE_URL}${SLUG}`;
+
+const TITLE =
+  "How to Format a Manuscript for Elsevier and IEEE: Step-by-Step Guide (2026)";
+const DESCRIPTION =
+  "Learn how to format an engineering manuscript for Elsevier and IEEE: pick the right template, structure sections, format equations, figures and references.";
+
+export const metadata: Metadata = {
+  /* If your root layout already uses title.template "%s | ScholarGrid",
+     keep this plain string; otherwise append " | ScholarGrid". */
+  title: TITLE,
+  description: DESCRIPTION,
+  keywords: [
+    "manuscript formatting guide",
+    "Elsevier manuscript format",
+    "IEEE manuscript format",
+    "elsarticle LaTeX template",
+    "IEEEtran template",
+    "format engineering manuscript",
+    "journal submission checklist",
+    "LaTeX equations in papers",
+  ],
+  alternates: { canonical: PAGE_URL },
+  robots: { index: true, follow: true },
+  openGraph: {
+    type: "article",
+    url: PAGE_URL,
+    siteName: "ScholarGrid",
+    title: `${TITLE} | ScholarGrid`,
+    description: DESCRIPTION,
+    publishedTime: "2026-10-01T00:00:00Z",
+    modifiedTime: "2026-11-12T00:00:00Z",
+    authors: ["ScholarGrid Technical Team"],
+  },
+  twitter: {
+    card: "summary",
+    title: TITLE,
+    description: DESCRIPTION,
+  },
+};
+
+type Faq = { q: string; a: string };
+
+const faqs: Faq[] = [
+  {
+    q: "Which LaTeX class should I use for Elsevier and IEEE papers?",
+    a: "Elsevier journals usually provide the elsarticle class, while IEEE journals and conferences use the IEEEtran class. Always download the template named in the journal’s Guide for Authors or the conference call for papers, because the required class options can change between venues and years.",
+  },
+  {
+    q: "Should I write my engineering paper in LaTeX or Word?",
+    a: "Choose LaTeX if your paper is equation-heavy, you want automatic numbering and cross-references, or you collaborate through Overleaf or Git. Choose Word if the paper is mostly experimental, your co-authors do not use LaTeX, or the venue supplies a Word template. Both are accepted by most Elsevier and IEEE venues.",
+  },
+  {
+    q: "How long should the abstract and title be?",
+    a: "A specific title of roughly 10 to 15 words works well, and most abstracts run 150 to 250 words in a single paragraph. For IEEE, avoid equations, citations and undefined abbreviations in the abstract. Limits vary by journal, so check the Guide for Authors before you finalise either.",
+  },
+  {
+    q: "Where should figure and table captions be placed?",
+    a: "Place captions below figures and above tables, and keep the numbering consistent throughout the manuscript. Every figure and table should also be cited in the text before it appears.",
+  },
+  {
+    q: "What image format and resolution should I use for figures?",
+    a: "Use vector formats such as PDF or EPS for plots, circuits and block diagrams, and TIFF or PNG for photographs and microscopy. Publishers publish their own artwork rules, so confirm the minimum resolution in the journal’s artwork instructions. Choose colours that stay readable for colour-blind readers.",
+  },
+  {
+    q: "How do I format equations correctly in a research paper?",
+    a: "Use inline math for short symbols and display math for anything long, complex or referenced later. Number referenced equations, end them with the punctuation the sentence requires, define every symbol in a “where” line, and cite them with a cross-reference command rather than typing numbers by hand. The amsmath and siunitx packages help with alignment and units.",
+  },
+  {
+    q: "Can I change margins or font size to meet the page limit?",
+    a: "No. Automated and editorial checks flag changed margins, font sizes and repeated spacing tricks. If you are over the limit, cut text, move material to supplementary files or reduce figure size within the template rules.",
+  },
+  {
+    q: "What formatting mistakes cause a manuscript to be returned at the technical check?",
+    a: "Common causes include an outdated template, altered layout settings, equations or citations in an IEEE abstract, low-resolution raster figures, unresolved citation markers such as [?], unnumbered equations and missing author or declaration statements. Our checklist near the end of this guide helps you catch them before upload.",
+  },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "@id": `${PAGE_URL}#article`,
+      headline:
+        "A Step-by-Step Guide to Formatting Engineering Manuscripts for Elsevier & IEEE",
+      description: DESCRIPTION,
+      datePublished: "2026-10-01",
+      dateModified: "2026-11-12",
+      inLanguage: "en",
+      mainEntityOfPage: PAGE_URL,
+      author: { "@type": "Organization", name: "ScholarGrid Technical Team" },
+      publisher: {
+        "@type": "Organization",
+        name: "ScholarGrid",
+        logo: { "@type": "ImageObject", url: `${SITE_URL}/logo.png` },
+      },
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Knowledge Library",
+          item: `${SITE_URL}/blog`,
+        },
+        {
+          "@type": "ListItem",
+          position: 3,
+          name: "Manuscript Formatting",
+          item: PAGE_URL,
+        },
+      ],
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: faqs.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    },
+  ],
+};
 
 /* ------------------------------------------------------------------ */
 /* Table of contents                                                   */
@@ -22,19 +159,70 @@ import {
 
 const contents = [
   { id: "introduction", title: "Introduction" },
-  { id: "step-1", title: "Choosing the Right Template" },
+  { id: "step-1", title: "Elsevier vs IEEE Templates" },
   { id: "step-2", title: "Preparing Section Structure" },
   { id: "step-3", title: "Mathematics and Equations" },
   { id: "step-4", title: "Figures and Tables" },
   { id: "step-5", title: "Citation Management" },
   { id: "common-mistakes", title: "Common Formatting Mistakes" },
   { id: "step-6", title: "Pre-Submission Checklist" },
+  { id: "faq", title: "FAQs" },
+  { id: "conclusion", title: "Conclusion" },
   { id: "references", title: "References" },
+];
+
+const related = [
+  {
+    href: "/blog/q1-research-paper-structure",
+    title: "How to Structure a Q1 Research Paper",
+    text: "A 10-part blueprint from abstract to submission readiness.",
+  },
+  {
+    href: "/blog/paper-rejection-reasons",
+    title: "Why Journals Reject Papers",
+    text: "The most common rejection reasons and how to avoid them.",
+  },
+  {
+    href: "/blog/contour-visualizations",
+    title: "Scientific Visualization Guide",
+    text: "Publication-quality contour and 3D plots for journals.",
+  },
+  {
+    href: "/blog/fast-review-q1-q2-journals",
+    title: "Fast-Review Q1/Q2 Journals",
+    text: "Find, verify and rank fast-review journals in engineering.",
+  },
 ];
 
 /* ------------------------------------------------------------------ */
 /* Reusable pieces                                                     */
 /* ------------------------------------------------------------------ */
+
+const linkClass =
+  "font-medium text-blue-800 underline decoration-blue-300 underline-offset-2 transition hover:text-blue-950";
+
+/** Internal link to another ScholarGrid page */
+function Int({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <Link href={href} className={linkClass}>
+      {children}
+    </Link>
+  );
+}
+
+/** External authoritative link */
+function Ext({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={linkClass}
+    >
+      {children}
+    </a>
+  );
+}
 
 function ArticleFigure({
   src,
@@ -129,7 +317,10 @@ function InlineCode({ children }: { children: React.ReactNode }) {
 function Check({ children }: { children: React.ReactNode }) {
   return (
     <li className="flex gap-3">
-      <CheckCircle2 className="mt-1 h-[18px] w-[18px] shrink-0 text-blue-800" />
+      <CheckCircle2
+        className="mt-1 h-[18px] w-[18px] shrink-0 text-blue-800"
+        aria-hidden="true"
+      />
       <span>{children}</span>
     </li>
   );
@@ -154,12 +345,10 @@ const P = "text-[15px] leading-[1.85] text-slate-700";
 const LIST = "mt-4 space-y-3 text-[15px] leading-[1.8] text-slate-700";
 
 /* ------------------------------------------------------------------ */
-/* Main blog page                                                      */
+/* Article body                                                        */
 /* ------------------------------------------------------------------ */
 
-export default function FormattingGuideBlog() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
+function ArticleBody() {
   const comparison = [
     ["Typical layout", "Single column, double-spaced, often with line numbers", "Two columns, single-spaced"],
     ["LaTeX class", "elsarticle", "IEEEtran"],
@@ -183,13 +372,13 @@ export default function FormattingGuideBlog() {
     [
       "Back Matter:",
       <>
-        CReDiT author statement <Cite n={5} />, competing-interest declarations, funding details, data availability statements, and AI disclosures where required.
+        CRediT author statement <Cite n={5} />, competing-interest declarations, funding details, data availability statements, and AI disclosures where required.
       </>,
     ],
   ];
 
   const mistakes = [
-    "Reusing an old paper's template instead of the current one.",
+    "Reusing an old paper’s template instead of the current one.",
     "Changing margins, font sizes, or spacing to fit the page limit.",
     "Putting equations, citations, or undefined abbreviations in an IEEE abstract.",
     "Submitting low-resolution raster images instead of vector or high-DPI figures.",
@@ -206,17 +395,41 @@ export default function FormattingGuideBlog() {
   ];
 
   const references: React.ReactNode[] = [
-    <>Elsevier, "Guide for Authors," available on each journal's homepage at sciencedirect.com.</>,
-    <>Elsevier, "elsarticle: Class for articles submitted to Elsevier journals," CTAN package documentation.</>,
-    <>IEEE Author Center, "Templates for IEEE journal and conference articles," ieee.org.</>,
-    <>M. Shell, "How to use the IEEEtran LaTeX class," CTAN package documentation.</>,
-    <>A. Brand, L. Allen, M. Altman, M. Hlava, and J. Scott, "Beyond authorship: Attribution, contribution, collaboration, and credit," <i>Learned Publishing</i>, vol. 28, no. 2, pp. 151–155, 2015.</>,
-    <>IEEE, "IEEE Editorial Style Manual for Authors," IEEE Periodicals.</>,
-    <>American Mathematical Society, "User's guide for the amsmath package," CTAN package documentation.</>,
-    <>J. Wright, "siunitx: A comprehensive (SI) units package," CTAN package documentation.</>,
-    <>Elsevier, "Artwork and media instructions," Elsevier Author Resources.</>,
-    <>B. Wong, "Points of view: Color blindness," <i>Nature Methods</i>, vol. 8, no. 6, p. 441, 2011.</>,
-    <>S. Fear, "Publication quality tables in LaTeX (booktabs)," CTAN package documentation.</>,
+    <>Elsevier, “Guide for Authors,” available on each journal’s homepage at sciencedirect.com.</>,
+    <>
+      Elsevier, “elsarticle: Class for articles submitted to Elsevier journals,”{" "}
+      <Ext href="https://ctan.org/pkg/elsarticle">CTAN package documentation</Ext>.
+    </>,
+    <>
+      IEEE Author Center, “Templates for IEEE journal and conference articles,”{" "}
+      <Ext href="https://template-selector.ieee.org/">IEEE Template Selector</Ext>.
+    </>,
+    <>
+      M. Shell, “How to use the IEEEtran LaTeX class,”{" "}
+      <Ext href="https://ctan.org/pkg/ieeetran">CTAN package documentation</Ext>.
+    </>,
+    <>
+      A. Brand, L. Allen, M. Altman, M. Hlava, and J. Scott, “Beyond authorship: Attribution, contribution, collaboration, and credit,” <i>Learned Publishing</i>, vol. 28, no. 2, pp. 151–155, 2015.{" "}
+      <Ext href="https://doi.org/10.1087/20150211">doi:10.1087/20150211</Ext>
+    </>,
+    <>IEEE, “IEEE Editorial Style Manual for Authors,” IEEE Periodicals.</>,
+    <>
+      American Mathematical Society, “User’s guide for the amsmath package,”{" "}
+      <Ext href="https://ctan.org/pkg/amsmath">CTAN package documentation</Ext>.
+    </>,
+    <>
+      J. Wright, “siunitx: A comprehensive (SI) units package,”{" "}
+      <Ext href="https://ctan.org/pkg/siunitx">CTAN package documentation</Ext>.
+    </>,
+    <>Elsevier, “Artwork and media instructions,” Elsevier Author Resources.</>,
+    <>
+      B. Wong, “Points of view: Color blindness,” <i>Nature Methods</i>, vol. 8, no. 6, p. 441, 2011.{" "}
+      <Ext href="https://doi.org/10.1038/nmeth.1618">doi:10.1038/nmeth.1618</Ext>
+    </>,
+    <>
+      S. Fear, “Publication quality tables in LaTeX (booktabs),”{" "}
+      <Ext href="https://ctan.org/pkg/booktabs">CTAN package documentation</Ext>.
+    </>,
     <>L. Lamport, <i>LaTeX: A Document Preparation System</i>, 2nd ed. Reading, MA, USA: Addison-Wesley, 1994.</>,
   ];
 
@@ -257,62 +470,66 @@ export default function FormattingGuideBlog() {
             </Link>
           </div>
 
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle navigation"
-            aria-expanded={mobileMenuOpen}
-            className="rounded-lg border border-slate-200 p-2 text-slate-700 transition hover:bg-slate-50 md:hidden"
-          >
-            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-        </div>
-
-        {mobileMenuOpen && (
-          <div className="border-t border-slate-200 bg-white px-6 py-4 md:hidden">
-            <div className="flex flex-col gap-4 text-sm font-medium text-slate-700">
-              <Link href="/" onClick={() => setMobileMenuOpen(false)}>Home</Link>
-              <Link href="/#services" onClick={() => setMobileMenuOpen(false)}>Services</Link>
-              <Link href="/#process" onClick={() => setMobileMenuOpen(false)}>How it works</Link>
-              <Link href="/#insights" onClick={() => setMobileMenuOpen(false)}>Insights</Link>
-              <Link href="/blog" onClick={() => setMobileMenuOpen(false)}>Knowledge Library</Link>
+          <details className="group md:hidden">
+            <summary
+              aria-label="Toggle navigation"
+              className="flex cursor-pointer list-none items-center rounded-lg border border-slate-200 p-2 text-slate-700 transition hover:bg-slate-50 [&::-webkit-details-marker]:hidden"
+            >
+              <Menu size={20} className="group-open:hidden" />
+              <X size={20} className="hidden group-open:block" />
+            </summary>
+            <div className="absolute left-0 right-0 top-full border-t border-slate-200 bg-white px-6 py-4 shadow-sm">
+              <div className="flex flex-col gap-4 text-sm font-medium text-slate-700">
+                <Link href="/">Home</Link>
+                <Link href="/#services">Services</Link>
+                <Link href="/#process">How it works</Link>
+                <Link href="/#insights">Insights</Link>
+                <Link href="/blog">Knowledge Library</Link>
+              </div>
             </div>
-          </div>
-        )}
+          </details>
+        </div>
       </nav>
 
       <main>
         {/* Article header */}
-        <section className="border-b border-slate-200 bg-gradient-to-b from-slate-50 to-white">
+        <header className="border-b border-slate-200 bg-gradient-to-b from-slate-50 to-white">
           <div className="mx-auto max-w-5xl px-6 pb-10 pt-9 sm:pb-12 sm:pt-12">
             {/* Breadcrumb */}
-            <div className="mb-7 flex flex-wrap items-center gap-2 text-sm">
+            <nav
+              aria-label="Breadcrumb"
+              className="mb-7 flex flex-wrap items-center gap-2 text-sm"
+            >
               <Link href="/" className="font-medium text-slate-500 transition hover:text-blue-800">
                 Home
               </Link>
-              <ChevronRight size={14} className="text-slate-400" />
+              <ChevronRight size={14} className="text-slate-400" aria-hidden="true" />
               <Link href="/blog" className="font-medium text-slate-500 transition hover:text-blue-800">
                 Knowledge Library
               </Link>
-              <ChevronRight size={14} className="text-slate-400" />
-              <span className="font-medium text-blue-800">Manuscript Formatting</span>
-            </div>
+              <ChevronRight size={14} className="text-slate-400" aria-hidden="true" />
+              <span aria-current="page" className="font-medium text-blue-800">
+                Manuscript Formatting
+              </span>
+            </nav>
 
             <div className="mb-5 flex flex-wrap items-center gap-3">
               <span className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-blue-900">
                 Manuscript Formatting Guide
               </span>
               <span className="flex items-center gap-1.5 text-xs text-slate-500">
-                <Calendar size={14} />
-                October 2026
+                <Calendar size={14} aria-hidden="true" />
+                <time dateTime="2026-10-01">October 2026</time>
               </span>
               <span className="flex items-center gap-1.5 text-xs text-slate-500">
-                <Clock size={14} />
+                <Clock size={14} aria-hidden="true" />
                 12 min read
               </span>
             </div>
 
             <h1 className="max-w-4xl font-serif text-3xl font-bold leading-[1.2] tracking-tight text-slate-950 sm:text-4xl lg:text-[44px]">
-              A Step-by-Step Guide to Formatting Engineering Manuscripts for Elsevier &amp; IEEE
+              A Step-by-Step Guide to Formatting Engineering Manuscripts for
+              Elsevier &amp; IEEE
             </h1>
 
             <p className="mt-5 max-w-3xl text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">
@@ -341,12 +558,12 @@ export default function FormattingGuideBlog() {
                 href="/blog"
                 className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-blue-900 transition hover:border-blue-800 hover:bg-blue-50"
               >
-                <BookOpen size={15} />
+                <BookOpen size={15} aria-hidden="true" />
                 All Articles
               </Link>
             </div>
           </div>
-        </section>
+        </header>
 
         {/* Article layout */}
         <div
@@ -355,21 +572,27 @@ export default function FormattingGuideBlog() {
         >
           <article className="min-w-0">
             {/* Introduction */}
-            <div
+            <section
               id="introduction"
-              className="mb-7 scroll-mt-28 rounded-r-lg border-l-[3px] border-blue-800 bg-slate-50 px-5 py-5 sm:px-6"
+              aria-labelledby="introduction-heading"
+              className="mb-7 scroll-mt-28"
             >
-              <p className="text-[15px] leading-[1.85] text-slate-700 sm:text-base">
-                Formatting alone will not get a weak paper accepted, but it can
-                get a strong paper returned at the technical check, and the
-                delay of a week or two is costly. This guide follows the order
-                in which you will actually meet each task: template, structure,
-                equations, figures, references, and a final check (Fig. 1).
-              </p>
-            </div>
+              <h2 id="introduction-heading" className="sr-only">
+                Introduction: Why Manuscript Formatting Matters
+              </h2>
+              <div className="rounded-r-lg border-l-[3px] border-blue-800 bg-slate-50 px-5 py-5 sm:px-6">
+                <p className="text-[15px] leading-[1.85] text-slate-700 sm:text-base">
+                  Formatting alone will not get a weak paper accepted, but it can
+                  get a strong paper returned at the technical check, and the
+                  delay of a week or two is costly. This guide follows the order
+                  in which you will actually meet each task: template, structure,
+                  equations, figures, references, and a final check (Fig. 1).
+                </p>
+              </div>
+            </section>
 
             <Callout title="One rule beats everything below">
-              The journal's Guide for Authors <Cite n={1} />, or the conference
+              The journal’s Guide for Authors <Cite n={1} />, or the conference
               call for papers, always takes priority. Treat this guide as a map
               and the journal page as the final word.
             </Callout>
@@ -381,9 +604,22 @@ export default function FormattingGuideBlog() {
               priority
             />
 
+            <p className={`${P} mb-5`}>
+              Formatting is one piece of a successful submission. To plan the
+              content itself, read our{" "}
+              <Int href="/blog/q1-research-paper-structure">
+                guide to structuring a Q1 research paper
+              </Int>
+              , and to avoid the problems that lead to an early decline, see{" "}
+              <Int href="/blog/paper-rejection-reasons">
+                why journals reject research papers
+              </Int>
+              .
+            </p>
+
             {/* Step 1 */}
             <SectionHeading id="step-1" number="01">
-              Choose Between Elsevier and IEEE Templates
+              Elsevier vs IEEE Template: Which One Should You Use?
             </SectionHeading>
 
             <p className={`${P} mt-4`}>
@@ -395,11 +631,14 @@ export default function FormattingGuideBlog() {
             <div className="my-6 overflow-hidden rounded-xl border border-slate-200">
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[620px] border-collapse text-left text-sm">
+                  <caption className="sr-only">
+                    Comparison of Elsevier and IEEE manuscript formatting
+                  </caption>
                   <thead>
                     <tr className="bg-blue-950 text-white">
-                      <th className="px-4 py-3.5 font-semibold">Feature</th>
-                      <th className="px-4 py-3.5 font-semibold">Elsevier Journals</th>
-                      <th className="px-4 py-3.5 font-semibold">IEEE Journals and Conferences</th>
+                      <th scope="col" className="px-4 py-3.5 font-semibold">Feature</th>
+                      <th scope="col" className="px-4 py-3.5 font-semibold">Elsevier Journals</th>
+                      <th scope="col" className="px-4 py-3.5 font-semibold">IEEE Journals and Conferences</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -433,15 +672,15 @@ export default function FormattingGuideBlog() {
               caption="Fig. 2. A two-column IEEE page next to a single-column, double-spaced Elsevier page."
             />
 
-            <SubHeading>LaTeX or Word?</SubHeading>
+            <SubHeading>Should You Use LaTeX or Word?</SubHeading>
 
             <ul className={LIST}>
               <Check>
                 <strong className="text-slate-900">Pick LaTeX if:</strong> your
                 paper is equation-heavy (control, signal processing,
                 electromagnetics, mechanics), you want automatic numbering and
-                cross-references, or you share the project through Overleaf or
-                Git.
+                cross-references, or you share the project through{" "}
+                <Ext href="https://www.overleaf.com">Overleaf</Ext> or Git.
               </Check>
               <Check>
                 <strong className="text-slate-900">Pick Word if:</strong> your
@@ -450,7 +689,7 @@ export default function FormattingGuideBlog() {
               </Check>
             </ul>
 
-            <SubHeading>Get the Right Template</SubHeading>
+            <SubHeading>Where to Download the Official Template</SubHeading>
 
             <p className={`${P} mt-3`}>
               For general LaTeX reference, see Lamport <Cite n={12} />.
@@ -459,15 +698,19 @@ export default function FormattingGuideBlog() {
             <p className={`${P} mt-3`}>
               <strong className="text-slate-900">Elsevier:</strong> open the
               journal homepage, then the Guide for Authors. It links to the
-              current template, usually the elsarticle class <Cite n={2} /> or
-              a Word file.
+              current template, usually the{" "}
+              <Ext href="https://ctan.org/pkg/elsarticle">elsarticle class</Ext>{" "}
+              <Cite n={2} /> or a Word file.
             </p>
 
             <p className={`${P} mt-3`}>
-              <strong className="text-slate-900">IEEE:</strong> use the
-              template selector in the IEEE Author Center <Cite n={3} /> or the
-              one named in your conference call, with the IEEEtran class{" "}
-              <Cite n={4} /> for LaTeX. Never reuse an old paper's template,
+              <strong className="text-slate-900">IEEE:</strong> use the{" "}
+              <Ext href="https://template-selector.ieee.org/">
+                IEEE Template Selector
+              </Ext>{" "}
+              <Cite n={3} /> or the one named in your conference call, with the{" "}
+              <Ext href="https://ctan.org/pkg/ieeetran">IEEEtran class</Ext>{" "}
+              <Cite n={4} /> for LaTeX. Never reuse an old paper’s template,
               because conferences change theirs yearly.
             </p>
 
@@ -485,7 +728,7 @@ export default function FormattingGuideBlog() {
 
             {/* Step 2 */}
             <SectionHeading id="step-2" number="02">
-              Prepare Your Section Structure
+              How to Prepare Your Manuscript Section Structure
             </SectionHeading>
 
             <p className={`${P} mt-4`}>
@@ -494,7 +737,7 @@ export default function FormattingGuideBlog() {
               section order.
             </p>
 
-            <SubHeading>Title, Abstract, and Keywords</SubHeading>
+            <SubHeading>How to Write the Title, Abstract, and Keywords</SubHeading>
 
             <ul className={LIST}>
               <Check>
@@ -509,7 +752,7 @@ export default function FormattingGuideBlog() {
               </Check>
               <Check>
                 <strong className="text-slate-900">Keywords:</strong> Elsevier
-                usually requires 4 to 6. IEEE uses "Index Terms", normally
+                usually requires 4 to 6. IEEE uses “Index Terms”, normally
                 alphabetical and drawn from the IEEE Taxonomy where possible{" "}
                 <Cite n={6} />.
               </Check>
@@ -531,17 +774,28 @@ export default function FormattingGuideBlog() {
               ))}
             </ul>
 
+            <p className={`${P} mt-4`}>
+              For a deeper look at what each section must contain, see our{" "}
+              <Int href="/blog/q1-research-paper-structure">
+                Q1 research paper structure blueprint
+              </Int>
+              . The back-matter statements follow the{" "}
+              <Ext href="https://credit.niso.org/">CRediT taxonomy</Ext>.
+            </p>
+
             {/* Step 3 */}
             <SectionHeading id="step-3" number="03">
-              Format Mathematics and Equations
+              How to Format Mathematics and Equations in LaTeX
             </SectionHeading>
 
             <p className={`${P} mt-4`}>
               Use inline math for short symbols and simple definitions inside a
               sentence. Use display math for anything long, complex, or
-              referenced later (Fig. 4). The amsmath package <Cite n={7} />{" "}
-              handles alignment and numbering, and siunitx <Cite n={8} /> keeps
-              units consistent.
+              referenced later (Fig. 4). The{" "}
+              <Ext href="https://ctan.org/pkg/amsmath">amsmath package</Ext>{" "}
+              <Cite n={7} /> handles alignment and numbering, and{" "}
+              <Ext href="https://ctan.org/pkg/siunitx">siunitx</Ext>{" "}
+              <Cite n={8} /> keeps units consistent.
             </p>
 
             <CodeBlock
@@ -559,16 +813,19 @@ where $\\mathbf{H}$ is the channel matrix and $\\mathbf{n}$ is noise.
               caption={'Fig. 4. A display equation with its number, punctuation, and "where" line.'}
             />
 
-            <SubHeading>Vectors, Matrices, and Symbols</SubHeading>
+            <SubHeading>How to Format Vectors, Matrices, and Symbols</SubHeading>
 
             <div className="my-6 overflow-hidden rounded-xl border border-slate-200">
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[520px] border-collapse text-left text-sm">
+                  <caption className="sr-only">
+                    Recommended notation styles and LaTeX commands
+                  </caption>
                   <thead>
                     <tr className="bg-blue-950 text-white">
-                      <th className="px-4 py-3.5 font-semibold">Object</th>
-                      <th className="px-4 py-3.5 font-semibold">Style</th>
-                      <th className="px-4 py-3.5 font-semibold">LaTeX</th>
+                      <th scope="col" className="px-4 py-3.5 font-semibold">Object</th>
+                      <th scope="col" className="px-4 py-3.5 font-semibold">Style</th>
+                      <th scope="col" className="px-4 py-3.5 font-semibold">LaTeX</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -591,15 +848,19 @@ where $\\mathbf{H}$ is the channel matrix and $\\mathbf{n}$ is noise.
 
             {/* Step 4 */}
             <SectionHeading id="step-4" number="04">
-              Figures, Tables, and High-Resolution Visuals
+              Figures, Tables, and High-Resolution Images for Journals
             </SectionHeading>
 
             <p className={`${P} mt-4`}>
               Use vector formats (PDF or EPS) for plots, circuits, and block
               diagrams. Use TIFF or PNG for photos and microscopy, and follow
-              the publisher's artwork rules <Cite n={9} /> (Fig. 5). Choose
+              the publisher’s artwork rules <Cite n={9} /> (Fig. 5). Choose
               colors that remain readable for color-blind readers{" "}
-              <Cite n={10} />.
+              <Cite n={10} />. For plot-specific advice, see our{" "}
+              <Int href="/blog/contour-visualizations">
+                scientific visualization guide
+              </Int>
+              .
             </p>
 
             <ArticleFigure
@@ -610,9 +871,9 @@ where $\\mathbf{H}$ is the channel matrix and $\\mathbf{n}$ is noise.
 
             <p className={P}>
               Place captions below figures and above tables, and keep the
-              numbering consistent throughout the manuscript (Fig. 6). The
-              booktabs package <Cite n={11} /> gives clean, professional table
-              rules.
+              numbering consistent throughout the manuscript (Fig. 6). The{" "}
+              <Ext href="https://ctan.org/pkg/booktabs">booktabs package</Ext>{" "}
+              <Cite n={11} /> gives clean, professional table rules.
             </p>
 
             <ArticleFigure
@@ -623,7 +884,7 @@ where $\\mathbf{H}$ is the channel matrix and $\\mathbf{n}$ is noise.
 
             {/* Step 5 */}
             <SectionHeading id="step-5" number="05">
-              Citation and Reference Management
+              How to Manage Citations and References with BibTeX
             </SectionHeading>
 
             <p className={`${P} mt-4`}>
@@ -637,7 +898,7 @@ where $\\mathbf{H}$ is the channel matrix and $\\mathbf{n}$ is noise.
 
             {/* Common mistakes */}
             <SectionHeading id="common-mistakes">
-              Common Formatting Mistakes
+              Common Manuscript Formatting Mistakes to Avoid
             </SectionHeading>
 
             <p className={`${P} mt-4`}>
@@ -645,51 +906,158 @@ where $\\mathbf{H}$ is the channel matrix and $\\mathbf{n}$ is noise.
               the following points before you upload.
             </p>
 
-            <div className="mt-5 space-y-2.5">
+            <ol className="mt-5 space-y-2.5">
               {mistakes.map((mistake, index) => (
-                <div
+                <li
                   key={index}
                   className="flex gap-3 rounded-lg border border-slate-200 bg-white p-3.5"
                 >
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-100 text-[11px] font-bold text-slate-600">
+                  <span
+                    aria-hidden="true"
+                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-100 text-[11px] font-bold text-slate-600"
+                  >
                     {index + 1}
                   </span>
-                  <p className="text-sm leading-[1.8] text-slate-700">{mistake}</p>
-                </div>
+                  <span className="text-sm leading-[1.8] text-slate-700">{mistake}</span>
+                </li>
               ))}
-            </div>
+            </ol>
 
             {/* Final checklist */}
             <SectionHeading id="step-6">
-              Final Pre-Submission Checklist
+              Final Pre-Submission Formatting Checklist
             </SectionHeading>
 
             <p className={`${P} mt-4`}>
               Before submitting your manuscript, use this checklist to evaluate
-              its overall quality and technical consistency.
+              its overall quality and technical consistency. If you have not
+              yet chosen a journal, our guide to{" "}
+              <Int href="/blog/fast-review-q1-q2-journals">
+                finding fast-review Q1/Q2 journals
+              </Int>{" "}
+              can help.
             </p>
 
-            <div className="mt-5 space-y-2">
+            <ul className="mt-5 space-y-2">
               {checklist.map((item) => (
-                <div
+                <li
                   key={item}
                   className="flex items-start gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3.5"
                 >
-                  <CheckCircle2 size={18} className="mt-0.5 shrink-0 text-emerald-600" />
+                  <CheckCircle2
+                    size={18}
+                    className="mt-0.5 shrink-0 text-emerald-600"
+                    aria-hidden="true"
+                  />
                   <span className="text-sm leading-[1.8] text-slate-700">{item}</span>
-                </div>
+                </li>
+              ))}
+            </ul>
+
+            {/* FAQ */}
+            <SectionHeading id="faq">
+              Frequently Asked Questions About Elsevier and IEEE Manuscript Formatting
+            </SectionHeading>
+
+            <div className="mt-6 divide-y divide-slate-200 overflow-hidden rounded-xl border border-slate-200">
+              {faqs.map((faq, index) => (
+                <details
+                  key={faq.q}
+                  className="group bg-white open:bg-slate-50"
+                  {...(index === 0 ? { open: true } : {})}
+                >
+                  <summary className="flex cursor-pointer list-none items-start justify-between gap-4 px-5 py-4 text-left [&::-webkit-details-marker]:hidden">
+                    <h3 className="font-serif text-base font-bold leading-snug text-slate-950">
+                      {faq.q}
+                    </h3>
+                    <ChevronDown
+                      size={18}
+                      aria-hidden="true"
+                      className="mt-1 shrink-0 text-blue-800 transition group-open:rotate-180"
+                    />
+                  </summary>
+                  <p className="px-5 pb-5 text-[15px] leading-[1.8] text-slate-700">
+                    {faq.a}
+                  </p>
+                </details>
               ))}
             </div>
 
+            <p className={`${P} mt-4`}>
+              Looking for more? Browse the{" "}
+              <Int href="/blog">ScholarGrid Knowledge Library</Int> for guides
+              on structure, literature reviews, visualization and more, or read
+              our{" "}
+              <Int href="/blog/systematic-literature-review-guide">
+                systematic literature review guide
+              </Int>
+              .
+            </p>
+
+            {/* Conclusion + CTA */}
+            <section
+              id="conclusion"
+              aria-labelledby="conclusion-heading"
+              className="mt-10 scroll-mt-28 border-t border-slate-200 pt-7"
+            >
+              <p className="text-xs font-bold uppercase tracking-[0.15em] text-blue-800">
+                ScholarGrid Research Library
+              </p>
+              <h2
+                id="conclusion-heading"
+                className="mt-2 font-serif text-2xl font-bold text-slate-950 sm:text-[28px]"
+              >
+                Conclusion: Format Once, Format Correctly
+              </h2>
+              <p className={`${P} mt-3`}>
+                Good formatting will not rescue a weak paper, but poor
+                formatting can slow down a strong one. Set up your template,
+                figures, and references properly once, and you can spend your
+                energy on the science.
+              </p>
+
+              <div className="mt-6 rounded-xl border border-blue-100 bg-blue-50/60 p-6">
+                <p className="font-serif text-lg font-bold text-blue-950">
+                  Need help formatting your manuscript for Elsevier or IEEE?
+                </p>
+                <p className="mt-2 text-sm leading-[1.8] text-slate-700">
+                  ScholarGrid helps researchers prepare templates, equations,
+                  figures and references so submissions pass the technical
+                  check. Explore our academic services or keep learning in the
+                  Knowledge Library.
+                </p>
+                <div className="mt-4 flex flex-wrap items-center gap-4">
+                  <Link
+                    href="/#services"
+                    className="inline-flex items-center gap-2 rounded-lg bg-blue-950 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-800"
+                  >
+                    Explore ScholarGrid Services
+                    <ArrowRight size={16} aria-hidden="true" />
+                  </Link>
+                  <Link
+                    href="/blog"
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-blue-800 transition hover:text-blue-950"
+                  >
+                    <ArrowLeft size={16} aria-hidden="true" />
+                    Back to Knowledge Library
+                  </Link>
+                </div>
+              </div>
+            </section>
+
             {/* References */}
-            <div
+            <section
               id="references"
+              aria-labelledby="references-heading"
               className="mt-12 scroll-mt-28 border-t border-slate-200 pt-8"
             >
               <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.16em] text-blue-800">
                 Further Reading
               </p>
-              <h2 className="font-serif text-2xl font-bold text-slate-950 sm:text-3xl">
+              <h2
+                id="references-heading"
+                className="font-serif text-2xl font-bold text-slate-950 sm:text-3xl"
+              >
                 References
               </h2>
 
@@ -708,50 +1076,28 @@ where $\\mathbf{H}$ is the channel matrix and $\\mathbf{n}$ is noise.
                   </li>
                 ))}
               </ol>
-            </div>
 
-            {/* Article ending */}
-            <div className="mt-10 border-t border-slate-200 pt-7">
-              <p className="text-xs font-bold uppercase tracking-[0.15em] text-blue-800">
-                ScholarGrid Research Library
+              <p className="mt-5 text-xs italic leading-relaxed text-slate-500">
+                Templates and author guidelines are updated regularly. Always
+                confirm requirements on the journal’s own website before
+                submitting.
               </p>
-              <p className="mt-3 text-[15px] leading-[1.85] text-slate-600">
-                Good formatting will not rescue a weak paper, but poor
-                formatting can slow down a strong one. Set up your template,
-                figures, and references properly once, and you can spend your
-                energy on the science.
-              </p>
-
-              <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
-                <Link
-                  href="/blog"
-                  className="inline-flex items-center gap-2 text-sm font-semibold text-blue-800 transition hover:text-blue-950"
-                >
-                  <ArrowLeft size={16} />
-                  Back to Knowledge Library
-                </Link>
-
-                <Link
-                  href="/"
-                  className="inline-flex items-center gap-2 rounded-lg bg-blue-950 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-800"
-                >
-                  Explore ScholarGrid
-                  <ArrowRight size={16} />
-                </Link>
-              </div>
-            </div>
+            </section>
           </article>
 
           {/* Desktop sidebar */}
-          <aside className="hidden lg:block">
+          <aside className="hidden lg:block" aria-label="Article sidebar">
             <div className="sticky top-24 space-y-5">
               {/* Table of contents */}
-              <div className="rounded-xl border border-slate-200 bg-white p-5">
+              <nav
+                aria-label="Table of contents"
+                className="rounded-xl border border-slate-200 bg-white p-5"
+              >
                 <div className="flex items-center gap-2 border-b border-slate-100 pb-4">
-                  <List size={17} className="text-blue-800" />
-                  <h3 className="font-serif text-base font-bold text-slate-950">
+                  <List size={17} className="text-blue-800" aria-hidden="true" />
+                  <p className="font-serif text-base font-bold text-slate-950">
                     In This Article
-                  </h3>
+                  </p>
                 </div>
 
                 <div className="mt-3 space-y-0.5">
@@ -767,21 +1113,22 @@ where $\\mathbf{H}$ is the channel matrix and $\\mathbf{n}$ is noise.
                       <span className="flex-1">{item.title}</span>
                       <ChevronRight
                         size={12}
+                        aria-hidden="true"
                         className="mt-1 shrink-0 opacity-0 transition group-hover:translate-x-0.5 group-hover:opacity-100"
                       />
                     </a>
                   ))}
                 </div>
-              </div>
+              </nav>
 
               {/* Knowledge library card */}
               <div className="rounded-xl border border-slate-200 bg-slate-50 p-5">
                 <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-blue-100 text-blue-900">
-                  <BookOpen size={19} />
+                  <BookOpen size={19} aria-hidden="true" />
                 </div>
-                <h3 className="font-serif text-lg font-bold text-slate-950">
+                <p className="font-serif text-lg font-bold text-slate-950">
                   Explore More Research Guides
-                </h3>
+                </p>
                 <p className="mt-2 text-[13px] leading-[1.8] text-slate-600">
                   Discover practical resources on academic writing, literature
                   reviews, research methodology, and scholarly publishing.
@@ -791,7 +1138,7 @@ where $\\mathbf{H}$ is the channel matrix and $\\mathbf{n}$ is noise.
                   className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-blue-800 transition hover:text-blue-950"
                 >
                   Browse All Articles
-                  <ArrowRight size={15} />
+                  <ArrowRight size={15} aria-hidden="true" />
                 </Link>
               </div>
 
@@ -800,7 +1147,7 @@ where $\\mathbf{H}$ is the channel matrix and $\\mathbf{n}$ is noise.
                 href="/"
                 className="flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-blue-800 hover:text-blue-900"
               >
-                <ArrowLeft size={15} />
+                <ArrowLeft size={15} aria-hidden="true" />
                 Back to Homepage
               </Link>
             </div>
@@ -808,15 +1155,21 @@ where $\\mathbf{H}$ is the channel matrix and $\\mathbf{n}$ is noise.
         </div>
 
         {/* Related reading section */}
-        <section className="border-t border-slate-200 bg-slate-50">
+        <section
+          aria-labelledby="related-heading"
+          className="border-t border-slate-200 bg-slate-50"
+        >
           <div className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
             <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
               <div>
                 <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-blue-800">
                   Continue Exploring
                 </p>
-                <h2 className="mt-2 font-serif text-2xl font-bold text-slate-950">
-                  More from the Research Library
+                <h2
+                  id="related-heading"
+                  className="mt-2 font-serif text-2xl font-bold text-slate-950"
+                >
+                  Related Research Guides from ScholarGrid
                 </h2>
               </div>
 
@@ -825,8 +1178,29 @@ where $\\mathbf{H}$ is the channel matrix and $\\mathbf{n}$ is noise.
                 className="inline-flex items-center gap-2 text-sm font-semibold text-blue-800 transition hover:text-blue-950"
               >
                 View All Articles
-                <ArrowRight size={16} />
+                <ArrowRight size={16} aria-hidden="true" />
               </Link>
+            </div>
+
+            <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {related.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="group rounded-xl border border-slate-200 bg-white p-5 transition hover:border-blue-800 hover:shadow-sm"
+                >
+                  <h3 className="font-serif text-base font-bold leading-snug text-slate-950 group-hover:text-blue-900">
+                    {item.title}
+                  </h3>
+                  <p className="mt-2 text-[13px] leading-[1.7] text-slate-600">
+                    {item.text}
+                  </p>
+                  <span className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-blue-800">
+                    Read guide
+                    <ArrowRight size={13} aria-hidden="true" />
+                  </span>
+                </Link>
+              ))}
             </div>
           </div>
         </section>
@@ -857,27 +1231,29 @@ where $\\mathbf{H}$ is the channel matrix and $\\mathbf{n}$ is noise.
           </div>
 
           {/* Explore */}
-          <div>
-            <h3 className="text-sm font-semibold text-white">Explore ScholarGrid</h3>
+          <nav aria-label="Explore ScholarGrid">
+            <p className="text-sm font-semibold text-white">Explore ScholarGrid</p>
             <ul className="mt-4 space-y-2.5 text-[13px]">
               <li><Link href="/" className="transition hover:text-white">Home</Link></li>
               <li><Link href="/#services" className="transition hover:text-white">Academic Services</Link></li>
               <li><Link href="/#process" className="transition hover:text-white">How It Works</Link></li>
               <li><Link href="/#faq" className="transition hover:text-white">Frequently Asked Questions</Link></li>
             </ul>
-          </div>
+          </nav>
 
           {/* Article links */}
-          <div>
-            <h3 className="text-sm font-semibold text-white">Research Resources</h3>
+          <nav aria-label="Research resources">
+            <p className="text-sm font-semibold text-white">Research Resources</p>
             <ul className="mt-4 space-y-2.5 text-[13px]">
               <li><Link href="/blog/formatting-guide" className="transition hover:text-white">Manuscript Formatting</Link></li>
               <li><Link href="/blog/paper-rejection-reasons" className="transition hover:text-white">Journal Rejection Guide</Link></li>
+              <li><Link href="/blog/fast-review-q1-q2-journals" className="transition hover:text-white">Fast-Review Q1/Q2 Journals</Link></li>
               <li><Link href="/blog/contour-visualizations" className="transition hover:text-white">Scientific Visualization</Link></li>
               <li><Link href="/blog/systematic-literature-review-guide" className="transition hover:text-white">Literature Review Guide</Link></li>
+              <li><Link href="/blog/q1-research-paper-structure" className="transition hover:text-white">Q1 Research Paper Structure</Link></li>
               <li><Link href="/blog" className="transition hover:text-white">All Articles</Link></li>
             </ul>
-          </div>
+          </nav>
         </div>
 
         <div className="border-t border-slate-800 px-6 py-5 text-center text-xs leading-relaxed text-slate-500">
@@ -885,5 +1261,21 @@ where $\\mathbf{H}$ is the channel matrix and $\\mathbf{n}$ is noise.
         </div>
       </footer>
     </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Page (server component: exports metadata and renders JSON-LD)       */
+/* ------------------------------------------------------------------ */
+
+export default function Page() {
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <ArticleBody />
+    </>
   );
 }
