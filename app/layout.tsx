@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import ChatBotGate from "@/components/Chatbot";
+import SiteFooter from "@/components/SiteFooter";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,37 +24,40 @@ const sourceSerif = Source_Serif_4({
 
 const ADSENSE_CLIENT = "ca-pub-4708685236568228";
 
+const GOOGLE_SCHOLAR_URL =
+  "https://scholar.google.com/citations?hl=en&user=-VGaDnoAAAAJ";
+
+const RESEARCHGATE_URL =
+  "https://www.researchgate.net/profile/Hamza-Iqbal-19?ev=hdr_xprf";
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://scholargrid.org"),
   title: {
-    default: "ScholarGrid | Global Academic & Research Publication Support",
+    default:
+      "ScholarGrid | Academic Writing, LaTeX & Research Guides for PhD Scholars",
     template: "%s | ScholarGrid",
   },
   description:
-    "International academic consultancy providing Q1/Q2 journal formatting, numerical modeling (MATLAB/Python), and systematic literature review support for PhD scholars worldwide.",
+    "Free guides for PhD scholars and researchers: Q1/Q2 paper structure, Elsevier and IEEE formatting, LaTeX, MATLAB and Python figures, and systematic literature reviews.",
   keywords: [
-    "Academic Consultancy",
+    "Academic Writing Guides",
+    "Q1 Research Paper Structure",
     "Manuscript Formatting",
-    "MATLAB Simulation Support",
-    "Python Numerical Modeling",
     "Elsevier IEEE Formatting",
-    "Thesis Research Assistance",
-    "ScholarGrid",
-    "Q1 Q2 Journal Publication",
+    "LaTeX Guide",
+    "MATLAB Python Visualization",
     "Systematic Literature Review",
-    "Computational Fluid Dynamics",
+    "Journal Selection",
+    "PhD Research Support",
+    "ScholarGrid",
   ],
-  authors: [{ name: "ScholarGrid Team", url: "https://scholargrid.org" }],
+  authors: [{ name: "ScholarGrid", url: "https://scholargrid.org" }],
   creator: "ScholarGrid",
   publisher: "ScholarGrid",
   alternates: {
-    canonical: "https://scholargrid.org",
-    languages: {
-      "en-US": "https://scholargrid.org",
-      "en-GB": "https://scholargrid.org",
-      "en-AE": "https://scholargrid.org",
-      "x-default": "https://scholargrid.org",
-    },
+    // "./" resolves to each page's own URL, so blog posts do not all
+    // inherit the homepage as their canonical.
+    canonical: "./",
   },
   verification: {
     google: "R-joaBU6oK5Y2WxN_RDz7f63hpLWrLt7CMKTBX6tzV8",
@@ -78,37 +82,40 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://scholargrid.org",
     siteName: "ScholarGrid",
-    title: "ScholarGrid - Global Academic & Research Consultancy",
+    title: "ScholarGrid | Academic Writing, LaTeX & Research Guides",
     description:
-      "Expert research guidance, Q1/Q2 journal formatting, and advanced computational modeling for PhD scholars worldwide.",
+      "Practical guides on Q1/Q2 paper structure, journal formatting, LaTeX, computational figures, and literature reviews for PhD scholars.",
     images: [
       {
         url: "/logo.png",
         width: 1200,
         height: 630,
-        alt: "ScholarGrid Academic Consultancy",
+        alt: "ScholarGrid academic research guides",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "ScholarGrid - International PhD & Research Consultancy",
+    title: "ScholarGrid | Academic Writing, LaTeX & Research Guides",
     description:
-      "Professional guidance for Q1/Q2 manuscript preparation, thesis writing, and numerical modeling.",
+      "Practical guides for PhD scholars on manuscript structure, formatting, LaTeX, and literature reviews.",
     images: ["/logo.png"],
   },
 };
 
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "EducationalOrganization",
+  "@type": "Organization",
   name: "ScholarGrid",
   url: "https://scholargrid.org",
   logo: "https://scholargrid.org/logo.png",
-  sameAs: ["https://www.youtube.com/@scholargrid"],
-  areaServed: "Worldwide",
+  sameAs: [
+    "https://www.youtube.com/@scholargrid",
+    GOOGLE_SCHOLAR_URL,
+    RESEARCHGATE_URL,
+  ],
   description:
-    "Global academic writing, Q1/Q2 manuscript formatting, SPSS/Python modeling, and thesis consultancy services for postgraduates and researchers.",
+    "Academic knowledge platform with guides on research paper structure, journal formatting, LaTeX, computational visualization, and literature reviews for PhD scholars and researchers.",
 };
 
 export default function RootLayout({
@@ -128,6 +135,9 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col relative">
         {children}
 
+        {/* Site-wide footer with Contact, Privacy Policy and Terms links */}
+        <SiteFooter />
+
         {/* Chatbot: shown on all pages except /blog and blog articles */}
         <ChatBotGate />
 
@@ -140,7 +150,7 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
 
-        {/* International Schema Markup (JSON-LD) */}
+        {/* Site-wide Schema Markup (JSON-LD) */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
