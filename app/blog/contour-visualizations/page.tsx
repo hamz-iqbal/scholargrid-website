@@ -31,7 +31,7 @@ const PAGE_URL = `${SITE_URL}${SLUG}`;
 const TITLE =
   "Contour Plots & 3D Surface Plots in Python and MATLAB for Q1 Journals";
 const DESCRIPTION =
-  "Learn how to make publication-quality contour plots and 3D surface plots in Python and MATLAB: color maps, export settings and a checklist for Q1 journals.";
+  "A technical guide to publication-quality contour and 3D surface plots in Python and MATLAB: scattered-data interpolation, perceptually uniform color maps, log-spaced levels, multi-panel consistency, vector export and reproducibility.";
 
 export const metadata: Metadata = {
   /* If your root layout already uses title.template "%s | ScholarGrid",
@@ -44,6 +44,8 @@ export const metadata: Metadata = {
     "3D surface plot Matplotlib",
     "scientific color maps",
     "viridis vs jet",
+    "scattered data interpolation griddata",
+    "log-spaced contour levels",
     "publication quality figures",
     "journal figure export",
     "scientific data visualization",
@@ -57,7 +59,7 @@ export const metadata: Metadata = {
     title: `${TITLE} | ScholarGrid`,
     description: DESCRIPTION,
     publishedTime: "2026-10-01T00:00:00Z",
-    modifiedTime: "2026-11-12T00:00:00Z",
+    modifiedTime: "2026-11-17T00:00:00Z",
     authors: ["ScholarGrid Technical Team"],
   },
   twitter: {
@@ -80,15 +82,23 @@ const faqs: Faq[] = [
   },
   {
     q: "How many contour levels should I use?",
-    a: "A good starting point is about 10 to 15 evenly spaced levels, adjusted to the data. Too many levels clutter the figure, and too few hide structure. For data that spans several orders of magnitude, logarithmically spaced levels are often more informative.",
+    a: "A good starting point is about 10 to 15 evenly spaced levels, adjusted to the data. Too many levels clutter the figure, and too few hide structure. For data that spans several orders of magnitude, logarithmically spaced levels are often more informative, and for signed data the levels should be symmetric about zero.",
+  },
+  {
+    q: "How do I make a contour plot from scattered measurements?",
+    a: "Either interpolate the points onto a regular grid, for example with scipy.interpolate.griddata in Python or scatteredInterpolant in MATLAB, or contour the triangulation directly with tricontourf. Report the method, mask regions outside the convex hull of the data, overlay the original measurement points, and validate the interpolation with held-out points whenever possible.",
   },
   {
     q: "Should I export figures as vector or raster files?",
-    a: "Export contour plots and other line artwork as vector PDF or EPS whenever the journal accepts them. For very dense 3D surfaces, a raster export at a suitable resolution, such as 600 dpi where the journal allows it, can be more reliable. Always check the target publisher's artwork instructions.",
+    a: "Export contour plots and other line artwork as vector PDF or EPS whenever the journal accepts them. For very dense 3D surfaces, a raster export at a suitable resolution, such as 600 dpi where the journal allows it, is often more reliable and gives smaller files. Always check the target publisher's artwork instructions.",
+  },
+  {
+    q: "Why does my vector contour plot show thin white lines between filled regions?",
+    a: "This is an anti-aliasing seam that some PDF viewers draw between adjacent filled polygons. Rasterize only the filled contour layer (rasterized=True in Matplotlib) while keeping axes, labels and contour lines as vectors, or increase the number of levels slightly. This also reduces file size for complex fields.",
   },
   {
     q: "What is the best color map for readers with color vision deficiency?",
-    a: "Cividis was designed with color vision deficiency in mind, and viridis is also widely used. Avoid relying on red-green combinations, and test every figure in grayscale before submission. The Scientific Colour Maps by Crameri provide additional perceptually uniform and colour-blind-friendly options.",
+    a: "Cividis was designed with color vision deficiency in mind, and viridis is also widely used. Avoid relying on red-green combinations, and test every figure in grayscale before submission. The Scientific Colour Maps by Crameri provide additional perceptually uniform and colour-blind-friendly options, including diverging maps.",
   },
   {
     q: "When should I use a 3D surface plot instead of a 2D contour plot?",
@@ -96,11 +106,11 @@ const faqs: Faq[] = [
   },
   {
     q: "How large should a figure be for a single-column journal layout?",
-    a: "About 3.5 inches (89 mm) is a useful reference for a single IEEE column, while Elsevier widths depend on the journal's artwork instructions. Keep text around 7 to 9 pt at final publication size and print the figure at that size to check that tick labels remain readable.",
+    a: "About 3.5 inches (89 mm) is a useful reference for a single IEEE column and 7.16 inches for a full-width figure, while Elsevier widths of roughly 90 mm, 140 mm and 190 mm depend on the journal's artwork instructions. Keep text around 7 to 9 pt at final publication size and print the figure at that size to check that tick labels remain readable.",
   },
   {
     q: "How can I make my figures reproducible?",
-    a: "Save the original numerical data, the plotting script and the final exported figure together, and record the interpolation method, grid resolution and color limits. This makes it easy to regenerate the figure when reviewers ask for changes.",
+    a: "Save the original numerical data, the plotting script and the final exported figure together, and record the interpolation method, grid resolution, random seeds, library versions and color limits. This makes it easy to regenerate the figure when reviewers ask for changes, and it supports data availability statements.",
   },
 ];
 
@@ -114,7 +124,7 @@ const jsonLd = {
         "Contour Plots and 3D Visualizations in Python and MATLAB for Q1 Journals",
       description: DESCRIPTION,
       datePublished: "2026-10-01",
-      dateModified: "2026-11-12",
+      dateModified: "2026-11-17",
       inLanguage: "en",
       mainEntityOfPage: PAGE_URL,
       author: { "@type": "Organization", name: "ScholarGrid Technical Team" },
@@ -197,6 +207,185 @@ const related = [
 ];
 
 /* ------------------------------------------------------------------ */
+/* Code samples                                                        */
+/* ------------------------------------------------------------------ */
+
+const pythonStyle = `import numpy as np
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+
+# One global style block keeps every figure in the paper consistent.
+mpl.rcParams.update({
+    "font.family": "serif",
+    "mathtext.fontset": "stix",     # matches Times-like journal body text
+    "font.size": 8,
+    "axes.labelsize": 8,
+    "xtick.labelsize": 7,
+    "ytick.labelsize": 7,
+    "pdf.fonttype": 42,             # embed TrueType, avoid Type 3 fonts
+    "ps.fonttype": 42,
+    "axes.linewidth": 0.6,
+    "figure.dpi": 150,              # screen preview only
+})`;
+
+const pythonContour = `x = np.linspace(-3, 3, 300)
+y = np.linspace(-3, 3, 300)
+X, Y = np.meshgrid(x, y)
+Z = np.exp(-(X**2 + Y**2)) * np.cos(2 * X)
+
+levels = np.linspace(-1.0, 1.0, 13)               # explicit, reproducible levels
+
+fig, ax = plt.subplots(figsize=(3.5, 3.0), constrained_layout=True)
+cf = ax.contourf(X, Y, Z, levels=levels, cmap="viridis",
+                 extend="both", rasterized=True)  # raster fill, vector everything else
+cs = ax.contour(X, Y, Z, levels=levels, colors="k", linewidths=0.4)
+ax.clabel(cs, levels=levels[::3], fontsize=6, fmt="%.1f")  # label selected levels
+
+cbar = fig.colorbar(cf, ax=ax, ticks=levels[::3])
+cbar.set_label("Response (units)")
+ax.set_xlabel("x (m)")
+ax.set_ylabel("y (m)")
+ax.set_aspect("equal")
+
+fig.savefig("contour.pdf")                        # vector PDF with embedded fonts`;
+
+const pythonDiverging = `# Signed quantity (error, residual, difference): centre the scale on zero.
+lim = np.abs(Z).max()
+levels_div = np.linspace(-lim, lim, 15)           # symmetric about zero
+
+cf = ax.contourf(X, Y, Z, levels=levels_div, cmap="RdBu_r")
+# For an asymmetric range use matplotlib.colors.TwoSlopeNorm(vcenter=0.0).`;
+
+const pythonScattered = `from scipy.interpolate import griddata
+
+rng = np.random.default_rng(42)                   # fixed seed, recorded in the paper
+pts = rng.uniform(-3, 3, size=(250, 2))           # measurement locations
+vals = np.exp(-(pts[:, 0]**2 + pts[:, 1]**2)) * np.cos(2 * pts[:, 0])
+
+xi = np.linspace(-3, 3, 200)
+X, Y = np.meshgrid(xi, xi)
+Z = griddata(pts, vals, (X, Y), method="cubic")   # NaN outside the convex hull
+
+fig, ax = plt.subplots(figsize=(3.5, 3.0), constrained_layout=True)
+cf = ax.contourf(X, Y, Z, levels=12, cmap="viridis")  # NaN regions stay blank
+ax.plot(pts[:, 0], pts[:, 1], "k.", ms=1.5)           # show where data really exist
+fig.colorbar(cf, ax=ax, label="Response (units)")
+
+# Triangulation alternative without gridding:
+# ax.tricontourf(pts[:, 0], pts[:, 1], vals, levels=12, cmap="viridis")`;
+
+const matlabContour = `[X, Y] = meshgrid(linspace(-3, 3, 300));
+Z = exp(-(X.^2 + Y.^2)) .* cos(2*X);
+levels = linspace(-1, 1, 13);
+
+figure('Units', 'inches', 'Position', [1 1 3.5 3.0]);
+contourf(X, Y, Z, levels, 'LineColor', 'none'); hold on
+[C, h] = contour(X, Y, Z, levels, 'k', 'LineWidth', 0.4);
+clabel(C, h, levels(1:3:end), 'FontSize', 6);
+
+colormap(parula);                 % perceptually uniform MATLAB default
+cb = colorbar;
+cb.Label.String = 'Response (units)';
+axis equal tight
+set(gca, 'FontName', 'Times New Roman', 'FontSize', 8);
+xlabel('x (m)'); ylabel('y (m)');
+
+exportgraphics(gcf, 'contour.pdf', 'ContentType', 'vector');`;
+
+const matlabScattered = `% Scattered measurements px, py, pv  ->  regular grid
+F = scatteredInterpolant(px, py, pv, 'natural', 'none');  % no extrapolation
+[X, Y] = meshgrid(linspace(min(px), max(px), 200), linspace(min(py), max(py), 200));
+Z = F(X, Y);                       % NaN outside the data hull
+
+contourf(X, Y, Z, 12, 'LineColor', 'none'); hold on
+plot(px, py, 'k.', 'MarkerSize', 4);   % overlay the actual measurements`;
+
+const pythonSurface = `fig = plt.figure(figsize=(3.5, 3.0))
+ax = fig.add_subplot(projection="3d")
+
+zmin = Z.min() - 0.3
+surf = ax.plot_surface(X, Y, Z, cmap="viridis", rcount=120, ccount=120,
+                       linewidth=0, antialiased=True)
+ax.contourf(X, Y, Z, zdir="z", offset=zmin, levels=12, cmap="viridis")  # projection
+
+ax.set_zlim(zmin, Z.max())
+ax.view_init(elev=28, azim=-55)                   # informative, consistent angle
+ax.set_box_aspect((1, 1, 0.6))
+for axis in (ax.xaxis, ax.yaxis, ax.zaxis):
+    axis.pane.fill = False                        # light, unobtrusive panes
+ax.set_xlabel("x (m)")
+ax.set_ylabel("y (m)")
+ax.set_zlabel("Response (units)")
+fig.colorbar(surf, ax=ax, shrink=0.6, pad=0.1, label="Response (units)")
+
+fig.savefig("surface.png", dpi=600)               # raster is safer for dense surfaces`;
+
+const matlabSurface = `h = surfc(X, Y, Z);                % surface plus contours on the base plane
+h(1).EdgeColor = 'none';           % remove heavy mesh lines from the surface
+shading interp
+colormap(parula);
+view(-55, 30);                     % azimuth, elevation
+axis tight; box on; grid on
+xlabel('x (m)'); ylabel('y (m)'); zlabel('Response (units)');
+colorbar;
+
+% Dense surfaces: export as a high-resolution image instead of vector.
+exportgraphics(gcf, 'surface.png', 'Resolution', 600);`;
+
+const pythonOverlay = `import matplotlib.patheffects as pe
+from matplotlib.colors import LogNorm
+from scipy.optimize import minimize
+
+def f(p):                                         # Rosenbrock test function
+    return (1 - p[0])**2 + 100 * (p[1] - p[0]**2)**2
+
+x = np.linspace(-2, 2, 400)
+y = np.linspace(-1, 3, 400)
+X, Y = np.meshgrid(x, y)
+Z = f([X, Y])
+
+path = [np.array([-1.5, 1.5])]                    # initial point
+minimize(f, path[0], method="BFGS", callback=lambda xk: path.append(xk.copy()))
+path = np.array(path)
+
+levels = np.logspace(-1, 3.5, 12)                 # log-spaced: data span decades
+fig, ax = plt.subplots(figsize=(3.5, 3.0), constrained_layout=True)
+cf = ax.contourf(X, Y, Z, levels=levels, norm=LogNorm(), cmap="viridis",
+                 rasterized=True)
+outline = [pe.withStroke(linewidth=2.2, foreground="black")]
+ax.plot(path[:, 0], path[:, 1], "-", color="white", lw=1.0, path_effects=outline)
+ax.plot(*path[0], "o", color="white", mec="black", label="Start")
+ax.plot(*path[-1], "*", color="gold", mec="black", ms=9, label="Optimum")
+ax.legend(frameon=True, fontsize=6, loc="upper left")
+fig.colorbar(cf, ax=ax, label="Objective value")`;
+
+const pythonPanels = `# Three comparable panels: identical levels, identical colour scale, one colorbar.
+X, Y = np.meshgrid(np.linspace(-3, 3, 200), np.linspace(-3, 3, 200))
+Z = np.exp(-(X**2 + Y**2)) * np.cos(2 * X)
+fields = {"(a) Case A": Z, "(b) Case B": 0.8 * Z, "(c) Case C": Z * np.cos(Y)}
+levels = np.linspace(-1, 1, 13)
+
+fig, axes = plt.subplots(1, 3, figsize=(7.16, 2.5), sharex=True, sharey=True,
+                         constrained_layout=True)    # 7.16 in = IEEE full width
+for ax, (title, field) in zip(axes, fields.items()):
+    cf = ax.contourf(X, Y, field, levels=levels, cmap="viridis",
+                     extend="both", rasterized=True)
+    ax.set_title(title, fontsize=8)
+    ax.set_aspect("equal")
+fig.colorbar(cf, ax=axes, shrink=0.9, label="Response (units)")
+fig.savefig("panels.pdf")`;
+
+const pythonReproduce = `import sys, matplotlib as mpl
+
+np.savez_compressed("fig3_data.npz", X=X, Y=Y, Z=Z, levels=levels)
+fig.savefig(
+    "fig3.pdf",
+    metadata={"Title": "Fig. 3 contour of response", "Creator": "plot_fig3.py v1.2"},
+)
+print("python", sys.version.split()[0], "| numpy", np.__version__,
+      "| matplotlib", mpl.__version__)       # record versions in the repository README`;
+
+/* ------------------------------------------------------------------ */
 /* Reusable components                                                 */
 /* ------------------------------------------------------------------ */
 
@@ -223,6 +412,25 @@ function Ext({ href, children }: { href: string; children: React.ReactNode }) {
     >
       {children}
     </a>
+  );
+}
+
+function Cite({ n }: { n: number }) {
+  return (
+    <a
+      href={`#ref${n}`}
+      className="font-semibold text-blue-800 transition hover:text-blue-950 hover:underline"
+    >
+      [{n}]
+    </a>
+  );
+}
+
+function InlineCode({ children }: { children: React.ReactNode }) {
+  return (
+    <code className="rounded bg-blue-50 px-1.5 py-0.5 font-mono text-[13px] text-blue-900">
+      {children}
+    </code>
   );
 }
 
@@ -335,51 +543,131 @@ function CodeBlock({ label, code }: { label: string; code: string }) {
   );
 }
 
+function DataTable({
+  caption,
+  headers,
+  rows,
+  minWidthClass,
+}: {
+  caption: string;
+  headers: string[];
+  rows: string[][];
+  minWidthClass: string;
+}) {
+  return (
+    <div className="my-6 overflow-hidden rounded-xl border border-slate-200">
+      <div className="overflow-x-auto">
+        <table
+          className={`w-full ${minWidthClass} border-collapse text-left text-sm`}
+        >
+          <caption className="sr-only">{caption}</caption>
+          <thead>
+            <tr className="bg-blue-950 text-white">
+              {headers.map((h) => (
+                <th key={h} scope="col" className="px-4 py-3.5 font-semibold">
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row, rowIndex) => (
+              <tr
+                key={row[0]}
+                className={`border-b border-slate-100 align-top ${
+                  rowIndex % 2 === 0 ? "bg-white" : "bg-slate-50"
+                }`}
+              >
+                {row.map((cell, cellIndex) => (
+                  <td
+                    key={cellIndex}
+                    className={`px-4 py-3.5 leading-relaxed ${
+                      cellIndex === 0
+                        ? "font-semibold text-slate-900"
+                        : "text-slate-600"
+                    }`}
+                  >
+                    {cell}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 const P = "text-[15px] leading-[1.85] text-slate-700";
-
-const pythonContour = `import numpy as np
-import matplotlib.pyplot as plt
-
-x = np.linspace(-3, 3, 300)
-y = np.linspace(-3, 3, 300)
-X, Y = np.meshgrid(x, y)
-Z = np.exp(-(X**2 + Y**2)) * np.cos(2 * X)
-
-fig, ax = plt.subplots(figsize=(3.5, 3.0))      # single-column width
-cf = ax.contourf(X, Y, Z, levels=12, cmap="viridis")
-cs = ax.contour(X, Y, Z, levels=12, colors="k", linewidths=0.4)
-ax.clabel(cs, levels=cs.levels[::3], fontsize=6)  # label selected levels
-
-cbar = fig.colorbar(cf, ax=ax)
-cbar.set_label("Response (units)")
-ax.set_xlabel("x (m)")
-ax.set_ylabel("y (m)")
-ax.set_aspect("equal")
-
-fig.savefig("contour.pdf", bbox_inches="tight")   # vector export`;
-
-const matlabContour = `[X, Y] = meshgrid(linspace(-3, 3, 300));
-Z = exp(-(X.^2 + Y.^2)) .* cos(2*X);
-
-figure('Units', 'inches', 'Position', [1 1 3.5 3.0]);
-contourf(X, Y, Z, 12, 'LineColor', 'none'); hold on
-[C, h] = contour(X, Y, Z, 12, 'k', 'LineWidth', 0.4);
-clabel(C, h, 'FontSize', 6);
-
-colormap(parula);
-cb = colorbar;
-cb.Label.String = 'Response (units)';
-axis equal tight
-xlabel('x (m)'); ylabel('y (m)');
-
-exportgraphics(gcf, 'contour.pdf', 'ContentType', 'vector');`;
 
 /* ------------------------------------------------------------------ */
 /* Article body                                                        */
 /* ------------------------------------------------------------------ */
 
 function ArticleBody() {
-  const referenceList = [
+  const plotTypes = [
+    ["Contour lines", "Reading numerical levels and comparing curves.", "Excessive contour levels and missing labels."],
+    ["Filled contour", "Showing magnitude and spatial distribution together.", "Misleading or poorly selected color maps."],
+    ["Heat map (pcolormesh, imagesc)", "Displaying raw gridded data without unnecessary smoothing.", "Blocky cells when using coarse grids."],
+    ["3D surface", "Understanding peaks, valleys, and surface geometry.", "Hidden regions and difficult numerical interpretation."],
+    ["3D scatter or path", "Displaying trajectories and three-dimensional point clouds.", "Depth ambiguity and overlapping markers."],
+    ["Line slices through a field", "Quantitative comparison of profiles with error bars or a reference.", "Hides the 2D structure unless paired with a map."],
+  ];
+
+  const interpolation = [
+    ["Linear (Delaunay)", "griddata(method='linear')", "griddata, scatteredInterpolant 'linear'", "Robust and monotone, but shows triangular facets on coarse data."],
+    ["Cubic or natural neighbour", "griddata(method='cubic')", "scatteredInterpolant 'natural'", "Smooth contours, yet may overshoot near sparse regions."],
+    ["Radial basis functions", "scipy RBFInterpolator", "Custom or Curve Fitting Toolbox", "Good for smooth fields. Tune the kernel and smoothing, and watch for oscillations."],
+    ["Gaussian process (kriging)", "scikit-learn GaussianProcessRegressor", "fitrgp (Statistics Toolbox)", "Gives uncertainty maps as well as estimates, ideal for noisy experimental data."],
+    ["No gridding (triangulation)", "tricontourf, tripcolor", "trisurf, tricontour alternatives", "Honest representation of sampling, since no new values are invented."],
+  ];
+
+  const colormaps = [
+    ["Sequential, magnitude only", "viridis, cividis, plasma, magma", "parula, or turbo with care", "jet, rainbow, hsv"],
+    ["Signed, centred on zero", "RdBu_r, or Crameri vik and berlin", "Custom diverging map", "Sequential maps with a hidden zero"],
+    ["Cyclic quantities (phase, angle)", "twilight, Crameri romaO", "hsv only if no better option", "Linear maps with a visual seam"],
+    ["Print in grayscale", "cividis, or a monotone-luminance gray ramp", "gray", "Any map with non-monotone lightness"],
+    ["Categorical regions", "tab10, or Okabe-Ito colours", "Distinct line styles", "Continuous maps for discrete classes"],
+  ];
+
+  const sizes = [
+    ["IEEE single column", "3.5 in (about 89 mm)", "7 to 9 pt"],
+    ["IEEE full width", "7.16 in (about 182 mm)", "7 to 9 pt"],
+    ["Elsevier single column", "About 90 mm (3.54 in)", "7 to 9 pt"],
+    ["Elsevier 1.5 column", "About 140 mm (5.51 in)", "7 to 9 pt"],
+    ["Elsevier full width", "About 190 mm (7.48 in)", "7 to 9 pt"],
+  ];
+
+  const mistakes: [string, string][] = [
+    ["Using the default rainbow color map without evaluating its suitability.", "Rainbow maps create false boundaries and fail in grayscale."],
+    ["Leaving colorbars, measurement units, or axis labels incomplete.", "A figure should be interpretable without reading the surrounding text."],
+    ["Using complex 3D representations when a simpler 2D plot communicates the results more clearly.", "Perspective makes exact values hard to read."],
+    ["Submitting screenshots instead of properly exported vector or high-resolution figures.", "Screen captures blur at print size and may be rejected."],
+    ["Using inconsistent color limits or viewing angles across comparative panels.", "Readers compare colours between panels, so identical levels and one shared colorbar are essential."],
+    ["Interpolating beyond the data without saying so.", "Extrapolated regions look as credible as measured ones. Mask them and show the sample points."],
+    ["Over-smoothing a coarse grid.", "Fine interpolation of sparse data suggests resolution that does not exist."],
+    ["Using a sequential map for signed data.", "The zero crossing, often the most important feature, disappears into the middle of the scale."],
+    ["Overlay clutter.", "Heavy markers, thick paths and dense contour labels hide the field they are meant to explain."],
+    ["Failing to record how the figure was made.", "Without the script, seed, grid and library versions, a reviewer-requested change becomes a rebuild from memory."],
+  ];
+
+  const checklist = [
+    "The plot type matches the scientific question being investigated.",
+    "The selected color map is perceptually uniform and passes a grayscale test.",
+    "Signed quantities use a diverging map centred on zero with symmetric levels.",
+    "All axes, colorbars, and measurement units are clearly labelled.",
+    "Interpolated or scattered data show the original sample points and a masked extrapolation region.",
+    "Comparative panels share identical levels, color limits, axis limits and viewing angles.",
+    "Text remains readable at the final journal publication size (about 7 to 9 pt).",
+    "Figures are exported in vector format or at an appropriate resolution, with fonts embedded and no Type 3 fonts.",
+    "Filled contours in vector files are checked for seams in more than one PDF viewer.",
+    "Figures are tested in grayscale and with a color vision deficiency simulator.",
+    "Original scripts, numerical data, random seeds and library versions are saved together.",
+    "Every figure is cited in the text and explained in a caption that states what the reader should conclude.",
+  ];
+
+  const referenceList: React.ReactNode[] = [
     <>
       E. R. Tufte, <i>The Visual Display of Quantitative Information</i>,
       2nd ed. Cheshire, CT, USA: Graphics Press, 2001.
@@ -397,6 +685,14 @@ function ArticleBody() {
       <i> Nature</i>, vol. 585, pp. 357–362, 2020.{" "}
       <Ext href="https://doi.org/10.1038/s41586-020-2649-2">
         doi:10.1038/s41586-020-2649-2
+      </Ext>
+    </>,
+    <>
+      P. Virtanen et al., “SciPy 1.0: Fundamental algorithms for scientific
+      computing in Python,” <i>Nature Methods</i>, vol. 17, pp. 261–272,
+      2020.{" "}
+      <Ext href="https://doi.org/10.1038/s41592-019-0686-2">
+        doi:10.1038/s41592-019-0686-2
       </Ext>
     </>,
     <>
@@ -437,45 +733,39 @@ function ArticleBody() {
       <Ext href="https://doi.org/10.1038/nmeth.1618">doi:10.1038/nmeth.1618</Ext>
     </>,
     <>
+      W. S. Cleveland and R. McGill, “Graphical perception: Theory,
+      experimentation, and application to the development of graphical
+      methods,” <i>Journal of the American Statistical Association</i>,
+      vol. 79, no. 387, pp. 531–554, 1984.{" "}
+      <Ext href="https://doi.org/10.1080/01621459.1984.10478080">
+        doi:10.1080/01621459.1984.10478080
+      </Ext>
+    </>,
+    <>
+      N. P. Rougier, M. Droettboom, and P. E. Bourne, “Ten simple rules for
+      better figures,” <i>PLoS Computational Biology</i>, vol. 10, no. 9,
+      Art. no. e1003833, 2014.{" "}
+      <Ext href="https://doi.org/10.1371/journal.pcbi.1003833">
+        doi:10.1371/journal.pcbi.1003833
+      </Ext>
+    </>,
+    <>
       Elsevier, “Artwork and media instructions,” Elsevier Author Resources.
     </>,
-  ];
-
-  const checklist = [
-    "The plot type matches the scientific question being investigated.",
-    "The selected color map is perceptually uniform and passes a grayscale test.",
-    "All axes, colorbars, and measurement units are clearly labelled.",
-    "Text remains readable at the final journal publication size.",
-    "Figures are exported in vector format or at an appropriate resolution.",
-    "Original scripts, numerical data, and final figures are saved together.",
-  ];
-
-  const plotTypes = [
-    {
-      plot: "Contour lines",
-      best: "Reading numerical levels and comparing curves.",
-      caution: "Excessive contour levels and missing labels.",
-    },
-    {
-      plot: "Filled contour",
-      best: "Showing magnitude and spatial distribution together.",
-      caution: "Misleading or poorly selected color maps.",
-    },
-    {
-      plot: "Heat map",
-      best: "Displaying raw gridded data without unnecessary smoothing.",
-      caution: "Blocky cells when using coarse grids.",
-    },
-    {
-      plot: "3D surface",
-      best: "Understanding peaks, valleys, and surface geometry.",
-      caution: "Hidden regions and difficult numerical interpretation.",
-    },
-    {
-      plot: "3D scatter or path",
-      best: "Displaying trajectories and three-dimensional point clouds.",
-      caution: "Depth ambiguity and overlapping markers.",
-    },
+    <>
+      IEEE Author Center, “Graphics and figure guidelines for IEEE journals,”{" "}
+      <Ext href="https://journals.ieeeauthorcenter.ieee.org/">
+        IEEE Author Center
+      </Ext>
+      .
+    </>,
+    <>
+      Matplotlib Development Team, “Choosing colormaps in Matplotlib,”{" "}
+      <Ext href="https://matplotlib.org/stable/users/explain/colors/colormaps.html">
+        matplotlib.org documentation
+      </Ext>
+      .
+    </>,
   ];
 
   return (
@@ -564,12 +854,12 @@ function ArticleBody() {
 
               <span className="flex items-center gap-1.5 text-xs text-slate-500">
                 <Calendar size={14} aria-hidden="true" />
-                <time dateTime="2026-10-01">October 2026</time>
+                <time dateTime="2026-11-17">Updated November 2026</time>
               </span>
 
               <span className="flex items-center gap-1.5 text-xs text-slate-500">
                 <Clock size={14} aria-hidden="true" />
-                12 min read
+                18 min read
               </span>
             </div>
 
@@ -579,10 +869,11 @@ function ArticleBody() {
             </h1>
 
             <p className="mt-5 max-w-3xl text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">
-              A practical guide to making accurate, readable, and
-              publication-quality contour plots and 3D surface plots for
-              researchers across computational, experimental, and engineering
-              disciplines, with Python and MATLAB examples.
+              A technical guide to accurate, readable, and reproducible
+              contour and 3D surface figures: from scattered-data
+              interpolation and perceptually uniform color maps to
+              multi-panel consistency, vector export, and journal artwork
+              compliance, with tested patterns in Python and MATLAB.
             </p>
 
             <div className="mt-7 flex flex-wrap items-center justify-between gap-4 border-t border-slate-200 pt-5">
@@ -654,15 +945,29 @@ function ArticleBody() {
               caption="Fig. 1. The same data: default rainbow plot versus a publication-ready contour plot."
             />
 
+            <p className={`${P} mb-4`}>
+              The reason is perceptual. Classic graphical-perception
+              experiments show that readers judge position and length far
+              more accurately than colour or area <Cite n={10} />. A colour
+              field therefore conveys pattern, while the numbers must come
+              from labelled contour lines, a well-designed colorbar and,
+              where precision matters, line slices. Tufte’s principle of
+              data-ink economy <Cite n={1} /> points the same way: remove
+              anything that does not carry information, and make everything
+              that remains unambiguous.
+            </p>
+
             <p className={`${P} mb-5`}>
-              This guide covers the complete workflow in Python (Matplotlib
-              and NumPy) and MATLAB: choosing the appropriate plot type,
-              preparing numerical data, building readable contours,
-              selecting scientific color maps, creating clear 3D surfaces,
-              and exporting figures for top-quartile (Q1) journals. The
-              examples demonstrate practical visualization principles that
-              can be adapted to computational and experimental research. For
-              journal-specific artwork rules beyond figures, read our{" "}
+              This guide covers the complete workflow in Python (Matplotlib{" "}
+              <Cite n={2} />, NumPy <Cite n={3} /> and SciPy <Cite n={4} />)
+              and MATLAB <Cite n={5} />: choosing the appropriate plot type,
+              preparing and interpolating numerical data, building readable
+              contours, selecting scientific color maps, creating clear 3D
+              surfaces, overlaying measurements and optimization paths, and
+              exporting figures for top-quartile (Q1) journals. The examples
+              demonstrate practical principles that can be adapted to
+              computational and experimental research. For journal-specific
+              artwork rules beyond figures, read our{" "}
               <Int href="/blog/formatting-guide">
                 manuscript formatting guide for Q1 and Q2 journals
               </Int>
@@ -679,44 +984,17 @@ function ArticleBody() {
               to answer. A reader who needs to interpret numerical levels
               benefits from contour lines. A reader who needs to understand
               the overall geometry may benefit from a surface representation.
+              A reader who needs to compare two profiles quantitatively is
+              best served by line plots with error bars, even when a full
+              two-dimensional field is available.
             </p>
 
-            <div className="my-6 overflow-hidden rounded-xl border border-slate-200">
-              <div className="overflow-x-auto">
-                <table className="w-full min-w-[600px] border-collapse text-left text-sm">
-                  <caption className="sr-only">
-                    Plot types, what each is best suited for, and potential issues
-                  </caption>
-                  <thead>
-                    <tr className="bg-blue-950 text-white">
-                      <th scope="col" className="px-4 py-3.5 font-semibold">Plot type</th>
-                      <th scope="col" className="px-4 py-3.5 font-semibold">Best suited for</th>
-                      <th scope="col" className="px-4 py-3.5 font-semibold">Potential issue</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {plotTypes.map((item, index) => (
-                      <tr
-                        key={item.plot}
-                        className={`border-b border-slate-100 ${
-                          index % 2 === 0 ? "bg-white" : "bg-slate-50"
-                        }`}
-                      >
-                        <td className="px-4 py-3.5 font-semibold text-slate-900">
-                          {item.plot}
-                        </td>
-                        <td className="px-4 py-3.5 leading-relaxed text-slate-600">
-                          {item.best}
-                        </td>
-                        <td className="px-4 py-3.5 leading-relaxed text-slate-600">
-                          {item.caution}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+            <DataTable
+              caption="Plot types, what each is best suited for, and potential issues"
+              headers={["Plot type", "Best suited for", "Potential issue"]}
+              rows={plotTypes}
+              minWidthClass="min-w-[640px]"
+            />
 
             <p className={P}>
               A useful rule is to prefer a 2D representation whenever it
@@ -742,17 +1020,20 @@ function ArticleBody() {
               Reliable visualization begins with correctly prepared
               numerical data. Even an attractive figure can be misleading
               if its underlying grid, interpolation, or measurement units
-              are inconsistent.
+              are inconsistent. A contour plot is a statement about a
+              continuous field, so you must be able to defend every region
+              of it.
             </p>
 
             <CheckList>
               <Check>
                 Build a regular numerical grid using meshgrid and maintain
-                consistent measurement units.
+                consistent measurement units across all axes and panels.
               </Check>
               <Check>
                 For scattered measurements, interpolate onto a grid and
-                clearly report the interpolation method.
+                clearly report the interpolation method in the caption or
+                the methods section.
               </Check>
               <Check>
                 Select grid density according to the actual resolution of
@@ -761,9 +1042,36 @@ function ArticleBody() {
               </Check>
               <Check>
                 Retain original measurement points as markers whenever
-                appropriate (Fig. 6).
+                appropriate (Fig. 6), and mask regions outside the convex
+                hull of the data instead of extrapolating silently.
+              </Check>
+              <Check>
+                Where possible, hold out a subset of the measurements and
+                report the interpolation error on it. A reviewer will trust
+                a field far more when you quantify how well it reproduces
+                data it has not seen.
               </Check>
             </CheckList>
+
+            <SubHeading>Choosing an interpolation method</SubHeading>
+
+            <DataTable
+              caption="Interpolation options for scattered data in Python and MATLAB"
+              headers={["Method", "Python", "MATLAB", "When to use it, and cautions"]}
+              rows={interpolation}
+              minWidthClass="min-w-[860px]"
+            />
+
+            <p className={P}>
+              The example below interpolates scattered samples with SciPy
+              <Cite n={4} />, leaves the region outside the data hull blank,
+              and overlays the measurement locations. Fix and report the
+              random seed whenever the sample positions come from a
+              simulation.
+            </p>
+
+            <CodeBlock label="Python: scattered data" code={pythonScattered} />
+            <CodeBlock label="MATLAB: scattered data" code={matlabScattered} />
 
             {/* Step 3 */}
             <SectionHeading id="contour-design" number="03">
@@ -780,15 +1088,18 @@ function ArticleBody() {
             <CheckList>
               <Check>
                 Begin with approximately 10 to 15 evenly spaced contour
-                levels, adjusting the number according to the data.
+                levels, adjusting the number according to the data. Define
+                the levels explicitly so that the figure is reproducible.
               </Check>
               <Check>
                 Combine filled contours with thin boundary lines and
-                selectively labelled contour levels.
+                selectively labelled contour levels, for instance every
+                third level.
               </Check>
               <Check>
                 Include a clearly labelled colorbar with measurement units
-                and descriptive axis labels.
+                and descriptive axis labels. Use <InlineCode>extend</InlineCode>{" "}
+                arrows when values fall outside the level range.
               </Check>
               <Check>
                 Apply an equal aspect ratio when both axes represent the
@@ -798,31 +1109,55 @@ function ArticleBody() {
 
             <SubHeading>Python (Matplotlib and NumPy) example</SubHeading>
             <p className={`${P} mt-3`}>
+              Start every project with one style block so that all figures
+              share the same fonts, sizes and embedding settings. Setting{" "}
+              <InlineCode>pdf.fonttype</InlineCode> to 42 embeds TrueType
+              fonts and avoids the Type 3 fonts that several publisher
+              workflows reject.
+            </p>
+            <CodeBlock label="Python: global style" code={pythonStyle} />
+
+            <p className={`${P} mt-3`}>
               The following sketch uses <Ext href="https://matplotlib.org/">Matplotlib</Ext>{" "}
               and <Ext href="https://numpy.org/">NumPy</Ext> to combine filled
               contours, thin labelled lines, a colorbar with units and a
               vector export at single-column width. Replace the test function
-              and labels with your own data.
+              and labels with your own data. Rasterizing only the filled
+              layer keeps text and lines as sharp vectors while avoiding
+              thin seams between filled regions in some PDF viewers.
             </p>
-            <CodeBlock label="Python" code={pythonContour} />
+            <CodeBlock label="Python: contour" code={pythonContour} />
 
             <SubHeading>MATLAB example</SubHeading>
             <p className={`${P} mt-3`}>
               The equivalent MATLAB version uses the perceptually uniform
-              parula map. The <code>exportgraphics</code> function is
+              parula map. The <InlineCode>exportgraphics</InlineCode> function is
               available in recent MATLAB releases (R2020a and later); check the{" "}
               <Ext href="https://www.mathworks.com/help/matlab/">
                 MATLAB documentation
               </Ext>{" "}
               for your version.
             </p>
-            <CodeBlock label="MATLAB" code={matlabContour} />
+            <CodeBlock label="MATLAB: contour" code={matlabContour} />
 
             <ArticleFigure
               src="/blogs/fig16.png"
               alt="Publication-quality Python contour plot"
               caption="Fig. 3. Example of a publication-ready contour plot at single-column width (3.5 in)."
             />
+
+            <SubHeading>Signed data and logarithmic levels</SubHeading>
+            <p className={`${P} mt-3`}>
+              Two cases need special treatment. For signed quantities such
+              as errors, residuals or differences between simulations, use a
+              diverging map with symmetric levels so that zero sits exactly
+              at the neutral colour. For fields spanning several orders of
+              magnitude, such as pressure, power density or an objective
+              function, use logarithmically spaced levels together with a
+              logarithmic colour normalisation. Linear levels would
+              compress the whole interesting region into one colour.
+            </p>
+            <CodeBlock label="Python: diverging levels" code={pythonDiverging} />
 
             <Callout title="Practical visualization tip">
               Print the figure at its actual publication size and examine
@@ -845,26 +1180,28 @@ function ArticleBody() {
               <Ext href="https://doi.org/10.1109/MCG.2007.323435">
                 “Rainbow color map (still) considered harmful”
               </Ext>{" "}
-              and{" "}
+              <Cite n={6} /> and{" "}
               <Ext href="https://doi.org/10.1038/s41467-020-19160-7">
                 “The misuse of colour in science communication”
-              </Ext>
-              .
+              </Ext>{" "}
+              <Cite n={7} />.
             </p>
 
             <p className={`${P} mt-3`}>
               Prefer perceptually uniform color maps such as viridis and
               cividis in Python, or parula in MATLAB. Cividis was designed
-              with color vision deficiency in mind. Diverging color maps
-              are more appropriate for signed quantities and should
-              generally be centred around zero. Avoid relying on red-green
-              combinations and evaluate figures in grayscale before
-              submission (Fig. 4). The{" "}
+              with color vision deficiency in mind <Cite n={8} />. Diverging
+              color maps are more appropriate for signed quantities and
+              should generally be centred around zero. Avoid relying on
+              red-green combinations <Cite n={9} /> and evaluate figures in
+              grayscale before submission (Fig. 4). The{" "}
               <Ext href="https://www.fabiocrameri.ch/colourmaps/">
                 Scientific Colour Maps
               </Ext>{" "}
-              collection is another trusted source of perceptually uniform
-              options.
+              collection (available in Python as the cmcrameri package) is
+              another trusted source of perceptually uniform options, and
+              the Matplotlib documentation <Cite n={14} /> explains how the
+              built-in maps were designed.
             </p>
 
             <ArticleFigure
@@ -872,6 +1209,26 @@ function ArticleBody() {
               alt="Grayscale comparison of jet and viridis color maps"
               caption="Fig. 4. Grayscale comparison: jet produces uneven visual transitions, whereas viridis maintains a more consistent light-to-dark progression."
             />
+
+            <SubHeading>Which color map for which data?</SubHeading>
+
+            <DataTable
+              caption="Color map selection by data type"
+              headers={["Data type", "Recommended (Python)", "Recommended (MATLAB)", "Avoid"]}
+              rows={colormaps}
+              minWidthClass="min-w-[780px]"
+            />
+
+            <p className={P}>
+              Roughly one in twelve men and a much smaller share of women
+              have some form of color vision deficiency, so a figure that
+              depends on hue alone excludes a measurable part of your
+              readership. Test with a simulator such as the one built into
+              many image viewers, or with the colorspacious library in
+              Python, and keep lightness monotonic whenever the map encodes
+              magnitude. Use the same map for the same quantity throughout
+              the manuscript, so that readers learn the encoding once.
+            </p>
 
             {/* Step 5 */}
             <SectionHeading id="3d-surfaces" number="05">
@@ -898,13 +1255,22 @@ function ArticleBody() {
               </Check>
               <Check>
                 Use clear surface shading, subtle grid lines, and
-                appropriately styled coordinate panes.
+                appropriately styled coordinate panes. Remove the mesh
+                lines of dense surfaces, since they obscure the colour
+                encoding.
               </Check>
               <Check>
                 Maintain consistent viewing angles across comparative
                 panels.
               </Check>
+              <Check>
+                Add a contour projection on the base plane so that readers
+                can read approximate values and locate features precisely.
+              </Check>
             </CheckList>
+
+            <CodeBlock label="Python: 3D surface with projection" code={pythonSurface} />
+            <CodeBlock label="MATLAB: 3D surface with contours" code={matlabSurface} />
 
             <ArticleFigure
               src="/blogs/fig18.png"
@@ -916,7 +1282,9 @@ function ArticleBody() {
               Three-dimensional surfaces communicate geometric patterns
               more effectively than exact numerical values. When precise
               values matter, include a contour projection or a separate
-              two-dimensional representation.
+              two-dimensional representation. Dense 3D surfaces exported
+              as vector files can also become very large and slow to
+              render, so a 600 dpi raster is often the more reliable choice.
             </Callout>
 
             {/* Step 6 */}
@@ -937,14 +1305,28 @@ function ArticleBody() {
               outlines to maintain visibility across different
               backgrounds. For functions spanning several orders of
               magnitude, logarithmically spaced contour levels may provide
-              a more informative representation.
+              a more informative representation. The example below draws an
+              optimizer trajectory over the Rosenbrock function, a standard
+              benchmark with a narrow curved valley, using log-spaced levels
+              and a path outlined for legibility.
             </p>
+
+            <CodeBlock label="Python: optimization path on log-spaced contours" code={pythonOverlay} />
 
             <ArticleFigure
               src="/blogs/fig19.png"
               alt="Contour visualization with an optimization trajectory"
               caption="Fig. 6. Contours of a test function showing an optimization path, initial point, and final point."
             />
+
+            <p className={P}>
+              When overlaying several algorithms, distinguish them by line
+              style and marker as well as colour, and keep the legend
+              inside the axes only if it does not hide the structure of the
+              field. In the caption, state the algorithm settings, the
+              starting point and the stopping criterion, because the path
+              itself is a result that readers may wish to reproduce.
+            </p>
 
             {/* Step 7 */}
             <SectionHeading id="journal-export" number="07">
@@ -964,18 +1346,27 @@ function ArticleBody() {
               <Int href="/blog/paper-rejection-reasons">
                 why journals reject papers
               </Int>{" "}
-              explains how poor figures contribute to rejection.
+              explains how poor figures contribute to rejection. Always
+              confirm the final numbers in the publisher’s own instructions{" "}
+              <Cite n={12} /> <Cite n={13} />.
             </p>
+
+            <DataTable
+              caption="Typical figure widths and text sizes for journal layouts"
+              headers={["Layout", "Figure width", "Text size at final size"]}
+              rows={sizes}
+              minWidthClass="min-w-[520px]"
+            />
 
             <CheckList>
               <Check>
-                Set figures to their intended publication dimensions.
-                Approximately 3.5 in (89 mm) is a useful reference for a
-                single IEEE column, while Elsevier figure widths should
-                follow the selected journal’s artwork instructions.
+                Set figures to their intended publication dimensions in
+                code (for example figsize in inches), instead of resizing
+                them in the manuscript. Resizing changes the effective font
+                size and line weight.
               </Check>
               <Check>
-                Maintain readable text, generally around 7–9 pt at final
+                Maintain readable text, generally around 7 to 9 pt at final
                 publication size, subject to journal specifications.
               </Check>
               <Check>
@@ -988,7 +1379,9 @@ function ArticleBody() {
               </Check>
               <Check>
                 Embed fonts and verify resolution against the target
-                publisher’s artwork requirements.
+                publisher’s artwork requirements. The pdffonts and
+                pdfimages utilities report embedded fonts and the effective
+                resolution of raster images in a PDF.
               </Check>
               <Check>
                 Save the original numerical scripts and source data
@@ -1002,6 +1395,29 @@ function ArticleBody() {
               caption="Fig. 7. Typography comparison at identical figure dimensions: small text becomes difficult to read, while appropriately sized 8 pt text remains clearer."
             />
 
+            <SubHeading>Consistency across multi-panel figures</SubHeading>
+            <p className={`${P} mt-3`}>
+              Readers compare panels by comparing colours, so panels that
+              show the same quantity must share identical levels, colour
+              limits, axis ranges and viewing angles, and should be served
+              by a single colorbar. Label the panels (a), (b), (c) in the
+              figure and refer to them in the caption and text.
+            </p>
+            <CodeBlock label="Python: shared levels and one colorbar" code={pythonPanels} />
+
+            <SubHeading>Reproducibility: keep data, code and versions together</SubHeading>
+            <p className={`${P} mt-3`}>
+              Reviewers frequently ask for a different color scale, an
+              extra panel or a larger font. If the figure is generated by a
+              script from stored data, the request takes minutes. If it
+              was assembled by hand, it can take days. Store the numerical
+              arrays beside the script, record library versions, and
+              reference the repository or archive in your data availability
+              statement. These habits also align with the broader advice on
+              figure design in <Cite n={11} />.
+            </p>
+            <CodeBlock label="Python: save the data and record versions" code={pythonReproduce} />
+
             {/* Common mistakes */}
             <SectionHeading id="common-mistakes">
               Common Scientific Visualization Mistakes to Avoid
@@ -1014,23 +1430,21 @@ function ArticleBody() {
             </p>
 
             <ol className="mt-5 space-y-2.5">
-              {[
-                "Using the default rainbow color map without evaluating its suitability.",
-                "Leaving colorbars, measurement units, or axis labels incomplete.",
-                "Using complex 3D representations when a simpler 2D plot communicates the results more clearly.",
-                "Submitting screenshots instead of properly exported vector or high-resolution figures.",
-                "Using inconsistent color limits or viewing angles across comparative panels.",
-              ].map((mistake, index) => (
+              {mistakes.map(([title, text], index) => (
                 <li
-                  key={index}
+                  key={title}
                   className="flex gap-3 rounded-lg border border-slate-200 bg-white p-3.5"
                 >
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-100 text-[11px] font-bold text-slate-600">
+                  <span
+                    aria-hidden="true"
+                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-100 text-[11px] font-bold text-slate-600"
+                  >
                     {index + 1}
                   </span>
-                  <p className="text-sm leading-[1.8] text-slate-700">
-                    {mistake}
-                  </p>
+                  <span className="text-sm leading-[1.8] text-slate-700">
+                    <strong className="text-slate-900">{title}</strong>{" "}
+                    {text}
+                  </span>
                 </li>
               ))}
             </ol>
@@ -1121,9 +1535,17 @@ function ArticleBody() {
                 High-quality scientific visualization is an essential part
                 of communicating computational and experimental research.
                 By combining accurate numerical data, appropriate graphical
-                representations, and journal-compliant export settings,
-                researchers can present their findings more clearly and
-                professionally.
+                representations, perceptually sound colour choices and
+                journal-compliant export settings, researchers can present
+                their findings more clearly and professionally.
+              </p>
+              <p className={`${P} mt-3`}>
+                The practical workflow is short: decide what the reader must
+                be able to read, prepare and validate the data, apply one
+                consistent style, make the figure at its final size, check
+                it in grayscale and in print, and archive the script with
+                the data. Following it once per project saves days during
+                revision.
               </p>
 
               <div className="mt-6 rounded-xl border border-blue-100 bg-blue-50/60 p-6">
@@ -1174,11 +1596,17 @@ function ArticleBody() {
 
               <ol className="mt-5 list-decimal space-y-3 pl-5 text-[13px] leading-[1.8] text-slate-600 sm:text-sm">
                 {referenceList.map((reference, index) => (
-                  <li key={index} className="pl-1">
+                  <li key={index} id={`ref${index + 1}`} className="scroll-mt-28 pl-1">
                     {reference}
                   </li>
                 ))}
               </ol>
+
+              <p className="mt-5 text-xs italic leading-relaxed text-slate-500">
+                Library behaviour and publisher artwork rules change over
+                time. Check the current documentation and the journal’s own
+                instructions before submitting.
+              </p>
             </section>
           </article>
 
@@ -1367,10 +1795,6 @@ function ArticleBody() {
     </div>
   );
 }
-
-/* ------------------------------------------------------------------ */
-/* Page (server component: exports metadata and renders JSON-LD)       */
-/* ------------------------------------------------------------------ */
 
 export default function Page() {
   return (

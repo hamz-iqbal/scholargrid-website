@@ -31,7 +31,7 @@ const PAGE_URL = `${SITE_URL}${SLUG}`;
 const TITLE =
   "How to Find Fast-Review Q1/Q2 Journals in Engineering (2026 Guide)";
 const DESCRIPTION =
-  "Find fast-review Q1 and Q2 engineering journals without losing impact: check quartiles, measure real review times, vet legitimacy and rank your top three.";
+  "A data-driven method for finding fast-review Q1 and Q2 engineering journals: compare JIF, CiteScore and SJR, measure real review times from article dates, vet legitimacy, and rank journals with a weighted scorecard.";
 
 export const metadata: Metadata = {
   /* If your root layout already uses title.template "%s | ScholarGrid",
@@ -45,6 +45,7 @@ export const metadata: Metadata = {
     "journal selection engineering",
     "journal review time",
     "time to first decision",
+    "journal impact factor vs CiteScore vs SJR",
     "predatory journal red flags",
     "SJR quartile",
   ],
@@ -57,7 +58,7 @@ export const metadata: Metadata = {
     title: `${TITLE} | ScholarGrid`,
     description: DESCRIPTION,
     publishedTime: "2026-11-12T00:00:00Z",
-    modifiedTime: "2026-11-12T00:00:00Z",
+    modifiedTime: "2026-11-17T00:00:00Z",
     authors: ["ScholarGrid Technical Team"],
   },
   twitter: {
@@ -72,15 +73,23 @@ type Faq = { q: string; a: string };
 const faqs: Faq[] = [
   {
     q: "What do Q1 and Q2 mean for a journal?",
-    a: "Quartiles rank journals within a subject category by an impact metric. A Q1 journal sits in the top 25 percent of its category and a Q2 journal in the 25 to 50 percent band. Clarivate's Journal Citation Reports uses the Journal Impact Factor within Web of Science categories, while SCImago uses the SJR indicator based on Scopus data.",
+    a: "Quartiles rank journals within a subject category by an impact metric. A Q1 journal sits in the top 25 percent of its category and a Q2 journal in the 25 to 50 percent band. Clarivate's Journal Citation Reports uses the Journal Impact Factor within Web of Science categories, Scopus reports CiteScore percentiles, and SCImago uses the SJR indicator based on Scopus data. The three systems can place the same journal in different quartiles.",
   },
   {
     q: "How do I check a journal's quartile?",
-    a: "Look up the journal on SCImago Journal & Country Rank or in Journal Citation Reports and read its quartile in the subject category that matches your topic. A journal can be Q1 in one category and Q2 or Q3 in another, and quartiles change every year, so always use the latest data release.",
+    a: "Look up the journal on SCImago Journal & Country Rank, in Scopus Sources or in Journal Citation Reports and read its quartile in the subject category that matches your topic. A journal can be Q1 in one category and Q2 or Q3 in another, and quartiles change every year, so always use the latest data release and confirm which database your university or funder accepts.",
+  },
+  {
+    q: "Which quartile does my university or graduation rule accept?",
+    a: "Rules differ: some institutions require Web of Science (JCR) quartiles, others accept Scopus or SCImago, and some specify the quartile in the year of publication or the year of submission. Ask your graduate office for the exact database, category and year before you shortlist journals, because a journal that is Q1 in SJR may be Q2 in JCR.",
   },
   {
     q: "How can I find the real review time of a journal?",
-    a: "Combine several signals: the journal's metrics or About page, the received, revised and accepted dates printed on recent articles, and author-reported data on sites such as SciRev. Sampling 15 to 20 recent papers and calculating the gaps yourself is usually the most honest data you can get.",
+    a: "Combine several signals: the journal's metrics or About page, the received, revised and accepted dates printed on recent articles, and author-reported data on sites such as SciRev. Sampling 15 to 20 recent papers and calculating the gaps yourself is usually the most honest data you can get, provided you remember that published articles only show accepted manuscripts.",
+  },
+  {
+    q: "Why can a reported time to first decision be misleading?",
+    a: "Many journals count desk rejections, which take only days, in their median time to first decision, so the figure can look much faster than the review an accepted paper experiences. Also check whether the figure is a mean or a median, how many manuscripts it covers and which year it refers to. Compare it with the received-to-accepted gaps on published articles.",
   },
   {
     q: "Are fast-review journals lower in quality?",
@@ -92,11 +101,15 @@ const faqs: Faq[] = [
   },
   {
     q: "Can I submit the same manuscript to several journals at once?",
-    a: "No. Journals expect a manuscript to be under review at only one journal at a time. Instead, rank your top three journals in advance and prepare your cover letter and formatting so that a transfer after a rejection takes days rather than weeks.",
+    a: "No. Journals expect a manuscript to be under review at only one journal at a time. Instead, rank your top three journals in advance and prepare your cover letter and formatting so that a transfer after a rejection takes days rather than weeks. Many publishers also offer transfer services that pass your files, and sometimes the reviews, to a sibling journal.",
   },
   {
     q: "How can I shorten the review time of my own manuscript?",
     a: "Match the journal's scope, follow the author guidelines exactly, state the novelty early, suggest qualified reviewers without conflicts of interest, submit a complete package with all required statements, and respond to reviewers quickly with a point-by-point reply.",
+  },
+  {
+    q: "Is it worth submitting to a more selective journal first?",
+    a: "It depends on how much a delay costs you. As a simple model, a selective journal with a 20 percent acceptance chance and a five-month review adds several months of expected delay compared with starting at a journal with a 50 percent chance and a three-month review. If the extra visibility is worth that delay, try it. If a deadline is fixed, start with a realistic target.",
   },
   {
     q: "Is it acceptable to post a preprint while waiting for review?",
@@ -114,7 +127,7 @@ const jsonLd = {
         "How to Find Fast-Review Q1/Q2 Journals in Engineering and Applied Sciences Without Sacrificing Impact",
       description: DESCRIPTION,
       datePublished: "2026-11-12",
-      dateModified: "2026-11-12",
+      dateModified: "2026-11-17",
       inLanguage: "en",
       mainEntityOfPage: PAGE_URL,
       author: { "@type": "Organization", name: "ScholarGrid Technical Team" },
@@ -166,6 +179,7 @@ const contents = [
   { id: "ranking", title: "Ranking Your Top Three Journals" },
   { id: "tradeoff-map", title: "Mapping the Speed–Impact Trade-Off" },
   { id: "journal-types", title: "Journal Types That Balance Speed and Impact" },
+  { id: "costs", title: "Costs, Open Access and Institutional Rules" },
   { id: "faster-review", title: "Speeding Up Your Own Review" },
   { id: "flags", title: "Red Flags vs. Green Flags" },
   { id: "final-checklist", title: "Final Submission Checklist" },
@@ -198,6 +212,39 @@ const related = [
 ];
 
 /* ------------------------------------------------------------------ */
+/* Code and text samples                                               */
+/* ------------------------------------------------------------------ */
+
+const sampleCode = `import pandas as pd
+
+# One row per recent article (15-20+), copied from the "Received / Accepted /
+# Published" line on each article page.
+df = pd.read_csv("journal_sample.csv",
+                 parse_dates=["received", "accepted", "published"])
+
+df["review_days"] = (df["accepted"] - df["received"]).dt.days      # editorial + review
+df["production_days"] = (df["published"] - df["accepted"]).dt.days # accept -> online
+
+print(df["review_days"].describe())
+print(df["review_days"].quantile([0.25, 0.50, 0.75, 0.90]))        # median and spread
+print("Median production:", df["production_days"].median(), "days")
+
+# Spreadsheet alternative: =MEDIAN(C2:C21 - B2:B21) entered as an array formula,
+# with received dates in column B and accepted dates in column C.`;
+
+const rebuttalTemplate = `Response to Reviewer 1
+
+Comment 1.1 (quoted): "The authors should justify the choice of the baseline."
+Response: We thank the reviewer. We added the justification in Section 4.2
+          and a comparison with the additional baseline in Table 3.
+Change:   Section 4.2, lines 312-325; new Table 3 (page 11).
+
+Comment 1.2 (quoted): "..."
+Response: We respectfully disagree for the following reason: ... (evidence, citation).
+Change:   No change to the manuscript. The clarification was added to the
+          limitations paragraph, lines 540-548.`;
+
+/* ------------------------------------------------------------------ */
 /* Reusable components                                                 */
 /* ------------------------------------------------------------------ */
 
@@ -224,6 +271,47 @@ function Ext({ href, children }: { href: string; children: React.ReactNode }) {
     >
       {children}
     </a>
+  );
+}
+
+/** One or more numbered citations, e.g. [2], [4] */
+function Cite({ n }: { n: number | number[] }) {
+  const list = Array.isArray(n) ? n : [n];
+  return (
+    <>
+      {list.map((num, index) => (
+        <React.Fragment key={num}>
+          {index > 0 && ", "}
+          <a
+            href={`#ref${num}`}
+            className="font-semibold text-blue-800 transition hover:text-blue-950 hover:underline"
+          >
+            [{num}]
+          </a>
+        </React.Fragment>
+      ))}
+    </>
+  );
+}
+
+function InlineCode({ children }: { children: React.ReactNode }) {
+  return (
+    <code className="rounded bg-blue-50 px-1.5 py-0.5 font-mono text-[13px] text-blue-900">
+      {children}
+    </code>
+  );
+}
+
+function CodeBlock({ label, code }: { label: string; code: string }) {
+  return (
+    <div className="my-5 overflow-hidden rounded-xl border border-slate-200">
+      <p className="border-b border-slate-200 bg-slate-100 px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-600">
+        {label}
+      </p>
+      <pre className="overflow-x-auto bg-slate-950 p-4 text-[13px] leading-relaxed text-slate-100">
+        <code>{code}</code>
+      </pre>
+    </div>
   );
 }
 
@@ -280,6 +368,14 @@ function SectionHeading({
   );
 }
 
+function SubHeading({ children }: { children: React.ReactNode }) {
+  return (
+    <h3 className="mt-7 font-serif text-xl font-bold text-slate-950">
+      {children}
+    </h3>
+  );
+}
+
 function BulletList({ items }: { items: React.ReactNode[] }) {
   return (
     <ul className="mt-4 space-y-3 text-[15px] leading-[1.8] text-slate-700">
@@ -311,6 +407,62 @@ function Callout({
   );
 }
 
+function DataTable({
+  caption,
+  headers,
+  rows,
+  minWidthClass,
+}: {
+  caption: string;
+  headers: string[];
+  rows: React.ReactNode[][];
+  minWidthClass: string;
+}) {
+  return (
+    <div className="my-6 overflow-hidden rounded-xl border border-slate-200">
+      <div className="overflow-x-auto">
+        <table
+          className={`w-full ${minWidthClass} border-collapse text-left text-sm`}
+        >
+          <caption className="sr-only">{caption}</caption>
+          <thead>
+            <tr className="bg-blue-950 text-white">
+              {headers.map((h) => (
+                <th key={h} scope="col" className="px-4 py-3.5 font-semibold">
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row, rowIndex) => (
+              <tr
+                key={rowIndex}
+                className={`border-b border-slate-100 align-top ${
+                  rowIndex % 2 === 0 ? "bg-white" : "bg-slate-50"
+                }`}
+              >
+                {row.map((cell, cellIndex) => (
+                  <td
+                    key={cellIndex}
+                    className={`px-4 py-3.5 leading-relaxed ${
+                      cellIndex === 0
+                        ? "font-semibold text-slate-900"
+                        : "text-slate-600"
+                    }`}
+                  >
+                    {cell}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 const P = "text-[15px] leading-[1.85] text-slate-700";
 
 /* ------------------------------------------------------------------ */
@@ -318,7 +470,7 @@ const P = "text-[15px] leading-[1.85] text-slate-700";
 /* ------------------------------------------------------------------ */
 
 function ArticleBody() {
-  const referenceList = [
+  const referenceList: React.ReactNode[] = [
     <>
       B. González-Pereira, V. P. Guerrero-Bote, and F. Moya-Anegón, “A new
       approach to the metric of journals’ scientific prestige: The SJR
@@ -402,16 +554,104 @@ function ArticleBody() {
       </Ext>
       .
     </>,
+    <>
+      Elsevier, “CiteScore metrics in Scopus,”{" "}
+      <Ext href="https://www.elsevier.com/products/scopus/metrics/citescore">
+        elsevier.com/products/scopus/metrics/citescore
+      </Ext>
+      .
+    </>,
+    <>
+      Clarivate, “Web of Science Master Journal List,”{" "}
+      <Ext href="https://mjl.clarivate.com/">https://mjl.clarivate.com</Ext>.
+    </>,
+    <>
+      L. Waltman, “A review of the literature on citation impact
+      indicators,” <i>Journal of Informetrics</i>, vol. 10, no. 2,
+      pp. 365–391, 2016.{" "}
+      <Ext href="https://doi.org/10.1016/j.joi.2016.02.007">
+        doi:10.1016/j.joi.2016.02.007
+      </Ext>
+    </>,
+    <>
+      D. Hicks, P. Wouters, L. Waltman, S. de Rijcke, and I. Rafols,
+      “Bibliometrics: The Leiden Manifesto for research metrics,”{" "}
+      <i>Nature</i>, vol. 520, no. 7548, pp. 429–431, 2015.{" "}
+      <Ext href="https://doi.org/10.1038/520429a">doi:10.1038/520429a</Ext>
+    </>,
+    <>
+      San Francisco Declaration on Research Assessment (DORA),{" "}
+      <Ext href="https://sfdora.org">https://sfdora.org</Ext>.
+    </>,
   ];
 
-  const checklist = [
-    "The journal is Q1 or Q2 in my specific subject category (latest year).",
-    "It is indexed in Scopus and/or Web of Science, verified directly at the source.",
-    "I sampled recent papers and calculated received-to-accepted times.",
-    "The scope match is strong, and I have read at least three recent articles.",
-    "Costs (APC, colour charges) fit my budget or funding.",
-    "The manuscript follows the template and includes all required statements.",
-    "I have a second and third choice ready.",
+  const metrics: React.ReactNode[][] = [
+    [
+      "Journal Impact Factor (JIF)",
+      "Clarivate, Journal Citation Reports (Web of Science)",
+      "2 years (a 5-year version is also published)",
+      <>
+        Citations in the report year to items from the previous two years,
+        divided by citable items. Strongly influenced by a few highly cited
+        papers <Cite n={[2, 17]} />.
+      </>,
+    ],
+    [
+      "CiteScore",
+      "Elsevier, Scopus",
+      "4 years",
+      <>
+        Counts more document types than JIF. Scopus also gives a percentile
+        rank in each subject area, from which a quartile follows{" "}
+        <Cite n={14} />.
+      </>,
+    ],
+    [
+      "SJR",
+      "SCImago, built on Scopus data",
+      "3 years",
+      <>
+        Citations are weighted by the prestige of the citing journal, and
+        the data are free to browse <Cite n={[1, 3]} />.
+      </>,
+    ],
+    [
+      "SNIP",
+      "CWTS, built on Scopus data",
+      "3 years",
+      "Normalises for differences in citation practices between fields, which helps when comparing journals across subfields.",
+    ],
+    [
+      "Journal Citation Indicator (JCI)",
+      "Clarivate, Journal Citation Reports",
+      "3 years",
+      "Category-normalised, where 1.0 is the average for the field. Useful for comparing across categories.",
+    ],
+  ];
+
+  const scorecard: React.ReactNode[][] = [
+    ["Scope and topical fit", "25%", "Read at least three recent articles and the aims and scope statement. A weak fit is the largest cause of desk rejection."],
+    ["Verified speed", "20%", "Median received-to-accepted time from 15 to 20 recent articles, plus the spread (upper quartile)."],
+    ["Metric strength", "20%", "Quartile in the correct category in the database your institution accepts, cross-checked in a second database."],
+    ["Realistic acceptance odds", "15%", "Your honest estimate of novelty and fit relative to what the journal publishes. Include desk-rejection risk."],
+    ["Cost and funding fit", "10%", "APC, colour or page charges, and whether a read-and-publish agreement covers you."],
+    ["Readership and field recognition", "10%", "Do the researchers you want to reach, and your evaluation committee, recognise this journal?"],
+  ];
+
+  const worked: React.ReactNode[][] = [
+    ["Scope and topical fit (25%)", "4", "5", "3"],
+    ["Verified speed (20%)", "2", "4", "5"],
+    ["Metric strength (20%)", "5", "4", "3"],
+    ["Acceptance odds (15%)", "2", "4", "5"],
+    ["Cost and funding fit (10%)", "3", "3", "2"],
+    ["Readership (10%)", "5", "4", "3"],
+    ["Weighted total (out of 5)", "3.50", "4.15", "3.60"],
+  ];
+
+  const expected: React.ReactNode[][] = [
+    ["Journal A (selective)", "20%", "5 months", "Higher visibility, slower and riskier"],
+    ["Journal B (well matched)", "50%", "3 months", "Good fit and good indexing"],
+    ["Journal C (fallback)", "Assume acceptance", "3 months", "Safe, but lower prestige"],
   ];
 
   const journalTypes = [
@@ -442,7 +682,7 @@ function ArticleBody() {
     },
   ];
 
-  const flags = [
+  const flags: { red: string; green: React.ReactNode }[] = [
     {
       red: "Guaranteed acceptance or “review in 3 days”.",
       green: "Median review times published with methodology.",
@@ -461,12 +701,38 @@ function ArticleBody() {
     },
     {
       red: "No named editors or unverifiable board members.",
-      green: "Transparent editors and peer-review policy, COPE alignment [11].",
+      green: (
+        <>
+          Transparent editors and peer-review policy, COPE alignment{" "}
+          <Cite n={11} />.
+        </>
+      ),
     },
     {
       red: "Fees requested before peer review is described.",
       green: "Clear APC policy with waivers where applicable.",
     },
+    {
+      red: "Sudden growth to thousands of papers a year with very short, uniform review times.",
+      green: "Stable volume, with a visible spread of review times.",
+    },
+    {
+      red: "Mass-produced special issues with many guest editors and little editorial oversight.",
+      green: "Special issues led by named, verifiable editors under the same peer-review policy as regular issues.",
+    },
+  ];
+
+  const checklist = [
+    "The journal is Q1 or Q2 in my specific subject category (latest year), in the database my institution accepts.",
+    "It is indexed in Scopus and/or Web of Science, verified directly at the source.",
+    "I sampled recent papers and calculated received-to-accepted times, including the spread.",
+    "The scope match is strong, and I have read at least three recent articles.",
+    "Costs (APC, colour charges) fit my budget, funding or read-and-publish agreement.",
+    "The manuscript follows the template and includes all required statements.",
+    "My cover letter states the novelty and does not copy the abstract.",
+    "I have suggested four to six qualified reviewers with no conflicts of interest.",
+    "I have a second and third choice ready, with a transfer plan.",
+    "I know the journal’s preprint, data-sharing and AI-use policies.",
   ];
 
   return (
@@ -555,12 +821,12 @@ function ArticleBody() {
 
               <span className="flex items-center gap-1.5 text-xs text-slate-500">
                 <Calendar size={14} aria-hidden="true" />
-                <time dateTime="2026-11-12">November 2026</time>
+                <time dateTime="2026-11-17">Updated November 2026</time>
               </span>
 
               <span className="flex items-center gap-1.5 text-xs text-slate-500">
                 <Clock size={14} aria-hidden="true" />
-                10 min read
+                18 min read
               </span>
             </div>
 
@@ -570,10 +836,11 @@ function ArticleBody() {
             </h1>
 
             <p className="mt-5 max-w-3xl text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">
-              A practical guide for researchers who need to publish quickly,
-              and well. Use a repeatable process to shortlist, verify, and
-              rank fast-review Q1 and Q2 journals, and learn how to avoid
-              predatory outlets along the way.
+              A repeatable, data-driven method for researchers who need to
+              publish quickly, and well: compare journal metrics correctly,
+              measure real review times, vet legitimacy, score candidates
+              with a weighted scorecard, and plan a fallback before you
+              submit.
             </p>
 
             <div className="mt-7 flex flex-wrap items-center justify-between gap-4 border-t border-slate-200 pt-5">
@@ -646,16 +913,25 @@ function ArticleBody() {
               caption="Fig. 1. Six-step workflow for building a shortlist of fast, high-quality journals."
             />
 
-            <p className={`${P} mb-5`}>
+            <p className={`${P} mb-4`}>
               Many reputable Q1 and Q2 journals in engineering and applied
               sciences have efficient editorial systems. The trick is
               knowing how to find them, how to verify them, and how to
-              avoid the “fast but predatory” trap. This guide covers
-              quartile basics, building a long list, collecting real review
-              speed data, vetting legitimacy, ranking candidates with a
-              scorecard, and preparing your submission so that the review
-              moves as quickly as possible. If you are still preparing the
-              manuscript itself, start with our{" "}
+              avoid the “fast but predatory” trap. Studies of publishing
+              delay show that the time from submission to publication
+              varies widely between journals and disciplines{" "}
+              <Cite n={[5, 7]} />, which means that a journal’s reputation
+              for speed is only a hypothesis until you test it with data.
+            </p>
+
+            <p className={`${P} mb-5`}>
+              This guide covers quartile basics, building a long list,
+              collecting real review speed data, vetting legitimacy,
+              ranking candidates with a scorecard and a simple
+              expected-delay model, budgeting for open access, and
+              preparing your submission so that the review moves as quickly
+              as possible. If you are still preparing the manuscript
+              itself, start with our{" "}
               <Int href="/blog/q1-research-paper-structure">
                 Q1 research paper structure guide
               </Int>{" "}
@@ -674,7 +950,9 @@ function ArticleBody() {
             <p className={`${P} mt-4`}>
               Quartiles rank journals within a subject category by an impact
               metric. A Q1 journal sits in the top 25% of its category, and
-              Q2 in the 25–50% band. Two main systems are used:
+              Q2 in the 25–50% band. In a category of 200 journals, for
+              example, the 50 highest-ranked journals are Q1 and the next 50
+              are Q2. Three main systems are used:
             </p>
 
             <BulletList
@@ -682,7 +960,7 @@ function ArticleBody() {
                 <>
                   <b>Journal Citation Reports (Clarivate):</b> quartiles are
                   based on the Journal Impact Factor (JIF) within Web of
-                  Science categories [2], [4]. See the{" "}
+                  Science categories <Cite n={[2, 4]} />. See the{" "}
                   <Ext href="https://clarivate.com/academia-government/scientific-and-academic-research/research-funding-analytics/journal-citation-reports/">
                     Journal Citation Reports
                   </Ext>
@@ -691,8 +969,55 @@ function ArticleBody() {
                 <>
                   <b>SCImago Journal Rank (SJR, Scopus data):</b> quartiles
                   are based on SJR, which weights citations by the prestige
-                  of the citing journal. It is free to use [1], [3] at{" "}
+                  of the citing journal. It is free to use{" "}
+                  <Cite n={[1, 3]} /> at{" "}
                   <Ext href="https://www.scimagojr.com/">scimagojr.com</Ext>.
+                </>,
+                <>
+                  <b>Scopus CiteScore percentiles:</b> Scopus ranks each
+                  journal by CiteScore within a subject area, and the
+                  percentile determines the quartile <Cite n={14} />.
+                </>,
+              ]}
+            />
+
+            <DataTable
+              caption="Common journal-level metrics, their sources and citation windows"
+              headers={["Metric", "Source", "Window", "What to remember"]}
+              rows={metrics}
+              minWidthClass="min-w-[820px]"
+            />
+
+            <SubHeading>Practical rules for reading quartiles</SubHeading>
+
+            <BulletList
+              items={[
+                <>
+                  <b>Always name the category.</b> A journal can be Q1 in one
+                  category and Q2 or Q3 in another. Use the category that
+                  matches your topic and the one your evaluator will look up.
+                </>,
+                <>
+                  <b>Cross-check two systems.</b> A journal that is Q1 in
+                  both JCR and SJR is a safer choice than one that is Q1 in
+                  only one, because small categories and metric differences
+                  can move a journal across the boundary.
+                </>,
+                <>
+                  <b>Confirm your institution’s rule.</b> Some universities
+                  and funders require Web of Science quartiles, others
+                  accept Scopus or SCImago, and the rule may refer to the
+                  year of submission or the year of publication. Ask before
+                  you shortlist.
+                </>,
+                <>
+                  <b>Use metrics as a screen, not a verdict.</b> Citation
+                  indicators are skewed by a few highly cited articles and
+                  differ between fields <Cite n={[17, 18]} />. The{" "}
+                  <Ext href="https://sfdora.org">DORA declaration</Ext>{" "}
+                  <Cite n={19} /> argues against judging individual papers
+                  by journal metrics, so choose a venue for readership and
+                  fit as well as for its number.
                 </>,
               ]}
             />
@@ -723,7 +1048,7 @@ function ArticleBody() {
                 <>
                   <b>SCImago (scimagojr.com):</b> filter by subject area
                   (e.g., Engineering, Materials Science, Energy) and by
-                  quartile [3].
+                  quartile <Cite n={3} />.
                 </>,
                 <>
                   <b>Scopus / Web of Science “Find a journal” tools:</b>{" "}
@@ -751,7 +1076,9 @@ function ArticleBody() {
                   <Ext href="https://journalfinder.wiley.com/">
                     Wiley Journal Finder
                   </Ext>
-                  , and similar tools.
+                  , and similar tools. These recommend only the publisher’s
+                  own titles, so use them to find candidates, not to rank
+                  them.
                 </>,
                 <>
                   <b>Your own reference list:</b> the journals you cite most
@@ -763,7 +1090,8 @@ function ArticleBody() {
                   shows how to map them.
                 </>,
                 <>
-                  <b>DOAJ:</b> useful for verifying open-access titles [12].
+                  <b>DOAJ:</b> useful for verifying open-access titles{" "}
+                  <Cite n={12} />.
                 </>,
               ]}
             />
@@ -772,7 +1100,9 @@ function ArticleBody() {
               Narrow the long list to Q1 and Q2 journals in your closest
               subject category. Where possible, confirm the quartile in both
               SJR and JCR. A journal that is strong in both is a safer bet
-              for hiring and promotion committees.
+              for hiring and promotion committees. Aim for eight to twelve
+              candidates at this stage, since the next steps will
+              eliminate most of them.
             </p>
 
             {/* Section 3 */}
@@ -782,9 +1112,9 @@ function ArticleBody() {
 
             <p className={`${P} mt-4`}>
               This is where most researchers stop too early. Publication
-              delays vary widely between journals and fields [5], [7], and a
-              journal’s home page rarely tells the full story, so combine
-              several signals:
+              delays vary widely between journals and fields{" "}
+              <Cite n={[5, 7]} />, and a journal’s home page rarely tells
+              the full story, so combine several signals:
             </p>
 
             <BulletList
@@ -799,14 +1129,14 @@ function ArticleBody() {
                   <b>Published articles:</b> each paper lists received,
                   revised, and accepted dates. Sample 15–20 recent papers
                   and calculate the gaps yourself, an approach used in
-                  published studies of publishing delay [5], [6]. This is
-                  the most honest data you can get.
+                  published studies of publishing delay <Cite n={[5, 6]} />.
+                  This is the most honest data you can get.
                 </>,
                 <>
                   <b>Review-time aggregators and community reports:</b>{" "}
                   sites such as <Ext href="https://scirev.org">SciRev</Ext>{" "}
                   collect author-reported review times. Treat them as
-                  directional, not definitive [8].
+                  directional, not definitive <Cite n={8} />.
                 </>,
                 <>
                   <b>Special issues and fast-track options:</b> these can
@@ -816,14 +1146,58 @@ function ArticleBody() {
               ]}
             />
 
+            <SubHeading>How to measure the gaps correctly</SubHeading>
+
+            <p className={`${P} mt-3`}>
+              Copy the received, accepted and published dates of 15 to 20
+              consecutive recent articles into a spreadsheet, taking all of
+              them rather than only the ones that look fast. Then compute the
+              median and the upper quartile of the received-to-accepted
+              time, together with the accepted-to-published time:
+            </p>
+
+            <CodeBlock label="Python (pandas)" code={sampleCode} />
+
+            <p className={P}>
+              Interpret the numbers with four caveats in mind:
+            </p>
+
+            <BulletList
+              items={[
+                <>
+                  <b>Survivorship bias.</b> Dates on published papers come
+                  only from accepted manuscripts. Rejected papers, which
+                  often leave quickly, never appear, so your sample shows
+                  the experience of a successful author.
+                </>,
+                <>
+                  <b>Desk rejections lower the headline figure.</b> A
+                  reported median “time to first decision” that includes
+                  desk rejections can be far shorter than the time a
+                  reviewed manuscript waits for its first decision.
+                </>,
+                <>
+                  <b>The “revised” date is not the first decision.</b> It
+                  usually marks the last revised version received, so it
+                  hides the number of review rounds.
+                </>,
+                <>
+                  <b>Look at the spread, not only the median.</b> A journal
+                  with a median of 70 days and a 90th percentile of 300
+                  days is a gamble, whereas one with a median of 90 days and
+                  a 90th percentile of 140 days is predictable.
+                </>,
+              ]}
+            />
+
             <p className={`${P} mt-4`}>
               Most of the difference between fast and slow journals comes
               from two places: how quickly editors secure reviewers, and how
               long the review window lasts. Studies of the author’s
               perspective confirm that review duration differs substantially
-              between journals [6], [7]. Journals with active handling
-              editors and shorter review deadlines tend to publish more
-              predictably (Fig. 2).
+              between journals <Cite n={[6, 7]} />. Journals with active
+              handling editors and shorter review deadlines tend to publish
+              more predictably (Fig. 2).
             </p>
 
             <ArticleFigure
@@ -839,21 +1213,34 @@ function ArticleBody() {
 
             <p className={`${P} mt-4`}>
               Fast does not mean careless, but some predatory outlets
-              exploit the demand for speed [9], [10]. Before submitting,
-              check the following:
+              exploit the demand for speed <Cite n={[9, 10]} />. There is no
+              single agreed definition of a predatory journal{" "}
+              <Cite n={9} />, so rely on verifiable facts rather than
+              impressions. Treat legitimacy as a gate in your scorecard: a
+              journal that fails it is excluded, however fast or prestigious
+              it appears. Before submitting, check the following:
             </p>
 
             <BulletList
               items={[
-                "The journal is indexed in Scopus or Web of Science (verify directly in the index, not by the badge on the journal website).",
-                "An identifiable editorial board with real affiliations and publication records.",
+                <>
+                  The journal is indexed in Scopus or Web of Science. Verify
+                  directly in the index, for example in the{" "}
+                  <Ext href="https://mjl.clarivate.com/">
+                    Web of Science Master Journal List
+                  </Ext>{" "}
+                  <Cite n={15} /> or the Scopus sources list, and not by the
+                  badge on the journal’s own website.
+                </>,
+                "An identifiable editorial board with real affiliations and publication records. Search a few editors by name and confirm that they know they are listed.",
                 <>
                   Transparent peer-review policy, ethics statements, and a
                   clear retraction process (see{" "}
                   <Ext href="https://publicationethics.org/core-practices">
                     COPE core practices
                   </Ext>{" "}
-                  [11]).
+                  <Cite n={11} />
+                  ).
                 </>,
                 <>
                   No guarantees of acceptance within days, no unsolicited
@@ -861,11 +1248,21 @@ function ArticleBody() {
                   <Ext href="https://thinkchecksubmit.org">
                     Think. Check. Submit.
                   </Ext>{" "}
-                  checklist is a useful companion [13].
+                  checklist is a useful companion <Cite n={13} />.
                 </>,
-                "Check the journal against current lists of delisted or discontinued titles, since indexing status can change.",
+                "A consistent publisher identity: a verifiable address, DOIs registered for every article, and a long-term archiving arrangement.",
+                "Check the journal against current lists of delisted or discontinued titles, since indexing status can change. Indexers have removed journals over peer-review integrity concerns.",
               ]}
             />
+
+            <p className={`${P} mt-4`}>
+              A comparison study of potential predatory and legitimate
+              journals found that the two groups differ in observable
+              characteristics, such as transparency about fees and editorial
+              information <Cite n={10} />. Use that insight: legitimate
+              journals tend to document their processes in public, so
+              missing documentation is itself informative.
+            </p>
 
             {/* Section 5 */}
             <SectionHeading id="ranking" number="05">
@@ -885,6 +1282,83 @@ function ArticleBody() {
               caption="Fig. 3. Example scorecard weights for ranking candidate journals. Adjust to your own priorities."
             />
 
+            <SubHeading>A detailed scorecard</SubHeading>
+
+            <p className={`${P} mt-3`}>
+              Rate every journal that passed the legitimacy gate from 1
+              (poor) to 5 (excellent) on each criterion, multiply by the
+              weights, and add the results. The weights below are a
+              starting point, so change them to reflect your situation, for
+              example by raising the speed weight if a deadline is fixed.
+            </p>
+
+            <DataTable
+              caption="Suggested scorecard criteria, weights and how to measure them"
+              headers={["Criterion", "Weight", "How to measure it"]}
+              rows={scorecard}
+              minWidthClass="min-w-[680px]"
+            />
+
+            <p className={P}>
+              The following worked example uses three hypothetical journals
+              to show how the arithmetic works. The numbers are invented for
+              illustration only.
+            </p>
+
+            <DataTable
+              caption="Worked example of a weighted journal scorecard with hypothetical journals"
+              headers={["Criterion (weight)", "Journal A", "Journal B", "Journal C"]}
+              rows={worked}
+              minWidthClass="min-w-[560px]"
+            />
+
+            <p className={P}>
+              Journal A has the strongest metrics, but its slow review and
+              low acceptance odds pull its total below the better-matched
+              Journal B, which therefore becomes the first choice, with C as
+              the fallback.
+            </p>
+
+            <SubHeading>Estimate the expected delay of a cascade</SubHeading>
+
+            <p className={`${P} mt-3`}>
+              Submitting to a more selective journal first has a cost that
+              is easy to underestimate. Consider the hypothetical figures
+              below, and assume that Journal C accepts the paper, that
+              revision time is ignored, and that the transfer between
+              journals is instant.
+            </p>
+
+            <DataTable
+              caption="Hypothetical journals used in the expected-delay example"
+              headers={["Journal", "Acceptance chance", "Time to decision", "Comment"]}
+              rows={expected}
+              minWidthClass="min-w-[620px]"
+            />
+
+            <BulletList
+              items={[
+                <>
+                  <b>Start with B, then C:</b> expected time = 3 months +
+                  0.5 × 3 months = <b>4.5 months</b>.
+                </>,
+                <>
+                  <b>Start with A, then B, then C:</b> expected time = 5
+                  months + 0.8 × 4.5 months = <b>8.6 months</b>.
+                </>,
+              ]}
+            />
+
+            <p className={`${P} mt-4`}>
+              In this example, aiming first at Journal A costs about four
+              extra months of expected delay in exchange for a 20% chance
+              of a more prestigious venue. That can be a good bet if you
+              have time and the paper is genuinely strong, and a poor one
+              if a graduation or funding deadline is fixed. Re-run the
+              arithmetic with your own estimates. The point is to make the
+              trade-off explicit before you submit.
+            </p>
+
             {/* Section 6 */}
             <SectionHeading id="tradeoff-map" number="06">
               Mapping the Speed–Impact Trade-Off Between Journals
@@ -896,8 +1370,8 @@ function ArticleBody() {
               well regarded. Journals that are prestigious but slow can
               still be the right choice for a major result, but should be
               planned for in advance. The lower-right quadrant is where
-              predatory or low-rigor outlets tend to appear [9], [10]
-              (Fig. 4).
+              predatory or low-rigor outlets tend to appear{" "}
+              <Cite n={[9, 10]} /> (Fig. 4).
             </p>
 
             <ArticleFigure
@@ -957,11 +1431,61 @@ function ArticleBody() {
             <Callout title="Please note">
               The examples above illustrate categories and are not
               endorsements. Always confirm the current quartile, indexing
-              status, and review metrics before submitting.
+              status, and review metrics before submitting, and judge each
+              title individually because quality varies within every
+              publisher.
             </Callout>
 
-            {/* Section 8 */}
-            <SectionHeading id="faster-review" number="08">
+            {/* Section 8 (new) */}
+            <SectionHeading id="costs" number="08">
+              Costs, Open Access and Institutional Rules
+            </SectionHeading>
+
+            <p className={`${P} mt-4`}>
+              A fast journal is no use if you cannot afford to publish in
+              it, or if your institution does not recognise it. Settle the
+              money and the rules early, because they can eliminate
+              candidates that look perfect on paper.
+            </p>
+
+            <BulletList
+              items={[
+                <>
+                  <b>Article processing charges (APCs).</b> Fully open-access
+                  journals usually charge an APC on acceptance, and
+                  subscription journals may charge optional open-access
+                  fees. Some also charge colour or page fees. Find the
+                  current figure on the journal’s “Open access” or “Author
+                  guidelines” page.
+                </>,
+                <>
+                  <b>Read-and-publish or transformative agreements.</b> Many
+                  universities have agreements with publishers that cover
+                  APCs for affiliated authors in selected journals. Ask your
+                  library before assuming that you must pay.
+                </>,
+                <>
+                  <b>Waivers and discounts.</b> Many publishers offer
+                  waivers or discounts for authors from lower-income
+                  countries, and some journals waive fees on request.
+                  Request them before submission, not after acceptance.
+                </>,
+                <>
+                  <b>Funder mandates.</b> Some funders require open access
+                  or specific licences and repository deposit. Check your
+                  grant conditions against the journal’s policies.
+                </>,
+                <>
+                  <b>Institutional recognition.</b> Confirm which database
+                  and quartile year your graduation, promotion or
+                  evaluation committee accepts, and whether letters, short
+                  communications or open-access mega-journals count.
+                </>,
+              ]}
+            />
+
+            {/* Section 9 */}
+            <SectionHeading id="faster-review" number="09">
               How to Speed Up Your Own Peer Review
             </SectionHeading>
 
@@ -985,8 +1509,10 @@ function ArticleBody() {
                 <>
                   <b>Suggest qualified reviewers:</b> provide four to six
                   reviewers with institutional emails, no conflicts of
-                  interest, and relevant publications. This reduces the time
-                  editors spend finding them.
+                  interest, and relevant publications. Avoid recent
+                  co-authors, colleagues at your institution and close
+                  collaborators. This reduces the time editors spend finding
+                  them, and editors normally verify the suggestions.
                 </>,
                 <>
                   <b>Submit a complete package:</b> figures at proper
@@ -1014,6 +1540,35 @@ function ArticleBody() {
                 </>,
               ]}
             />
+
+            <SubHeading>Write a response letter that closes the loop</SubHeading>
+
+            <p className={`${P} mt-3`}>
+              The strongest revision cycles end with a response that makes
+              the editor’s job easy. Quote every reviewer comment, answer it
+              directly, say exactly where the manuscript changed, and, where
+              you disagree, explain why with evidence rather than defending
+              the original text. Return the revision within the deadline,
+              or ask for an extension before it passes.
+            </p>
+
+            <CodeBlock label="Response letter structure" code={rebuttalTemplate} />
+
+            <SubHeading>Plan the transfer before you need it</SubHeading>
+
+            <p className={`${P} mt-3`}>
+              After a rejection, speed depends on how little you must redo.
+              Keep a generic version of the manuscript, a cover letter with
+              a slot for the journal name, and the reviewer comments that
+              you have already addressed. Many publishers also run transfer
+              services that carry files, and sometimes the reviews, to a
+              sibling journal. Even without one, revise according to the
+              previous reviews before resubmitting, since an editor may ask
+              the same reviewer again. Finally, adapt the formatting to the
+              next journal’s template with the help of our{" "}
+              <Int href="/blog/formatting-guide">formatting guide</Int>{" "}
+              rather than copying the previous layout.
+            </p>
 
             {/* Red / green flags */}
             <SectionHeading id="flags">
@@ -1057,6 +1612,17 @@ function ArticleBody() {
                 </table>
               </div>
             </div>
+
+            <p className={P}>
+              No single flag is conclusive. Several red flags together, or a
+              missing green flag that you would expect from a journal of
+              that size, justify a pause. When in doubt, ask a senior
+              colleague or your university librarian, who often know a
+              journal’s reputation in your field. Searching your own{" "}
+              <InlineCode>topic + journal name</InlineCode> in Scopus will
+              also show whether credible authors from established
+              institutions publish there.
+            </p>
 
             {/* Final checklist */}
             <SectionHeading id="final-checklist">
@@ -1144,6 +1710,15 @@ function ArticleBody() {
                 submission, researchers can often shave months off their
                 timeline without compromising on reputation.
               </p>
+              <p className={`${P} mt-3`}>
+                The practical sequence is short. Confirm the quartile rule
+                that applies to you, build a long list from several sources,
+                measure the review time yourself, exclude anything that
+                fails the legitimacy gate, score the survivors, and decide
+                with the expected-delay arithmetic in hand. Then prepare the
+                fallback before you submit, so that a rejection costs you
+                days instead of months.
+              </p>
 
               <div className="mt-6 rounded-xl border border-blue-100 bg-blue-50/60 p-6">
                 <p className="font-serif text-lg font-bold text-blue-950">
@@ -1193,7 +1768,11 @@ function ArticleBody() {
 
               <ol className="mt-5 list-decimal space-y-3 pl-5 text-[13px] leading-[1.8] text-slate-600 sm:text-sm">
                 {referenceList.map((reference, index) => (
-                  <li key={index} className="pl-1">
+                  <li
+                    key={index}
+                    id={`ref${index + 1}`}
+                    className="scroll-mt-28 pl-1"
+                  >
                     {reference}
                   </li>
                 ))}
@@ -1201,10 +1780,11 @@ function ArticleBody() {
 
               <p className="mt-5 text-xs italic leading-relaxed text-slate-500">
                 Journal metrics, quartiles, and review times change
-                frequently. Figures 2 and 4 are conceptual illustrations, not
-                measured data. Verify all details on SCImago, Journal
-                Citation Reports, and the journal’s own website before
-                making decisions.
+                frequently. Figures 2 and 4 are conceptual illustrations, and
+                the journals in the scorecard and expected-delay examples are
+                hypothetical, not measured data. Verify all details on
+                SCImago, Scopus, Journal Citation Reports, and the journal’s
+                own website before making decisions.
               </p>
             </section>
           </article>
