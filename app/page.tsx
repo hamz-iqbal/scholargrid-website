@@ -81,6 +81,13 @@ const blogPosts = [
     desc: "A practical workflow to shortlist, verify, and rank journals by quartile, real review times, and legitimacy.",
     href: "/blog/fast-review-q1-q2-journals",
   },
+  {
+    tag: "AI & Machine Learning",
+    title:
+      "Artificial Intelligence in Scientific Research: Applications, Tools, Benefits, and Limitations (2026)",
+    desc: "Where AI helps in research, which tools to use, a worked physics-informed neural network example, and the limits and ethics of responsible use.",
+    href: "/blog/ai-in-scientific-research",
+  },
 ];
 
 const featuredPost = blogPosts[0];
@@ -157,9 +164,7 @@ const services = [
 ];
 
 const stats = [
-  { value: "7", label: "In-depth research guides" },
-  { value: "6", label: "Publishers covered in guides" },
-  { value: "4", label: "Areas of research support" },
+  { value: "8", label: "In-depth research guides" },
   { value: "Free", label: "To read, no sign-up" },
 ];
 
@@ -454,7 +459,7 @@ export default function ScholarGridLandingPage() {
           aria-label="Track record"
           className="border-b border-slate-200 bg-white"
         >
-          <div className="mx-auto grid max-w-7xl grid-cols-2 divide-x divide-y divide-slate-200 sm:grid-cols-4 sm:divide-y-0">
+          <div className="mx-auto grid max-w-7xl grid-cols-2 divide-x divide-slate-200">
             {stats.map((stat) => (
               <div key={stat.label} className="px-3 py-6 text-center sm:py-7">
                 <div className="font-serif text-3xl font-bold tracking-tight text-blue-900 sm:text-4xl">
