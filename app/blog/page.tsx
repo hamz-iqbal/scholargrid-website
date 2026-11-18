@@ -66,6 +66,15 @@ const articles = [
       "Follow a practical workflow to shortlist, verify, and rank fast-review Q1 and Q2 journals, from checking quartiles and real review times to avoiding predatory outlets.",
     href: "/blog/fast-review-q1-q2-journals",
   },
+  {
+    number: "08",
+    category: "AI & Machine Learning",
+    title:
+      "How Artificial Intelligence Transforms Scientific Research: Applications, Tools, Benefits, and Limitations (2026)",
+    description:
+      "Explore how AI transforms scientific research through advanced tools, practical applications, key benefits, and ethical limitations for modern scholars.",
+    href: "/blog/ai-in-scientific-research",
+  },
 ];
 
 export default function BlogPage() {
