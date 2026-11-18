@@ -29,9 +29,9 @@ const SLUG = "/blog/systematic-literature-review-guide";
 const PAGE_URL = `${SITE_URL}${SLUG}`;
 
 const TITLE =
-  "How to Write a Systematic Literature Review: 6-Step Guide for Engineers (2026)";
+  "Systematic Literature Review Guide for Engineers: Method, Synthesis and LaTeX Submission (2026)";
 const DESCRIPTION =
-  "Learn how to write a systematic literature review in six steps: define the question, search databases, screen with PRISMA, extract data, synthesize and report.";
+  "A research-grade guide to systematic literature reviews: protocol, database search, PRISMA 2020 screening, synthesis and gap analysis, plus Elsevier elsarticle and IEEEtran LaTeX preparation and pre-submission checks.";
 
 export const metadata: Metadata = {
   /* If your root layout already uses title.template "%s | ScholarGrid",
@@ -42,11 +42,15 @@ export const metadata: Metadata = {
     "systematic literature review",
     "how to write a systematic review",
     "PRISMA 2020 flow diagram",
+    "PRISMA-S search reporting",
     "literature review search string",
     "inclusion and exclusion criteria",
     "research gap identification",
     "thematic analysis literature review",
     "Kitchenham guidelines",
+    "elsarticle LaTeX template",
+    "IEEEtran LaTeX template",
+    "siunitx amsmath manuscript",
   ],
   alternates: { canonical: PAGE_URL },
   robots: { index: true, follow: true },
@@ -57,7 +61,7 @@ export const metadata: Metadata = {
     title: `${TITLE} | ScholarGrid`,
     description: DESCRIPTION,
     publishedTime: "2026-11-01T00:00:00Z",
-    modifiedTime: "2026-11-12T00:00:00Z",
+    modifiedTime: "2026-11-18T00:00:00Z",
     authors: ["ScholarGrid Technical Team"],
   },
   twitter: {
@@ -84,7 +88,7 @@ const faqs: Faq[] = [
   },
   {
     q: "What is the PRISMA 2020 flow diagram and do I need it?",
-    a: "PRISMA 2020 is a reporting guideline for systematic reviews. Its flow diagram shows how many records you identified, screened, excluded and included at each stage. Most journals expect something equivalent for a systematic review, so it is good practice to include one.",
+    a: "PRISMA 2020 is a reporting guideline for systematic reviews. Its flow diagram shows how many records you identified, screened, excluded and included at each stage, and its checklist has 27 items. Most journals expect something equivalent for a systematic review, so it is good practice to include one. PRISMA-S is a companion extension for reporting the literature searches themselves.",
   },
   {
     q: "How many reviewers do I need for screening?",
@@ -102,6 +106,18 @@ const faqs: Faq[] = [
     q: "What are the most common mistakes in systematic reviews?",
     a: "Common mistakes include searching only one database, changing criteria halfway without recording it, listing papers instead of synthesizing them, skipping quality appraisal, submitting with a stale search, and ending with vague gaps such as “more research is needed”.",
   },
+  {
+    q: "Should I use elsarticle or IEEEtran for my review paper?",
+    a: "Use the class that the target journal publishes in. Elsevier journals use elsarticle, and IEEE journals and conferences use IEEEtran. Always download the template from the journal’s own author page, because journals sometimes ship a customized version, and do not switch classes late in the project because the front matter, figure placement and bibliography style all change.",
+  },
+  {
+    q: "How do I typeset units and numbers correctly in a LaTeX manuscript?",
+    a: "Load the siunitx package and write quantities with \\qty{25}{\\celsius} or the older \\SI{25}{\\celsius}, and plain numbers with \\num{1.5e-3}. It keeps the number and unit together on one line, formats scientific notation consistently, and aligns decimals in tables with the S column type.",
+  },
+  {
+    q: "Why does my IEEE or Elsevier submission system reject my PDF?",
+    a: "The most common causes are fonts that are not embedded (often Type 3 fonts from plotting libraries), figures with transparency or the wrong color space, missing files, and unresolved references that appear as question marks. Embed fonts, export vector figures as PDF or high-resolution images, and run a full build with BibTeX before uploading.",
+  },
 ];
 
 const jsonLd = {
@@ -113,7 +129,7 @@ const jsonLd = {
       headline: "A Practical Guide to Systematic Literature Reviews",
       description: DESCRIPTION,
       datePublished: "2026-11-01",
-      dateModified: "2026-11-12",
+      dateModified: "2026-11-18",
       inLanguage: "en",
       mainEntityOfPage: PAGE_URL,
       author: { "@type": "Organization", name: "ScholarGrid Technical Team" },
@@ -164,6 +180,8 @@ const contents = [
   { id: "step-4", title: "Extract Data and Judge Quality" },
   { id: "step-5", title: "Synthesize Like a Senior Researcher" },
   { id: "step-6", title: "Write It Up and Report It" },
+  { id: "step-7", title: "Prepare the Manuscript in LaTeX" },
+  { id: "presubmission", title: "Pre-Submission Errors to Fix" },
   { id: "common-mistakes", title: "Common Mistakes" },
   { id: "final-checklist", title: "Final Checklist" },
   { id: "faq", title: "FAQs" },
@@ -413,44 +431,208 @@ function ArticleBody() {
     ["Meta-analysis", "Studies report comparable numbers", "Pooled estimate"],
   ];
 
+  const picoc = [
+    ["Population", "Rotating machinery (bearings, gearboxes) in laboratory or industrial settings"],
+    ["Intervention", "Deep-learning fault diagnosis and prognosis methods"],
+    ["Comparison", "Classical signal processing and shallow machine learning baselines"],
+    ["Outcome", "Accuracy, robustness to noise, cross-domain generalization"],
+    ["Context", "Public benchmark datasets versus real plant data"],
+  ];
+
+  const databases = [
+    ["Scopus", "Broad multidisciplinary coverage and clean CSV export", "Indexing of very recent papers can lag"],
+    ["Web of Science", "Curated core collection and strong citation tracking", "Coverage depends on your institution’s subscription"],
+    ["IEEE Xplore", "Full-text IEEE and IET journals and conferences", "Publisher-limited: misses Elsevier and Springer papers"],
+    ["ScienceDirect", "Full-text Elsevier journals", "Export and query length limits"],
+    ["Compendex or Inspec", "Engineering-focused indexing with controlled vocabulary", "Paid access, so check your library"],
+    ["Google Scholar", "Finds grey literature and odd papers", "Not reproducible, so use it only as a supplement"],
+  ];
+
   const criteria = [
     ["Period", "2015 to 2025", "Earlier work"],
     ["Type", "Peer-reviewed journal and conference papers", "Editorials, theses, posters"],
     ["Topic", "Deep-learning fault diagnosis of rotating machinery", "Other machinery or methods"],
     ["Evidence", "Reports experimental results", "Concept papers without data"],
+    ["Language", "English full text available", "Abstract-only records"],
   ];
 
-  const searchString = `TITLE-ABS-KEY(
+  const extractionFields = [
+    ["Bibliographic", "Authors, year, venue, DOI", "Traceability and deduplication"],
+    ["Problem and data", "Task, dataset, sample size, sampling rate, train/test split", "Reveals whether results are comparable"],
+    ["Method", "Architecture, input representation, key hyperparameters", "Feeds the taxonomy"],
+    ["Validation", "Metrics, baselines, cross-validation scheme, statistical tests", "Feeds quality appraisal"],
+    ["Results", "Reported numbers with units and page number", "Lets you answer reviewer queries quickly"],
+    ["Limitations", "Stated and unstated weaknesses", "Feeds the gap analysis"],
+  ];
+
+  const packages = [
+    ["amsmath", "Equations: align, multline, split, \\text, \\operatorname", "Using eqnarray, which spaces badly, instead of align"],
+    ["siunitx", "Units, numbers and decimal-aligned table columns", "Typing units as plain text so they break across lines"],
+    ["booktabs", "Professional tables with \\toprule, \\midrule, \\bottomrule", "Vertical rules and \\hline, which journals discourage"],
+    ["graphicx", "Figure inclusion with \\includegraphics", "Raster screenshots of charts instead of vector PDF"],
+    ["cite (IEEE) or sort&compress (Elsevier)", "Compressed citation ranges such as [3]–[6]", "Unsorted citation lists in the text"],
+    ["hyperref", "Clickable references and PDF metadata", "Loading it too early, which can clash with other packages"],
+  ];
+
+  const errorRows = [
+    ["Question marks in text (??)", "References or labels not resolved", "Run LaTeX, BibTeX, then LaTeX twice, or use latexmk"],
+    ["Overfull \\hbox warnings", "Long URLs, equations or tables exceed the column", "Break equations with align, shrink tables, use \\url and allow breaks"],
+    ["Fonts not embedded in the PDF", "Plotting library exported Type 3 fonts", "Set pdf.fonttype to 42 in matplotlib and re-export the figures"],
+    ["Blurry or pixelated figures", "Low-resolution raster export", "Export vector PDF, or raster at the journal’s required dpi"],
+    ["Bibliography shows keys or missing entries", "Wrong .bst file or duplicate or missing keys", "Check the style file and BibTeX log (.blg) for warnings"],
+    ["Equations run into the margin in two columns", "Single-line equation too wide for IEEEtran", "Split with multline or align, or use figure* and table* for wide items"],
+    ["Wrong capitalization in titles", "BibTeX lowercases words", "Protect names and acronyms with braces, such as {LSTM} and {Gaussian}"],
+  ];
+
+  const searchString = String.raw`TITLE-ABS-KEY(
   ("predictive maintenance" OR "condition monitoring"
    OR prognostics)
   AND ("deep learning" OR "neural network*")
-  AND ("rotating machinery" OR bearing* OR gearbox*) )`;
+  AND ("rotating machinery" OR bearing* OR gearbox*) )
+AND PUBYEAR > 2014 AND PUBYEAR < 2026
+AND DOCTYPE(ar OR cp)`;
 
-  const dedupCode = `import pandas as pd
+  const dedupCode = String.raw`import pandas as pd
 
 df = pd.read_csv('records.csv')
 df['key'] = (df['doi'].str.lower()
     .fillna(df['title'].str.lower()
-    .str.replace(r'\\W+', '', regex=True)))
+    .str.replace(r'\W+', '', regex=True)))
 dedup = df.drop_duplicates('key')
 print(len(df), '->', len(dedup))`;
 
+  const elsCode = String.raw`\documentclass[preprint,12pt,number]{elsarticle}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage{graphicx}
+
+\journal{Journal Name}
+
+\begin{document}
+\begin{frontmatter}
+\title{Deep Learning for Rotating Machinery Diagnosis:
+  A Systematic Literature Review}
+
+\author[inst1]{First Author\corref{cor1}}
+\ead{first.author@university.edu}
+\cortext[cor1]{Corresponding author}
+\affiliation[inst1]{organization={University Name},
+  city={City}, country={Country}}
+
+\begin{abstract}
+Context, method (databases, dates, criteria), main findings,
+and implications in 150--250 words.
+\end{abstract}
+
+\begin{keyword}
+systematic review \sep PRISMA \sep fault diagnosis
+\end{keyword}
+\end{frontmatter}
+
+\section{Introduction}
+...
+\bibliographystyle{elsarticle-num}
+\bibliography{refs}
+\end{document}`;
+
+  const ieeeCode = String.raw`\documentclass[journal]{IEEEtran}
+\usepackage{amsmath,amssymb}
+\usepackage{cite}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{siunitx}
+
+\begin{document}
+\title{Deep Learning for Rotating Machinery Diagnosis:
+  A Systematic Literature Review}
+
+\author{First~Author,~\IEEEmembership{Member,~IEEE,}
+  and~Second~Author%
+\thanks{Manuscript received Month DD, 2026.}}
+
+\markboth{IEEE Transactions on Journal Name, 2026}%
+{Author \MakeLowercase{\textit{et al.}}: Short Title}
+\maketitle
+
+\begin{abstract}
+Context, method, findings and implications.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Systematic review, PRISMA, fault diagnosis.
+\end{IEEEkeywords}
+
+\section{Introduction}
+\IEEEPARstart{S}{ystematic} reviews ...
+
+\bibliographystyle{IEEEtran}
+\bibliography{refs}
+\end{document}`;
+
+  const tableCode = String.raw`\begin{table}[t]
+\centering
+\caption{Search log. All searches were run on 14 October 2026.}
+\label{tab:searchlog}
+\begin{tabular}{@{}l l S[table-format=4.0] @{}}
+\toprule
+Database & Fields searched & {Records} \\
+\midrule
+Scopus         & Title, abstract, keywords & 1243 \\
+Web of Science & Topic (TS)                & 987  \\
+IEEE Xplore    & All metadata              & 654  \\
+\midrule
+\multicolumn{2}{@{}l}{Total before deduplication} & 2884 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% Quantities in running text (siunitx v3):
+% The signals were sampled at \qty{12}{\kilo\hertz} and the
+% load was \qty{1.5}{\kilo\watt}, with \num{3e-4} noise variance.
+% Cross-reference equations with Eq.~\eqref{eq:loss}.`;
+
+  const fontCode = String.raw`import matplotlib as mpl
+
+# Embed TrueType fonts so journal PDF checkers accept the figures
+mpl.rcParams['pdf.fonttype'] = 42
+mpl.rcParams['ps.fonttype'] = 42
+mpl.rcParams['font.size'] = 9        # match the journal body text
+mpl.rcParams['figure.dpi'] = 300
+
+fig.savefig('fig_flow.pdf', bbox_inches='tight')`;
+
+  const buildCode = String.raw`# One command that resolves references and the bibliography
+latexmk -pdf -interaction=nonstopmode main.tex
+
+# Then inspect the logs for the issues that matter
+grep -n "Warning" main.log | head -50
+grep -n "Warning" main.blg`;
+
   const mistakes = [
     "Searching only one database, or only Google Scholar.",
-    "Changing criteria halfway without recording it.",
-    "Listing papers instead of synthesizing them.",
-    "Skipping quality appraisal.",
-    "Submitting with a stale search. Re-run it shortly before you submit.",
-    "Ending with vague gaps.",
+    "Changing criteria halfway without recording the change and the reason.",
+    "Listing papers instead of synthesizing them into themes and arguments.",
+    "Skipping quality appraisal, so weak studies carry the same weight as strong ones.",
+    "Submitting with a stale search. Re-run it shortly before you submit and update the counts.",
+    "Ending with vague gaps such as “more research is needed”.",
+    "Comparing accuracy numbers from studies that used different data splits or leaked data between training and test sets.",
+    "Reporting PRISMA numbers that do not add up between the text, the flow diagram and the search log.",
+    "Switching LaTeX classes late, or editing a journal template’s margins and fonts to squeeze in more text.",
+    "Uploading source files that compile only on your machine, with missing figures or local package paths.",
   ];
 
   const checklist = [
     "Research questions and protocol are written and dated.",
-    "Search strings, databases, dates, and hit counts are recorded.",
-    "Criteria are fixed, and screening is documented in a PRISMA flow diagram.",
-    "Extraction and quality sheets are complete.",
-    "Synthesis shows themes, a taxonomy, and clear gaps.",
-    "Limitations and supplementary files are ready.",
+    "Search strings, databases, dates, and hit counts are recorded and reported following PRISMA-S.",
+    "Criteria are fixed, and screening is documented in a PRISMA flow diagram whose numbers reconcile.",
+    "Two reviewers screened at least a sample, and agreement is reported.",
+    "Extraction and quality sheets are complete and shared as supplementary files.",
+    "Synthesis shows themes, a taxonomy, and clear, specific gaps.",
+    "Limitations and threats to validity are stated.",
+    "The manuscript compiles cleanly with the journal’s own class file, with no unresolved references or fonts missing from the PDF.",
+    "Figures meet the journal’s resolution and format rules, and units and equations are typeset consistently.",
+    "Mandatory declarations are included (competing interests, funding, data availability, author contributions).",
   ];
 
   const references: React.ReactNode[] = [
@@ -481,6 +663,27 @@ print(len(df), '->', len(dedup))`;
     <>
       N. J. van Eck and L. Waltman, “Software survey: VOSviewer, a computer program for bibliometric mapping,” <i>Scientometrics</i>, vol. 84, no. 2, pp. 523–538, 2010.{" "}
       <Ext href="https://doi.org/10.1007/s11192-009-0146-3">doi:10.1007/s11192-009-0146-3</Ext>
+    </>,
+    <>
+      M. L. Rethlefsen et al., “PRISMA-S: An extension to the PRISMA statement for reporting literature searches in systematic reviews,” <i>Systematic Reviews</i>, vol. 10, Art. no. 39, 2021.{" "}
+      <Ext href="https://doi.org/10.1186/s13643-020-01542-z">doi:10.1186/s13643-020-01542-z</Ext>
+    </>,
+    <>J. R. Landis and G. G. Koch, “The measurement of observer agreement for categorical data,” <i>Biometrics</i>, vol. 33, no. 1, pp. 159–174, 1977.</>,
+    <>
+      Elsevier Ltd., “elsarticle: Class for articles submitted to Elsevier journals,” CTAN package documentation.{" "}
+      <Ext href="https://ctan.org/pkg/elsarticle">ctan.org/pkg/elsarticle</Ext>
+    </>,
+    <>
+      M. Shell, “How to use the IEEEtran LaTeX class,” IEEE, CTAN package documentation.{" "}
+      <Ext href="https://ctan.org/pkg/ieeetran">ctan.org/pkg/ieeetran</Ext>
+    </>,
+    <>
+      J. Wright, “The siunitx package: A comprehensive SI units package,” CTAN package documentation.{" "}
+      <Ext href="https://ctan.org/pkg/siunitx">ctan.org/pkg/siunitx</Ext>
+    </>,
+    <>
+      American Mathematical Society, “User’s guide for the amsmath package,” CTAN package documentation.{" "}
+      <Ext href="https://ctan.org/pkg/amsmath">ctan.org/pkg/amsmath</Ext>
     </>,
   ];
 
@@ -513,9 +716,8 @@ print(len(df), '->', len(dedup))`;
 
           <div className="hidden items-center gap-7 text-sm font-medium text-slate-600 md:flex">
             <Link href="/" className="transition hover:text-blue-800">Home</Link>
-            <Link href="/#services" className="transition hover:text-blue-800">Services</Link>
-            <Link href="/#process" className="transition hover:text-blue-800">How it works</Link>
-            <Link href="/#insights" className="transition hover:text-blue-800">Insights</Link>
+            <Link href="/#services" className="transition hover:text-blue-800">Support Scope</Link>
+            <Link href="/#library" className="transition hover:text-blue-800">Insights</Link>
             <Link href="/blog" className="font-semibold text-blue-800 transition hover:text-blue-950">
               Knowledge Library
             </Link>
@@ -532,9 +734,8 @@ print(len(df), '->', len(dedup))`;
             <div className="absolute left-0 right-0 top-full border-t border-slate-200 bg-white px-6 py-4 shadow-sm">
               <div className="flex flex-col gap-4 text-sm font-medium text-slate-700">
                 <Link href="/">Home</Link>
-                <Link href="/#services">Services</Link>
-                <Link href="/#process">How it works</Link>
-                <Link href="/#insights">Insights</Link>
+                <Link href="/#services">Support Scope</Link>
+                <Link href="/#library">Insights</Link>
                 <Link href="/blog">Knowledge Library</Link>
               </div>
             </div>
@@ -570,11 +771,11 @@ print(len(df), '->', len(dedup))`;
               </span>
               <span className="flex items-center gap-1.5 text-xs text-slate-500">
                 <Calendar size={14} aria-hidden="true" />
-                <time dateTime="2026-11-01">November 2026</time>
+                <time dateTime="2026-11-18">Updated November 2026</time>
               </span>
               <span className="flex items-center gap-1.5 text-xs text-slate-500">
                 <Clock size={14} aria-hidden="true" />
-                10 min read
+                18 min read
               </span>
             </div>
 
@@ -583,8 +784,10 @@ print(len(df), '->', len(dedup))`;
             </h1>
 
             <p className="mt-5 max-w-3xl text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">
-              A practical walkthrough for PhD scholars and engineering authors,
-              from defining the question to synthesizing the evidence.
+              A research-grade walkthrough for PhD scholars and engineering
+              authors: from defining the question and searching databases, to
+              PRISMA screening, synthesis, and preparing the final manuscript
+              in Elsevier and IEEE LaTeX templates.
             </p>
 
             <div className="mt-7 flex flex-wrap items-center justify-between gap-4 border-t border-slate-200 pt-5">
@@ -650,7 +853,10 @@ print(len(df), '->', len(dedup))`;
                   Senior researchers add one more thing: they synthesize. They do
                   not report what each paper did. They show patterns, conflicts,
                   and gaps across the whole body of work. This guide covers both
-                  the method and the thinking.
+                  the method and the thinking, and then closes the loop that most
+                  tutorials skip: how to turn the finished review into a clean
+                  LaTeX manuscript that passes an Elsevier or IEEE submission
+                  system without technical rejections.
                 </p>
               </div>
             </section>
@@ -663,8 +869,11 @@ print(len(df), '->', len(dedup))`;
             />
 
             <p className={`${P} mb-2`}>
-              Once your review is complete, you will still need to turn it into
-              a publishable paper. Our guides on{" "}
+              Plan for weeks, not days. The search and screening stages are
+              mechanical but slow, and the synthesis stage rewards time spent
+              thinking. A realistic review also produces a paper that is
+              judged on two things: the rigor of the method and the quality of
+              the insight. Once your review is complete, our guides on{" "}
               <Int href="/blog/q1-research-paper-structure">
                 structuring a Q1 research paper
               </Int>{" "}
@@ -685,8 +894,10 @@ print(len(df), '->', len(dedup))`;
               known about machine learning in maintenance?&quot; is far too
               broad. Frame the question with a structure such as PICO(C):
               population, intervention, comparison, outcome, and context{" "}
-              <Cite n={3} />. First, check that an SLR is the right type of
-              review.
+              <Cite n={3} />. A good question is answerable from published
+              evidence, bounded enough to finish, and non-trivial enough that
+              the answer is worth publishing. First, check that an SLR is the
+              right type of review.
             </p>
 
             <SubHeading>Which Type of Literature Review Do You Need?</SubHeading>
@@ -697,11 +908,26 @@ print(len(df), '->', len(dedup))`;
               rows={reviewTypes}
             />
 
+            <SubHeading>Framing an Engineering Question with PICOC</SubHeading>
+
+            <p className={`${P} mt-3`}>
+              The PICOC table below shows how a vague topic becomes a precise
+              review question. Notice how each row later maps to one concept
+              block in your search string.
+            </p>
+
+            <DataTable
+              caption="PICOC framing example for a machinery diagnosis review"
+              headers={["Element", "Example for this review"]}
+              rows={picoc}
+            />
+
             <CheckList>
               <Check>
                 Write two to four research questions, such as: RQ1, which
                 architectures are used? RQ2, how are they validated? RQ3, what
-                gaps remain?
+                gaps remain? Avoid yes/no questions, because they produce thin
+                answers.
               </Check>
               <Check>
                 Write a protocol before you search: databases, search strings,
@@ -712,6 +938,11 @@ print(len(df), '->', len(dedup))`;
                 Date-stamp the protocol in a repository or on{" "}
                 <Ext href="https://osf.io/">OSF</Ext>. It proves you did not
                 change the criteria after seeing the results.
+              </Check>
+              <Check>
+                Decide in advance whether preprints and grey literature are
+                in scope. Either choice is defensible, but it must be stated
+                and applied consistently.
               </Check>
             </CheckList>
 
@@ -724,6 +955,19 @@ print(len(df), '->', len(dedup))`;
             <SectionHeading id="step-2" number="02">
               How to Search Databases Systematically
             </SectionHeading>
+
+            <p className={`${P} mt-4`}>
+              No single database covers a field. Each has different coverage,
+              indexing, and export limits, so the combination you choose shapes
+              which papers you can possibly find <Cite n={4} />. The table
+              below summarizes the usual options for engineering topics.
+            </p>
+
+            <DataTable
+              caption="Common databases for engineering literature reviews"
+              headers={["Source", "Best for", "Watch out for"]}
+              rows={databases}
+            />
 
             <CheckList>
               <Check>
@@ -740,16 +984,27 @@ print(len(df), '->', len(dedup))`;
                 reproduce and cannot be exported cleanly <Cite n={4} />.
               </Check>
               <Check>
-                Build the search string from concept blocks. Join synonyms with
-                OR inside a block, and join blocks with AND (Fig. 2).
+                Build the search string from concept blocks taken from your
+                PICOC table. Join synonyms with OR inside a block, and join
+                blocks with AND (Fig. 2). Use truncation (such as
+                network*) for word endings and quotation marks for exact
+                phrases.
               </Check>
               <Check>
-                Pilot the string. If it misses five to ten papers you already
-                know are relevant, revise it.
+                Remember that field codes differ between platforms. Scopus uses
+                TITLE-ABS-KEY, while Web of Science uses TS=. Translate the
+                same logic for each database instead of pasting one string
+                everywhere.
+              </Check>
+              <Check>
+                Pilot the string against a gold-standard set: five to ten
+                papers you already know are relevant. If the string misses
+                them, revise it and note why.
               </Check>
               <Check>
                 Record the database, date, string, filters, and number of hits
-                for every search.
+                for every search, and report them following PRISMA-S{" "}
+                <Cite n={11} />.
               </Check>
               <Check>
                 Add backward and forward snowballing to catch papers the
@@ -765,6 +1020,13 @@ print(len(df), '->', len(dedup))`;
               caption="Fig. 2. A search string built from concept blocks: OR inside a block, AND between blocks."
             />
 
+            <Callout title="Reproducibility note">
+              Databases change. A search re-run six months later will return
+              different counts because of new indexing. Always store the
+              exported records file together with the date, so your reported
+              numbers can be reproduced exactly.
+            </Callout>
+
             {/* Step 3 */}
             <SectionHeading id="step-3" number="03">
               How to Screen Studies and Create a PRISMA Flow Diagram
@@ -772,7 +1034,10 @@ print(len(df), '->', len(dedup))`;
 
             <p className={`${P} mt-4`}>
               Write your inclusion and exclusion criteria before screening, and
-              apply them the same way to every paper.
+              apply them the same way to every paper. Criteria should be
+              observable from the text, not matters of opinion. &quot;Reports
+              experimental results on a named dataset&quot; is checkable.
+              &quot;High-quality study&quot; is not.
             </p>
 
             <SubHeading>Example Inclusion and Exclusion Criteria</SubHeading>
@@ -786,11 +1051,13 @@ print(len(df), '->', len(dedup))`;
             <CheckList>
               <Check>
                 Remove duplicates first, using the DOI or a cleaned title (code
-                below).
+                below). Keep a log of how many were removed, because the
+                PRISMA diagram needs that number.
               </Check>
               <Check>
                 Screen in two rounds: titles and abstracts, then full texts.
-                Record the reason for every full-text exclusion.
+                Record a coded reason for every full-text exclusion, such as E1
+                for wrong population and E2 for no experimental evidence.
               </Check>
               <Check>
                 Tools such as{" "}
@@ -799,9 +1066,16 @@ print(len(df), '->', len(dedup))`;
                 much easier.
               </Check>
               <Check>
-                Have two reviewers screen at least a sample independently.
-                Measure agreement with Cohen&apos;s kappa <Cite n={7} /> and
-                settle disagreements by discussion.
+                Calibrate first. Have both reviewers screen the same 30 to 50
+                records, compare, and refine the criteria before the main
+                round.
+              </Check>
+              <Check>
+                Measure agreement with Cohen&apos;s kappa <Cite n={7} />. By the
+                common Landis and Koch convention <Cite n={12} />, values of
+                0.61 to 0.80 indicate substantial agreement and above 0.80
+                almost perfect agreement. Settle disagreements by discussion,
+                or with a third reviewer.
               </Check>
             </CheckList>
 
@@ -809,7 +1083,11 @@ print(len(df), '->', len(dedup))`;
 
             <p className={P}>
               Report the counts in a PRISMA 2020 flow diagram <Cite n={2} />{" "}
-              (Fig. 3).
+              (Fig. 3). Before you finalize it, run an arithmetic check: records
+              identified minus duplicates must equal records screened, and
+              records screened minus excluded must equal full texts assessed.
+              Reviewers notice flow diagrams whose numbers do not reconcile
+              with the text.
             </p>
 
             <ArticleFigure
@@ -823,12 +1101,19 @@ print(len(df), '->', len(dedup))`;
               How to Extract Data and Assess Study Quality
             </SectionHeading>
 
+            <p className={`${P} mt-4`}>
+              Extraction turns papers into comparable rows. Decide the columns
+              before reading in depth, because every extra column is a second
+              pass over every paper.
+            </p>
+
+            <DataTable
+              caption="Recommended data extraction fields"
+              headers={["Field group", "What to record", "Why it matters"]}
+              rows={extractionFields}
+            />
+
             <CheckList>
-              <Check>
-                Build the extraction sheet before reading in depth. Typical
-                columns: citation, year, problem, method, data, metrics,
-                results, and limitations.
-              </Check>
               <Check>
                 Pilot the sheet on five papers, then fix it. Changing columns
                 later means re-reading everything.
@@ -843,8 +1128,15 @@ print(len(df), '->', len(dedup))`;
                 Are limitations stated?
               </Check>
               <Check>
+                Look for validity threats that are specific to your field. In
+                machine-learning studies, a classic one is data leakage:
+                overlapping windows from the same recording appearing in both
+                training and test sets inflate accuracy and make results
+                incomparable with honest splits.
+              </Check>
+              <Check>
                 Do not hide weak studies. Say how they affect your confidence in
-                the findings.
+                the findings, or run the synthesis with and without them.
               </Check>
             </CheckList>
 
@@ -861,7 +1153,10 @@ print(len(df), '->', len(dedup))`;
             <p className={`${P} mt-4`}>
               This is where reviews succeed or fail. A summary says what each
               paper did. A synthesis says what the papers mean together (Fig.
-              4).
+              4). Choose the synthesis approach that fits your evidence:
+              thematic or narrative synthesis for diverse methods, a taxonomy
+              for organizing techniques, and a meta-analysis only when studies
+              report comparable effect measures under comparable conditions.
             </p>
 
             <ArticleFigure
@@ -886,11 +1181,14 @@ print(len(df), '->', len(dedup))`;
               </Check>
               <Check>
                 Compare results on common metrics only when conditions are
-                comparable. When they are not, say so.
+                comparable. When they are not, say so. Avoid &quot;vote
+                counting&quot; (X papers found an effect, Y did not), because
+                it ignores sample size and study quality.
               </Check>
               <Check>
                 Look for contradictions, and offer reasons: different data,
-                settings, or definitions.
+                settings, or definitions. Explaining a contradiction is often
+                the most original contribution a review can make.
               </Check>
               <Check>
                 For large sets, keyword and co-citation maps from{" "}
@@ -917,8 +1215,12 @@ print(len(df), '->', len(dedup))`;
               Cross two dimensions, such as method and application, and count
               the studies in each cell (Fig. 7). Thin cells are candidate gaps.
               Check that a gap matters and is not just empty. A real gap is one
-              a reviewer would agree is worth filling. For how to present the
-              gap in a paper, see our{" "}
+              a reviewer would agree is worth filling, and it usually falls into
+              one of three kinds: an untested combination (method and
+              application), an unreliable evidence base (weak validation), or an
+              unstudied condition (such as real plant data rather than
+              laboratory benchmarks). For how to present the gap in a paper, see
+              our{" "}
               <Int href="/blog/q1-research-paper-structure">
                 Q1 research paper structure guide
               </Int>
@@ -957,6 +1259,11 @@ print(len(df), '->', len(dedup))`;
                 papers one by one.
               </Check>
               <Check>
+                Discuss threats to validity in three groups: search coverage
+                (missed papers), selection and extraction bias (subjective
+                decisions), and synthesis bias (coding and interpretation) <Cite n={1} />.
+              </Check>
+              <Check>
                 Be honest about limits: database coverage, language, publication
                 bias, and subjective coding.
               </Check>
@@ -965,16 +1272,208 @@ print(len(df), '->', len(dedup))`;
                 Share search strings and the extraction sheet as supplementary
                 files so others can reproduce your work.
               </Check>
+            </CheckList>
+
+            {/* Step 7: LaTeX */}
+            <SectionHeading id="step-7" number="07">
+              How to Prepare the Review Manuscript in LaTeX (Elsevier and IEEE)
+            </SectionHeading>
+
+            <p className={`${P} mt-4`}>
+              A strong review can still be returned by the editorial office for
+              technical reasons: wrong template, broken references, fonts not
+              embedded, or figures that miss the resolution rules. Most
+              engineering journals accept or prefer LaTeX, and two classes cover
+              the majority of submissions: <code className="rounded bg-slate-100 px-1.5 py-0.5 text-[13px]">elsarticle</code> for
+              Elsevier journals <Cite n={13} /> and{" "}
+              <code className="rounded bg-slate-100 px-1.5 py-0.5 text-[13px]">IEEEtran</code> for IEEE journals and
+              conferences <Cite n={14} />. Always download the template from the
+              journal&apos;s own author page. The{" "}
+              <Ext href="https://journals.ieeeauthorcenter.ieee.org/">
+                IEEE Author Center
+              </Ext>{" "}
+              and the Elsevier author instructions for your target journal are
+              the final authority, and they can differ from older copies on
+              your computer. Our{" "}
+              <Int href="/blog/formatting-guide">manuscript formatting guide</Int>{" "}
+              covers the wider checklist.
+            </p>
+
+            <SubHeading>Elsevier: the elsarticle Class</SubHeading>
+
+            <p className={`${P} mt-3`}>
+              The class options control the layout. The preprint option gives a
+              single-column draft, and review adds double line spacing for
+              reviewers. Options such as 1p, 3p and 5p preview the final
+              column widths, and number or authoryear selects the citation
+              style that must match the bibliography style file
+              (elsarticle-num for numbered citations, elsarticle-harv for
+              author-year). All front matter goes inside the frontmatter
+              environment, and Elsevier typically also requires separate
+              highlights (three to five bullet points, each at most 85
+              characters including spaces) and a declaration of competing
+              interests, so check the journal&apos;s current list.
+            </p>
+
+            <CodeBlock label="elsarticle skeleton" code={elsCode} />
+
+            <SubHeading>IEEE: the IEEEtran Class</SubHeading>
+
+            <p className={`${P} mt-3`}>
+              Use the journal option for IEEE Transactions and journals, and
+              the conference option for conference papers. IEEEtran sets a
+              two-column layout, so wide tables and figures need the starred
+              forms (figure* and table*). Captions follow IEEE convention:
+              table captions go above the table and figure captions below the
+              figure, and the class already styles them. Reference lists use
+              the IEEEtran.bst style, and the cite package compresses ranges
+              such as [3]–[6].
+            </p>
+
+            <CodeBlock label="IEEEtran skeleton" code={ieeeCode} />
+
+            <SubHeading>Essential Packages and Their Pitfalls</SubHeading>
+
+            <p className={`${P} mt-3`}>
+              Load only what you need, and load it after the document class.
+              The packages below handle most of what a review manuscript
+              contains: equations, quantities, tables and figures.
+            </p>
+
+            <DataTable
+              caption="Essential LaTeX packages for engineering manuscripts"
+              headers={["Package", "Use it for", "Common pitfall"]}
+              rows={packages}
+            />
+
+            <SubHeading>amsmath: Typesetting Equations Cleanly</SubHeading>
+
+            <CheckList>
               <Check>
-                Before you submit, check the template and declarations with our{" "}
-                <Int href="/blog/formatting-guide">manuscript formatting guide</Int>
-                , and review the{" "}
-                <Int href="/blog/paper-rejection-reasons">
-                  common reasons journals reject papers
-                </Int>
-                .
+                Use equation for a single numbered formula and align for
+                several aligned lines. Avoid the old eqnarray environment,
+                because it produces uneven spacing around the equals sign{" "}
+                <Cite n={16} />.
+              </Check>
+              <Check>
+                Put words inside math with \text{"{...}"}, and define repeated
+                operators once with \DeclareMathOperator in the preamble.
+              </Check>
+              <Check>
+                Label every numbered equation and refer to it with
+                Eq.~\eqref{"{eq:loss}"}, so numbering stays correct when you
+                add or remove equations. In IEEEtran, break long equations
+                manually, because a single line cannot overflow a column.
+              </Check>
+              <Check>
+                Define every symbol at first use, and keep notation consistent
+                between the method section and the results.
               </Check>
             </CheckList>
+
+            <SubHeading>siunitx: Units, Numbers and Tables</SubHeading>
+
+            <p className={`${P} mt-3`}>
+              Typing units as plain text causes inconsistent spacing and line
+              breaks between a number and its unit. The siunitx package
+              solves this and also formats scientific notation consistently{" "}
+              <Cite n={15} />. In version 3, \qty{"{value}{unit}"} is the
+              recommended command, and the older \SI still works. In tables,
+              the S column type aligns numbers on the decimal point, and the
+              header cell must be wrapped in braces. The example below also
+              shows a PRISMA-S style search log, built with booktabs, which
+              you can adapt directly for your own review.
+            </p>
+
+            <CodeBlock label="siunitx and booktabs search-log table" code={tableCode} />
+
+            <SubHeading>Figures and Bibliography</SubHeading>
+
+            <CheckList>
+              <Check>
+                Prefer vector formats (PDF) for diagrams and plots. For raster
+                images, follow the journal&apos;s stated resolution rules: Elsevier&apos;s
+                artwork guidance asks for about 300 dpi for photographs and
+                much higher for line art, and IEEE gives its own resolution
+                requirements, so confirm the current numbers before exporting.
+              </Check>
+              <Check>
+                Keep figure text readable at final print size, roughly the
+                same size as the body text, and use the same font family
+                across all figures.
+              </Check>
+              <Check>
+                Provide every figure as a separate file when the journal asks
+                for it, and name files plainly (fig1.pdf, not
+                Figure final v3 (copy).pdf).
+              </Check>
+              <Check>
+                Keep one clean .bib file with consistent keys, complete fields
+                and DOIs. Protect capitalization with braces, such as {"{LSTM}"}{" "}
+                and {"{Gaussian}"}, or BibTeX will lowercase them in
+                titles.
+              </Check>
+            </CheckList>
+
+            <CodeBlock label="Matplotlib: embed fonts for journal PDF checks" code={fontCode} />
+
+            {/* Pre-submission errors */}
+            <SectionHeading id="presubmission">
+              Pre-Submission Errors That Trigger Technical Rejection
+            </SectionHeading>
+
+            <p className={`${P} mt-4`}>
+              Editorial offices run automated and manual checks before a
+              manuscript ever reaches a reviewer. The table lists the
+              symptoms we see most often, with the cause and the fix. Work
+              through it on a clean build, not on the copy that has been open
+              in your editor for weeks.
+            </p>
+
+            <DataTable
+              caption="Common LaTeX and submission errors with fixes"
+              headers={["Symptom", "Likely cause", "Fix"]}
+              rows={errorRows}
+            />
+
+            <CodeBlock label="Terminal: clean build and log check" code={buildCode} />
+
+            <CheckList>
+              <Check>
+                Compile from a clean folder containing only the files you plan
+                to upload. If it fails there, it will fail in the submission
+                system.
+              </Check>
+              <Check>
+                Do not modify the class file, margins, font sizes or
+                spacing to fit more content. Journals treat this as a
+                formatting violation, and it can shift the layout of the
+                final typeset article.
+              </Check>
+              <Check>
+                Check the front matter once more: author affiliations,
+                corresponding author, keywords, abstract length, highlights and
+                declarations, exactly as the journal&apos;s author guidelines
+                list them.
+              </Check>
+              <Check>
+                Read the final PDF from start to finish, looking for question
+                marks, broken tables, overflowing equations and inconsistent
+                numbering. Our guide to the{" "}
+                <Int href="/blog/paper-rejection-reasons">
+                  common reasons journals reject papers
+                </Int>{" "}
+                lists the scientific problems that follow after the technical
+                checks pass.
+              </Check>
+            </CheckList>
+
+            <Callout title="Colleague tip">
+              Keep a small submission folder per journal with the unmodified
+              template, a working main.tex, a .bib file and a figures
+              directory. When a paper is rejected, resubmitting to the next
+              journal becomes a template swap and not a rebuild.
+            </Callout>
 
             {/* Common mistakes */}
             <SectionHeading id="common-mistakes">
@@ -1010,7 +1509,7 @@ print(len(df), '->', len(dedup))`;
 
             <p className={`${P} mt-4`}>
               Before submitting your review, use this checklist to evaluate its
-              overall quality and transparency.
+              overall quality, transparency and technical readiness.
             </p>
 
             <ul className="mt-5 space-y-2">
@@ -1087,7 +1586,11 @@ print(len(df), '->', len(dedup))`;
               <p className="mt-3 text-[15px] leading-[1.85] text-slate-600">
                 A strong review is not the one with the most papers. It is the
                 one a reader can trust, repeat, and build on. Follow the method,
-                show your work, and let the synthesis carry your argument.
+                show your work, and let the synthesis carry your argument. Then
+                protect that work at the finish line: use the journal&apos;s own
+                LaTeX class, typeset equations and units consistently, and
+                clear the technical checks before an editor ever sees the
+                manuscript.
               </p>
 
               <div className="mt-6 rounded-xl border border-blue-100 bg-blue-50/60 p-6">
@@ -1097,14 +1600,21 @@ print(len(df), '->', len(dedup))`;
                 <p className="mt-2 text-sm leading-[1.8] text-slate-700">
                   ScholarGrid helps researchers plan searches, structure
                   reviews and prepare complete submission packages. Explore our
-                  academic services or keep learning in the Knowledge Library.
+                  support scope or keep learning in the Knowledge Library.
                 </p>
                 <div className="mt-4 flex flex-wrap items-center gap-4">
                   <Link
                     href="/#services"
                     className="inline-flex items-center gap-2 rounded-lg bg-blue-950 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-800"
                   >
-                    Explore ScholarGrid Services
+                    Explore ScholarGrid Support
+                    <ArrowRight size={16} aria-hidden="true" />
+                  </Link>
+                  <Link
+                    href="/contact"
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-blue-800 transition hover:text-blue-950"
+                  >
+                    Contact us
                     <ArrowRight size={16} aria-hidden="true" />
                   </Link>
                   <Link
@@ -1265,60 +1775,7 @@ print(len(df), '->', len(dedup))`;
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-slate-800 bg-slate-950 text-slate-400">
-        <div className="mx-auto grid max-w-7xl gap-8 px-6 py-10 md:grid-cols-[1.5fr_1fr_1fr]">
-          {/* Brand */}
-          <div>
-            <Link href="/" className="inline-flex items-center gap-3">
-              <Image
-                src="/logo.png"
-                alt="ScholarGrid Logo"
-                width={36}
-                height={36}
-                className="h-9 w-9 object-contain"
-              />
-              <span className="font-serif text-xl font-bold text-white">
-                ScholarGrid
-              </span>
-            </Link>
-            <p className="mt-4 max-w-sm text-[13px] leading-[1.8]">
-              An academic knowledge platform sharing practical research
-              resources, scholarly writing guidance, and publishing insights
-              for researchers across disciplines.
-            </p>
-          </div>
-
-          {/* Explore */}
-          <nav aria-label="Explore ScholarGrid">
-            <p className="text-sm font-semibold text-white">Explore ScholarGrid</p>
-            <ul className="mt-4 space-y-2.5 text-[13px]">
-              <li><Link href="/" className="transition hover:text-white">Home</Link></li>
-              <li><Link href="/#services" className="transition hover:text-white">Academic Services</Link></li>
-              <li><Link href="/#process" className="transition hover:text-white">How It Works</Link></li>
-              <li><Link href="/#faq" className="transition hover:text-white">Frequently Asked Questions</Link></li>
-            </ul>
-          </nav>
-
-          {/* Article links */}
-          <nav aria-label="Research resources">
-            <p className="text-sm font-semibold text-white">Research Resources</p>
-            <ul className="mt-4 space-y-2.5 text-[13px]">
-              <li><Link href="/blog/formatting-guide" className="transition hover:text-white">Manuscript Formatting</Link></li>
-              <li><Link href="/blog/paper-rejection-reasons" className="transition hover:text-white">Journal Rejection Guide</Link></li>
-              <li><Link href="/blog/fast-review-q1-q2-journals" className="transition hover:text-white">Fast-Review Q1/Q2 Journals</Link></li>
-              <li><Link href="/blog/contour-visualizations" className="transition hover:text-white">Scientific Visualization</Link></li>
-              <li><Link href="/blog/systematic-literature-review-guide" className="transition hover:text-white">Literature Review Guide</Link></li>
-              <li><Link href="/blog/q1-research-paper-structure" className="transition hover:text-white">Q1 Research Paper Structure</Link></li>
-              <li><Link href="/blog" className="transition hover:text-white">All Articles</Link></li>
-            </ul>
-          </nav>
-        </div>
-
-        <div className="border-t border-slate-800 px-6 py-5 text-center text-xs leading-relaxed text-slate-500">
-          © 2026 ScholarGrid. All rights reserved.
-        </div>
-      </footer>
+      {/* Footer is rendered globally by app/layout.tsx (SiteFooter) */}
     </div>
   );
 }
