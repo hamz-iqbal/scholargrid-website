@@ -31,7 +31,7 @@ const PAGE_URL = `${SITE_URL}${SLUG}`;
 const TITLE =
   "Why Journals Reject Engineering Manuscripts: 7 Common Reasons and Fixes (2026)";
 const DESCRIPTION =
-  "Learn why journals reject engineering manuscripts, from scope mismatch to weak methods and formatting errors, and how to avoid each one before you submit.";
+  "Why journals reject engineering manuscripts and how to prevent it: scope audits, novelty statements, reproducible methods, claim-evidence checks, technical-check failures, ethics issues, and a decision guide for what to do after a rejection.";
 
 export const metadata: Metadata = {
   /* If your root layout already uses title.template "%s | ScholarGrid",
@@ -46,6 +46,7 @@ export const metadata: Metadata = {
     "engineering manuscript rejection",
     "journal scope mismatch",
     "reproducibility in research",
+    "major revision vs reject",
     "what to do after journal rejection",
   ],
   alternates: { canonical: PAGE_URL },
@@ -57,7 +58,7 @@ export const metadata: Metadata = {
     title: `${TITLE} | ScholarGrid`,
     description: DESCRIPTION,
     publishedTime: "2026-10-01T00:00:00Z",
-    modifiedTime: "2026-11-12T00:00:00Z",
+    modifiedTime: "2026-11-17T00:00:00Z",
     authors: ["ScholarGrid Technical Team"],
   },
   twitter: {
@@ -80,7 +81,15 @@ const faqs: Faq[] = [
   },
   {
     q: "How can I avoid a desk rejection?",
-    a: "Read the journal’s aims and scope and its Guide for Authors, check that recent papers match your topic and article type, state your novelty in the abstract and cover letter, and make sure the template, figures, references and declarations meet the journal’s requirements before you upload.",
+    a: "Read the journal’s aims and scope and its Guide for Authors, check that recent papers match your topic and article type, state your novelty in the abstract and cover letter, and make sure the template, figures, references and declarations meet the journal’s requirements before you upload. Many journals also accept a short pre-submission enquiry if you are unsure about fit.",
+  },
+  {
+    q: "Is a major revision a good sign?",
+    a: "Generally yes. Editors invite a major revision when they see enough value in the work to justify another round, but the decision is not an acceptance. Answer every comment point by point, add the requested experiments or analysis where they are reasonable, and explain politely and with evidence where you disagree.",
+  },
+  {
+    q: "What does “reject and resubmit” mean?",
+    a: "Some journals use this decision when the idea is promising but the required changes are too large for a normal revision, for example new experiments or a restructured argument. You may resubmit as a new submission after addressing the comments, but the journal does not promise acceptance. Check the decision letter for the allowed time window and instructions.",
   },
   {
     q: "Can I appeal a journal’s rejection decision?",
@@ -88,11 +97,15 @@ const faqs: Faq[] = [
   },
   {
     q: "Should I resubmit to another journal immediately after a rejection?",
-    a: "Not before you have read the reviewer comments and fixed the real problems. The next journal’s reviewers may be the same people, and the same weaknesses will come back. Reformat the manuscript, cover letter and references completely for the new journal.",
+    a: "Not before you have read the reviewer comments and fixed the real problems. The next journal’s reviewers may be the same people, and the same weaknesses will come back. Reformat the manuscript, cover letter and references completely for the new journal, and move quickly after you have made the changes.",
   },
   {
     q: "Can formatting alone cause a manuscript to be rejected?",
     a: "Formatting alone rarely decides acceptance, but many journals run a technical check before the editor sees the paper. An outdated template, low-resolution figures, missing declarations or broken references can lead to the manuscript being returned or declined at that stage.",
+  },
+  {
+    q: "Do journals reject papers because of English language problems?",
+    a: "Sometimes. Editors and reviewers can usually forgive occasional errors, but language that obscures the method or the claims can lead to rejection or a request for language editing. Ask a colleague outside the project to read the paper and consider professional editing before submission.",
   },
   {
     q: "How do I avoid ethics and originality problems?",
@@ -114,7 +127,7 @@ const jsonLd = {
         "Common Reasons Engineering Manuscripts Get Rejected by Journals (And How to Avoid Them)",
       description: DESCRIPTION,
       datePublished: "2026-10-01",
-      dateModified: "2026-11-12",
+      dateModified: "2026-11-17",
       inLanguage: "en",
       mainEntityOfPage: PAGE_URL,
       author: { "@type": "Organization", name: "ScholarGrid Technical Team" },
@@ -197,6 +210,52 @@ const related = [
 ];
 
 /* ------------------------------------------------------------------ */
+/* Code and text samples                                               */
+/* ------------------------------------------------------------------ */
+
+const coverLetter = `Dear Dr. [Editor surname],
+
+Please consider our manuscript, "[Title]", for publication as a [regular article]
+in [Journal name].
+
+Problem and gap:   [One or two specific sentences. What is missing in current work?]
+What we did/found: [Method in one sentence. The key quantitative result.]
+Why this journal:  [Link to two recent papers in the journal and the readership you target.]
+
+Statements: This work is original, is not under consideration elsewhere, and all
+authors approved the submission. [Preprint or conference version: DOI, and what is new.]
+Suggested reviewers: [4-6 names, affiliations, institutional emails, expertise;
+no recent co-authors and no conflicts of interest.]
+
+Sincerely,
+[Corresponding author, affiliation, ORCID]`;
+
+const statsCode = `import numpy as np
+from scipy import stats
+
+# Metric from n independent runs (different seeds or splits) for two methods.
+proposed = np.array([0.912, 0.905, 0.918, 0.909, 0.915, 0.911, 0.907, 0.916])
+baseline = np.array([0.901, 0.899, 0.906, 0.897, 0.903, 0.900, 0.898, 0.904])
+
+def mean_ci(x, confidence=0.95):
+    m = x.mean()
+    lo, hi = stats.t.interval(confidence, df=len(x) - 1, loc=m, scale=stats.sem(x))
+    return m, lo, hi
+
+print("Proposed: %.3f (95%% CI %.3f to %.3f)" % mean_ci(proposed))
+print("Baseline: %.3f (95%% CI %.3f to %.3f)" % mean_ci(baseline))
+
+# Paired comparison (same splits for both methods): report the effect size,
+# not only the p-value.
+diff = proposed - baseline
+print("Mean paired difference: %.4f" % diff.mean())
+print(stats.wilcoxon(proposed, baseline))`;
+
+const rejectionLog = `Date | Journal | Stage (desk / post-review) | Main reason | Fixable? | Action taken
+2026-11-03 | Journal A | Desk | Scope: applied case study | Yes | Retargeted to an application journal
+2026-12-10 | Journal B | Post-review | No baseline from 2024-2025 | Yes | Added two baselines, new Table 3`;
+
+/* ------------------------------------------------------------------ */
 /* Reusable components                                                 */
 /* ------------------------------------------------------------------ */
 
@@ -234,6 +293,27 @@ function Cite({ n }: { n: number }) {
     >
       [{n}]
     </a>
+  );
+}
+
+function InlineCode({ children }: { children: React.ReactNode }) {
+  return (
+    <code className="rounded bg-blue-50 px-1.5 py-0.5 font-mono text-[13px] text-blue-900">
+      {children}
+    </code>
+  );
+}
+
+function CodeBlock({ label, code }: { label: string; code: string }) {
+  return (
+    <div className="my-5 overflow-hidden rounded-xl border border-slate-200">
+      <p className="border-b border-slate-200 bg-slate-100 px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-600">
+        {label}
+      </p>
+      <pre className="overflow-x-auto bg-slate-950 p-4 text-[13px] leading-relaxed text-slate-100">
+        <code>{code}</code>
+      </pre>
+    </div>
   );
 }
 
@@ -291,6 +371,14 @@ function SectionHeading({
   );
 }
 
+function SubHeading({ children }: { children: React.ReactNode }) {
+  return (
+    <h3 className="mt-7 font-serif text-xl font-bold text-slate-950">
+      {children}
+    </h3>
+  );
+}
+
 function BulletList({ items }: { items: React.ReactNode[] }) {
   return (
     <ul className="mt-4 space-y-3 text-[15px] leading-[1.8] text-slate-700">
@@ -340,15 +428,19 @@ function DataTable({
   caption,
   headers,
   rows,
+  minWidthClass = "min-w-[600px]",
 }: {
   caption: string;
   headers: string[];
-  rows: string[][];
+  rows: React.ReactNode[][];
+  minWidthClass?: string;
 }) {
   return (
     <div className="my-6 overflow-hidden rounded-xl border border-slate-200">
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[560px] border-collapse text-left text-sm">
+        <table
+          className={`w-full ${minWidthClass} border-collapse text-left text-sm`}
+        >
           <caption className="sr-only">{caption}</caption>
           <thead>
             <tr className="bg-blue-950 text-white">
@@ -362,8 +454,8 @@ function DataTable({
           <tbody>
             {rows.map((row, rowIndex) => (
               <tr
-                key={row[0]}
-                className={`border-b border-slate-100 ${
+                key={rowIndex}
+                className={`border-b border-slate-100 align-top ${
                   rowIndex % 2 === 0 ? "bg-white" : "bg-slate-50"
                 }`}
               >
@@ -434,26 +526,237 @@ function CheckCards({ items }: { items: string[] }) {
 /* ------------------------------------------------------------------ */
 
 function ArticleBody() {
-  const formattingRows = [
+  const decisions: React.ReactNode[][] = [
+    [
+      "Desk rejection",
+      "The editor or technical check stops the paper before review, usually for scope, novelty, language, formatting, similarity or ethics.",
+      "Fix the cause, then retarget. Do not resubmit unchanged to a similar journal.",
+    ],
+    [
+      "Reject after peer review",
+      "Reviewers read the paper and the editor agrees that the problems are too serious for this journal.",
+      "Read the reports, classify the comments, fix the real problems, then submit elsewhere.",
+    ],
+    [
+      "Reject and resubmit",
+      "The idea has promise, but the required changes are too large for a normal revision.",
+      "Treat it as a serious invitation. Follow the letter’s time window and instructions.",
+    ],
+    [
+      "Major revision",
+      "The editor sees potential, but significant experiments, analysis or rewriting are needed.",
+      "Answer every comment point by point and return it within the deadline.",
+    ],
+    [
+      "Minor revision",
+      "The paper is close to acceptance and needs small corrections or clarifications.",
+      "Make the changes carefully and keep the response short and precise.",
+    ],
+  ];
+
+  const scopeAudit: React.ReactNode[][] = [
+    [
+      "Aims and scope statement",
+      "Journal homepage",
+      "Your topic is mentioned only indirectly, or your method is not in the list of covered areas.",
+    ],
+    [
+      "Recent issues",
+      "The last 3 to 4 issues or the last 20 papers",
+      "No paper is within two steps of your topic, depth or article type.",
+    ],
+    [
+      "Article types and limits",
+      "Guide for Authors",
+      "The journal publishes letters or reviews only, or caps length below your manuscript.",
+    ],
+    [
+      "Special issue scope",
+      "Call for papers",
+      "You submit outside the stated theme, or after the deadline.",
+    ],
+    [
+      "Editorial board",
+      "Editorial board page",
+      "No editor works in your sub-area, so nobody can judge your contribution quickly.",
+    ],
+  ];
+
+  const relatedWork: React.ReactNode[][] = [
+    ["[Author A, year]", "[Method family]", "[Key assumption]", "[Dataset and metric]", "[What it cannot do]"],
+    ["[Author B, year]", "[Method family]", "[Key assumption]", "[Dataset and metric]", "[What it cannot do]"],
+    ["[Author C, year]", "[Method family]", "[Key assumption]", "[Dataset and metric]", "[What it cannot do]"],
+    ["This work", "[Your method]", "[Relaxed or new assumption]", "[Same dataset and metric]", "[Gap addressed, with result]"],
+  ];
+
+  const reproducibility: React.ReactNode[][] = [
+    [
+      "Data and splits",
+      "Source, size, preprocessing, train, validation and test split, and how leakage was prevented.",
+      <>Information from the test set leaking into training is a documented cause of overoptimistic results <Cite n={12} />.</>,
+    ],
+    [
+      "Model and parameters",
+      "Architecture, hyperparameters, search ranges and how the final values were chosen.",
+      "Baselines should receive the same tuning effort as the proposed method.",
+    ],
+    [
+      "Software and hardware",
+      "Versions of libraries and solvers, random seeds, processor or GPU, and run time.",
+      "A reader should be able to rebuild the environment from your description.",
+    ],
+    [
+      "Experimental set-up",
+      "Instruments, calibration, sample count, environmental conditions and measurement uncertainty.",
+      <>Express uncertainty in a standard way, for example following the GUM <Cite n={10} />.</>,
+    ],
+    [
+      "Simulation verification",
+      "Mesh or time-step independence, convergence tolerance, boundary conditions and validation against data.",
+      <>Report grid-refinement studies in a consistent manner <Cite n={11} />.</>,
+    ],
+    [
+      "Statistical reporting",
+      "Number of runs, mean and spread, confidence intervals and an appropriate test.",
+      <>Compare methods over several datasets or splits with an appropriate procedure <Cite n={13} />, and emphasise estimation and intervals over a lone p-value <Cite n={14} />.</>,
+    ],
+    [
+      "Availability",
+      "Code, data and configuration files in a persistent repository with a licence.",
+      <>Aim for findable, accessible, interoperable and reusable resources <Cite n={3} />.</>,
+    ],
+  ];
+
+  const claims: React.ReactNode[][] = [
+    [
+      "“Robust”",
+      "Performance across noise levels, parameter ranges, operating conditions or datasets, with the worst case reported.",
+    ],
+    [
+      "“Real-time”",
+      "Measured latency on stated hardware, including the 95th or 99th percentile, against the application’s deadline.",
+    ],
+    [
+      "“Optimal”",
+      "A proof, a bound, or a global search that supports optimality. Otherwise write “improved” or “near-optimal in our tests”.",
+    ],
+    [
+      "“Outperforms”",
+      "Same data and metric, equally tuned and recent baselines, repeated runs and a suitable statistical comparison.",
+    ],
+    [
+      "“Generalises”",
+      "Tests on held-out datasets, devices, sites or domains that were not used for design or tuning.",
+    ],
+    [
+      "“Validated”",
+      "Comparison with experiments or independent data. A simulation validated only against another simulation should say so.",
+    ],
+    [
+      "“Causes” or “leads to”",
+      "A designed intervention or ablation. Otherwise use associative language such as “is associated with”.",
+    ],
+  ];
+
+  const formattingRows: React.ReactNode[][] = [
     [
       "Outdated or wrong template",
-      "Download the current one from the journal page",
+      "Download the current one from the journal page, and do not change margins, fonts or spacing.",
     ],
     [
       "Low-resolution or screenshot figures",
-      "Export vector files and check the dpi",
+      "Export vector files, check the dpi at final size and make sure the text in figures stays readable.",
     ],
     [
       "Missing declarations (funding, interests, data, author roles)",
-      "Fill in every item on the journal’s list",
+      "Fill in every item on the journal’s list, including the data availability and AI-use statements.",
     ],
     [
       "Broken references such as [?]",
-      "Compile from scratch and read the PDF",
+      "Compile from scratch, read the PDF, and include the generated reference file if the system needs it.",
     ],
     [
       "Names left in a double-blind submission",
-      "Remove names, first-person self-citations, and identifying acknowledgments",
+      "Remove names, first-person self-citations, identifying acknowledgments and file metadata.",
+    ],
+    [
+      "Abstract, keyword or length limits exceeded",
+      "Check the word limits, the number of keywords and the page limit before you upload.",
+    ],
+    [
+      "Missing or corrupt files",
+      "Upload every figure, table and supplementary file in the accepted formats, and open the system-generated PDF to confirm.",
+    ],
+  ];
+
+  const ethics: React.ReactNode[][] = [
+    [
+      "Text overlap or recycling",
+      "A similarity report highlighting matches with published papers, including your own.",
+      "Rewrite in your own words, cite the source, and disclose related prior work in the cover letter.",
+    ],
+    [
+      "Duplicate submission",
+      "The same results appearing in another journal or conference without disclosure.",
+      "Submit to one journal at a time, and describe any related preprint or conference version.",
+    ],
+    [
+      "Salami slicing",
+      "Several thin papers from one study, with heavy overlap in data and text.",
+      "Publish one complete contribution, or explain clearly why the studies are independent.",
+    ],
+    [
+      "Image or data problems",
+      "Duplicated or edited images, or numbers that cannot be reproduced from the raw data.",
+      "Keep raw files, apply only disclosed, uniform adjustments, and be ready to provide the data.",
+    ],
+    [
+      "Authorship disputes",
+      "Missing contributors, gift authors, or changes in authorship at revision.",
+      "Agree on authorship and roles early and record them with CRediT roles.",
+    ],
+    [
+      "Undisclosed AI tools",
+      "Text or figures produced with AI tools without a statement, or an AI tool listed as an author.",
+      <>Follow the journal’s policy and disclose the tool and how you used it. Journals following COPE do not accept AI tools as authors <Cite n={15} />.</>,
+    ],
+    [
+      "Reviewer suggestions",
+      "Suggested reviewers with personal email addresses, or with conflicts of interest.",
+      "Suggest independent experts with institutional emails and a verifiable publication record.",
+    ],
+  ];
+
+  const triage: React.ReactNode[][] = [
+    [
+      "Fatal flaw",
+      "The central claim is not supported, or the method is invalid for the problem.",
+      "Redesign the study or the claim before submitting anywhere. A new journal will not fix this.",
+    ],
+    [
+      "Missing evidence",
+      "A baseline, ablation, dataset, uncertainty estimate or experiment is absent.",
+      "Add it if you can. This is the most common fixable cause of a post-review rejection.",
+    ],
+    [
+      "Positioning and novelty",
+      "Reviewers do not see the difference from existing work.",
+      "Rewrite the gap, add a comparison table and make the contribution list more specific.",
+    ],
+    [
+      "Presentation",
+      "Unclear structure, notation, language or figures.",
+      "Rewrite and ask an outside reader to test it. Treat repeated comments as a signal.",
+    ],
+    [
+      "Misunderstanding",
+      "The reviewer misread something that you consider clear.",
+      "The text probably is not as clear as you think. Clarify it so that the next reader does not make the same mistake.",
+    ],
+    [
+      "Scope or fit",
+      "The paper is sound, but the editor says it does not suit the journal.",
+      "Retarget to a better-matched journal and keep the science unchanged.",
     ],
   ];
 
@@ -462,17 +765,26 @@ function ArticleBody() {
     "Reformat completely for the next journal, including the cover letter and references.",
     "Do not resubmit within days to a lower-ranked journal with no changes. The same weaknesses will come back.",
     "Appeal only if you see a clear factual error, and do it once, politely, with evidence (Fig. 7).",
+    "Set a deadline of about two weeks to resubmit. Delay loses momentum and lets related work appear.",
   ];
 
   const checklist = [
-    "The journal’s scope and recent papers match your topic.",
-    "Your contributions are stated in one clear list.",
-    "Methods are complete, baselines are fair, and results include uncertainty.",
-    "Every claim has evidence, and limitations are stated.",
-    "Template, figures, references, and declarations pass the journal’s checklist.",
+    "The journal’s scope, article types and recent papers match your topic, and I have read at least three recent articles.",
+    "My contributions are stated in one clear list, and each one is concrete and checkable.",
+    "The closest three to five recent papers are discussed and compared fairly, including a comparison table.",
+    "Methods are complete, baselines are fair and tuned, and results include repeated runs with uncertainty.",
+    "Test data were kept separate from tuning, and the split is described.",
+    "Every claim in the abstract maps to a result, and the limitations are stated.",
+    "Figures, tables and text agree, and all numbers match.",
+    "Template, figures, references and declarations pass the journal’s own checklist, and I read the system-generated PDF.",
+    "A similarity check was run, overlaps with my earlier work are rewritten or disclosed, and authorship was agreed in writing.",
+    "AI use, funding, conflicts of interest and data availability are declared.",
+    "A colleague outside the project read the paper and could state the novelty in one sentence.",
+    "A mock review by co-authors, using the journal’s reviewer form if available, found no unresolved major issue.",
+    "A second and third target journal are chosen, and the cover letter is ready to adapt.",
   ];
 
-  const referenceList = [
+  const referenceList: React.ReactNode[] = [
     <>
       Elsevier, “Guide for Authors,” available on each journal’s homepage at
       sciencedirect.com.
@@ -528,6 +840,47 @@ function ArticleBody() {
       L. Bornmann, “Scientific peer review,”{" "}
       <i>Annual Review of Information Science and Technology</i>, vol. 45,
       no. 1, pp. 197–245, 2011.
+    </>,
+    <>
+      Joint Committee for Guides in Metrology (JCGM), “Evaluation of
+      measurement data: Guide to the expression of uncertainty in
+      measurement,” JCGM 100:2008.{" "}
+      <Ext href="https://www.bipm.org/en/committees/jc/jcgm/publications">
+        bipm.org (JCGM publications)
+      </Ext>
+    </>,
+    <>
+      P. J. Roache, “Perspective: A method for uniform reporting of grid
+      refinement studies,” <i>Journal of Fluids Engineering</i>, vol. 116,
+      no. 3, pp. 405–413, 1994.{" "}
+      <Ext href="https://doi.org/10.1115/1.2910291">doi:10.1115/1.2910291</Ext>
+    </>,
+    <>
+      S. Kapoor and A. Narayanan, “Leakage and the reproducibility crisis in
+      machine-learning-based science,” <i>Patterns</i>, vol. 4, no. 9,
+      Art. no. 100804, 2023.{" "}
+      <Ext href="https://doi.org/10.1016/j.patter.2023.100804">
+        doi:10.1016/j.patter.2023.100804
+      </Ext>
+    </>,
+    <>
+      J. Demšar, “Statistical comparisons of classifiers over multiple data
+      sets,” <i>Journal of Machine Learning Research</i>, vol. 7,
+      pp. 1–30, 2006.
+    </>,
+    <>
+      G. Cumming, “The new statistics: Why and how,”{" "}
+      <i>Psychological Science</i>, vol. 25, no. 1, pp. 7–29, 2014.{" "}
+      <Ext href="https://doi.org/10.1177/0956797613504966">
+        doi:10.1177/0956797613504966
+      </Ext>
+    </>,
+    <>
+      Committee on Publication Ethics (COPE), “Authorship and AI tools,”{" "}
+      <Ext href="https://publicationethics.org/guidance/cope-position/authorship-and-ai-tools">
+        publicationethics.org/guidance/cope-position
+      </Ext>
+      .
     </>,
   ];
 
@@ -617,11 +970,11 @@ function ArticleBody() {
               </span>
               <span className="flex items-center gap-1.5 text-xs text-slate-500">
                 <Calendar size={14} aria-hidden="true" />
-                <time dateTime="2026-10-01">October 2026</time>
+                <time dateTime="2026-11-17">Updated November 2026</time>
               </span>
               <span className="flex items-center gap-1.5 text-xs text-slate-500">
                 <Clock size={14} aria-hidden="true" />
-                12 min read
+                20 min read
               </span>
             </div>
 
@@ -631,9 +984,10 @@ function ArticleBody() {
             </h1>
 
             <p className="mt-5 max-w-3xl text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">
-              A practical walkthrough for PhD scholars and engineering authors:
-              the seven most common reasons for rejection and how to fix each
-              one before you submit.
+              A practical, evidence-minded walkthrough for PhD scholars and
+              engineering authors: the seven most common reasons for
+              rejection, the checks that prevent each one, and a structured
+              plan for what to do when a decision still goes against you.
             </p>
 
             <div className="mt-7 flex flex-wrap items-center justify-between gap-4 border-t border-slate-200 pt-5">
@@ -698,19 +1052,39 @@ function ArticleBody() {
               priority
             />
 
-            <Para className="mb-2">
+            <Para className="mb-3">
               There are two kinds of rejection. A desk rejection means the
               technical check or the editor stops the paper early. A
               post-review rejection means reviewers read it and found problems
-              with the work. This guide covers seven common causes, what to do
-              after a rejection, and a short checklist to run before you
-              submit. Always read the journal’s own Guide for Authors first{" "}
-              <Cite n={1} />. If you are still planning the paper, start with
-              our{" "}
+              with the work. Rejection rates differ greatly between journals,
+              and selective journals reject most of what they receive, so a
+              rejection says less about the quality of your science than
+              about the fit between your paper and that venue on that day.
+              This guide covers seven common causes, what to do after a
+              rejection, and a checklist to run before you submit. Always read
+              the journal’s own Guide for Authors first <Cite n={1} />. If you
+              are still planning the paper, start with our{" "}
               <Int href="/blog/q1-research-paper-structure">
                 Q1 research paper structure guide
               </Int>
               .
+            </Para>
+
+            <SubHeading>The possible decisions and what each one asks of you</SubHeading>
+
+            <DataTable
+              caption="Editorial decisions, what they mean, and the recommended response"
+              headers={["Decision", "What it usually means", "Your next step"]}
+              rows={decisions}
+              minWidthClass="min-w-[680px]"
+            />
+
+            <Para className="mt-2">
+              Editors and reviewers generally read in a predictable order:
+              the title and abstract, the end of the introduction, the
+              figures and tables, the conclusion, and only then the details of
+              the method. Every reason below is easier to avoid when you check
+              that this fast reading path tells a coherent, honest story.
             </Para>
 
             {/* Reason 1 */}
@@ -737,6 +1111,15 @@ function ArticleBody() {
               ]}
             />
 
+            <SubHeading>A five-minute scope audit</SubHeading>
+
+            <DataTable
+              caption="Scope audit: signals, where to find them, and warning signs"
+              headers={["Signal", "Where to look", "Warning sign"]}
+              rows={scopeAudit}
+              minWidthClass="min-w-[640px]"
+            />
+
             <Para>
               To shortlist journals systematically, see our guide to{" "}
               <Int href="/blog/fast-review-q1-q2-journals">
@@ -744,6 +1127,10 @@ function ArticleBody() {
               </Int>
               , and check quartiles on{" "}
               <Ext href="https://www.scimagojr.com/">SCImago Journal Rank</Ext>.
+              If you are still unsure, many journals will answer a short
+              pre-submission enquiry containing your title, abstract and a
+              two-line statement of novelty. A clear “yes, send it” or “no,
+              try elsewhere” saves weeks.
             </Para>
 
             <ArticleFigure
@@ -751,6 +1138,18 @@ function ArticleBody() {
               alt="A good fit intersection between paper and journal"
               caption="Fig. 2. A good fit sits where your paper, the journal's scope, and its recent papers overlap."
             />
+
+            <SubHeading>Write a cover letter that does real work</SubHeading>
+
+            <Para className="mt-3">
+              A cover letter is often the first thing an editor reads. Keep
+              it to one page, make it specific, and avoid copying your
+              abstract. The skeleton below carries the four things an editor
+              needs: the gap, the result, the reason for this journal, and
+              the required statements.
+            </Para>
+
+            <CodeBlock label="Cover letter skeleton" code={coverLetter} />
 
             <TipBox title="Practical tip">
               Cite one or two recent papers from the target journal where they
@@ -763,9 +1162,13 @@ function ArticleBody() {
             </SectionHeading>
 
             <Para>
-              Reviewers often write &quot;incremental&quot; or &quot;limited
-              novelty&quot;. Usually the work is fine, but the paper never says
-              what is new.
+              Reviewers often write “incremental” or “limited novelty”.
+              Usually the work is fine, but the paper never says what is new.
+              Novelty comes in several legitimate forms: a new method, a new
+              application of a known method under new constraints, a new
+              analysis or insight, a new dataset or benchmark, or a
+              carefully documented negative or replication result. Name which
+              one yours is.
             </Para>
 
             <BulletList
@@ -782,6 +1185,23 @@ function ArticleBody() {
               src="/blogs/fig9.png"
               alt="Vague versus specific research contribution"
               caption="Fig. 3. A vague contribution statement versus a specific, checkable one (illustrative)."
+            />
+
+            <SubHeading>Use a comparison table to make the gap visible</SubHeading>
+
+            <Para className="mt-3">
+              A short table that places your work beside the three to five
+              closest recent studies lets an editor see the difference in
+              seconds. Fill each row with facts, not adjectives, and make
+              the last column state the limitation that your work removes.
+              The template below shows the structure.
+            </Para>
+
+            <DataTable
+              caption="Template for comparing your work with the closest related studies"
+              headers={["Study", "Method", "Key assumption", "Data and metric", "Limitation or gap"]}
+              rows={relatedWork}
+              minWidthClass="min-w-[760px]"
             />
 
             <TipBox title="Practical tip">
@@ -833,6 +1253,35 @@ function ArticleBody() {
               caption="Fig. 4. A single run can hide noise. Repeated runs with error bars show whether a difference is real."
             />
 
+            <SubHeading>What a reviewer looks for in the methods</SubHeading>
+
+            <DataTable
+              caption="Reproducibility elements, what to report, and why it matters"
+              headers={["Element", "What to report", "Why it matters"]}
+              rows={reproducibility}
+              minWidthClass="min-w-[760px]"
+            />
+
+            <SubHeading>Report uncertainty, not just a better number</SubHeading>
+
+            <Para className="mt-3">
+              A difference of 0.5 percent between two methods means little
+              without a sense of run-to-run variation. The short script below
+              computes a confidence interval for each method and a paired
+              comparison over the same splits. Adapt it to your metric and
+              choose the test that suits your design <Cite n={13} />.
+            </Para>
+
+            <CodeBlock label="Python (NumPy and SciPy)" code={statsCode} />
+
+            <Para>
+              Simulation studies have their own expectations. State the
+              mesh or time-step independence study, the convergence
+              criterion, and how you validated the model against experimental
+              or independent data <Cite n={11} />. For measurements, give the
+              instrument, calibration and uncertainty budget <Cite n={10} />.
+            </Para>
+
             {/* Reason 4 */}
             <SectionHeading id="reason-4" number="04">
               Reason 4: Claims the Results Do Not Support
@@ -840,8 +1289,8 @@ function ArticleBody() {
 
             <Para>
               Overclaiming is a favorite target for reviewers. Words like
-              &quot;robust&quot;, &quot;real-time&quot;, &quot;optimal&quot;,
-              and &quot;outperforms&quot; all need matching evidence (Fig. 5).
+              “robust”, “real-time”, “optimal”, and “outperforms” all need
+              matching evidence (Fig. 5).
             </Para>
 
             <BulletList
@@ -863,9 +1312,9 @@ function ArticleBody() {
 
             <Para>
               Simulation-only work is a good example. Calling a result
-              &quot;validated&quot; without experiments, or at least a
+              “validated” without experiments, or at least a
               high-fidelity model, invites a reviewer to say so. Write
-              &quot;in simulation&quot; wherever that is the truth.
+              “in simulation” wherever that is the truth.
             </Para>
 
             <ArticleFigure
@@ -873,6 +1322,30 @@ function ArticleBody() {
               alt="Strong claims matched with supporting evidence"
               caption="Fig. 5. Strong words need matching evidence."
             />
+
+            <SubHeading>A claim-evidence map</SubHeading>
+
+            <Para className="mt-3">
+              Before you submit, highlight every strong word in your
+              abstract, introduction and conclusion, and check that the
+              evidence in the right-hand column of the table below exists in
+              the paper. If it does not, either add the evidence or soften
+              the claim.
+            </Para>
+
+            <DataTable
+              caption="Strong claim words and the evidence each one requires"
+              headers={["If you write", "Reviewers expect to find"]}
+              rows={claims}
+              minWidthClass="min-w-[600px]"
+            />
+
+            <Para>
+              Finally, write a real limitations paragraph. Naming the
+              conditions under which your method fails or is untested reads
+              as confidence, whereas leaving them out invites reviewers to
+              supply them in their report.
+            </Para>
 
             {/* Reason 5 */}
             <SectionHeading id="reason-5" number="05">
@@ -896,7 +1369,17 @@ function ArticleBody() {
               caption="Common technical-check problems and quick fixes"
               headers={["Problem", "Quick fix"]}
               rows={formattingRows}
+              minWidthClass="min-w-[560px]"
             />
+
+            <Para>
+              For LaTeX users, most of these problems show up in the log or in
+              the compiled PDF. Build from a clean folder, search the log for
+              “undefined” and “Overfull”, and check the fonts and image
+              resolution in the PDF before you upload. The{" "}
+              <Int href="/blog/formatting-guide">formatting guide</Int>{" "}
+              contains a five-minute preflight routine.
+            </Para>
 
             <TipBox title="Practical tip">
               Do a dry run in the submission system. Read the PDF it generates,
@@ -920,7 +1403,7 @@ function ArticleBody() {
 
             <BulletList
               items={[
-                "A classic trap is overlap with your own conference paper. Extending a conference paper is normal, but the journal expects clearly new material and a note explaining what changed.",
+                "A classic trap is overlap with your own conference paper. Extending a conference paper is normal, but the journal expects clearly new material and a note explaining what changed. Some venues state a threshold of new content, so follow the journal’s own rule.",
                 <>
                   Run a similarity check before you submit if your institution
                   offers one, such as{" "}
@@ -928,7 +1411,8 @@ function ArticleBody() {
                     Crossref Similarity Check
                   </Ext>{" "}
                   <Cite n={6} />. Rewrite overlapping text, even from your own
-                  earlier papers.
+                  earlier papers. There is no universal acceptable score, so
+                  editors read the report, not just the percentage.
                 </>,
                 "Never submit the same work to two journals at once, and do not split one study into several thin papers.",
                 <>
@@ -947,6 +1431,22 @@ function ArticleBody() {
               alt="Research ethics red flags"
               caption="Fig. 6. Four ethics red flags and the habit that avoids each."
             />
+
+            <SubHeading>What editors see, and how to prevent it</SubHeading>
+
+            <DataTable
+              caption="Common ethics issues, what editors see, and how to prevent them"
+              headers={["Issue", "What an editor sees", "How to prevent it"]}
+              rows={ethics}
+              minWidthClass="min-w-[760px]"
+            />
+
+            <Para>
+              Posting a preprint is generally not duplicate publication, and
+              many journals allow it, but policies vary. Check the target
+              journal’s preprint policy, and cite the preprint in the cover
+              letter.
+            </Para>
 
             {/* Reason 7 */}
             <SectionHeading id="reason-7" number="07">
@@ -976,6 +1476,42 @@ function ArticleBody() {
               ]}
             />
 
+            <SubHeading>Make the fast-reading path work</SubHeading>
+
+            <BulletList
+              items={[
+                <>
+                  <b>Abstract:</b> problem, method, key quantitative result,
+                  conclusion. No unexplained abbreviations and no claims that
+                  the paper does not support.
+                </>,
+                <>
+                  <b>End of the introduction:</b> the gap, the contribution
+                  list and a one-paragraph outline.
+                </>,
+                <>
+                  <b>Figures and captions:</b> each figure should be
+                  understandable from its caption alone, with labelled axes,
+                  units and a readable font size at final width.
+                </>,
+                <>
+                  <b>Conclusion:</b> findings, limitations and future work,
+                  without new results or repeated abstract sentences.
+                </>,
+              ]}
+            />
+
+            <Para>
+              A thin literature review has a recognisable signature: a list
+              of papers summarised one after another, mostly from the last
+              few years, with no comparison and no statement of what
+              remains unsolved. A strong review organises the literature by
+              idea, compares approaches, cites the foundational work and
+              ends with the gap your paper fills. It also reports what you
+              searched, so that a reviewer can see you did not miss an
+              obvious competitor.
+            </Para>
+
             {/* After rejection */}
             <SectionHeading id="after-rejection">
               What to Do After a Journal Rejection
@@ -996,6 +1532,39 @@ function ArticleBody() {
               caption="Fig. 7. A simple decision path after a rejection."
             />
 
+            <SubHeading>Triage the reviewer comments</SubHeading>
+
+            <Para className="mt-3">
+              Copy every comment into a spreadsheet and label it with one of
+              the categories below. The label tells you whether you need new
+              work, a rewrite, or just a better target journal.
+            </Para>
+
+            <DataTable
+              caption="Types of reviewer comments and the appropriate action"
+              headers={["Comment type", "Typical example", "Action"]}
+              rows={triage}
+              minWidthClass="min-w-[720px]"
+            />
+
+            <Para>
+              If the same point appears in two or more reports, treat it as
+              real, even when you disagree. If a decision is a revision
+              rather than a rejection, return the paper within the stated
+              deadline with a numbered, point-by-point response that quotes
+              each comment and says where the manuscript changed. Our guide
+              to{" "}
+              <Int href="/blog/fast-review-q1-q2-journals">
+                fast-review Q1/Q2 journals
+              </Int>{" "}
+              includes a response-letter structure and a method for planning
+              the next submission so that a transfer takes days.
+            </Para>
+
+            <SubHeading>Keep a rejection log</SubHeading>
+
+            <CodeBlock label="Rejection log (plain text or spreadsheet)" code={rejectionLog} />
+
             <TipBox title="Practical tip">
               Keep a rejection log with the journal, date, and reason. Patterns
               show up fast and tell you what to fix in your next paper.
@@ -1008,7 +1577,10 @@ function ArticleBody() {
 
             <Para>
               Before you press submit, confirm that each of the following is
-              done.
+              done. The best test is a mock review: ask a co-author who did not
+              write the paper to review it as a skeptical reviewer, using the
+              journal’s review form if it is public, and fix every major point
+              before you upload.
             </Para>
 
             <CheckCards items={checklist} />
@@ -1045,7 +1617,10 @@ function ArticleBody() {
             <Para>
               Looking for more? Browse the{" "}
               <Int href="/blog">ScholarGrid Knowledge Library</Int> for guides
-              on structure, formatting, journal selection and more.
+              on structure, formatting, journal selection and more. For the
+              technical side of the submission package, use our{" "}
+              <Int href="/blog/formatting-guide">manuscript formatting guide</Int>{" "}
+              as a companion.
             </Para>
 
             {/* Conclusion + CTA */}
@@ -1068,6 +1643,13 @@ function ArticleBody() {
                 novelty, document your methods, support your claims, and pass
                 the technical check. Do these five things and your paper
                 reaches reviewers on its merits.
+              </p>
+              <p className="mt-3 text-[15px] leading-[1.85] text-slate-600">
+                When a rejection still comes, treat it as data. Classify the
+                comments, fix what is real, pick a better-matched journal, and
+                resubmit quickly. Researchers who do this consistently
+                publish more, not because they are never rejected, but because
+                each rejection improves the next submission.
               </p>
 
               <div className="mt-6 rounded-xl border border-blue-100 bg-blue-50/60 p-6">
@@ -1122,6 +1704,13 @@ function ArticleBody() {
                   </li>
                 ))}
               </ol>
+
+              <p className="mt-5 text-xs italic leading-relaxed text-slate-500">
+                Journal policies, similarity-check practices and decision
+                terminology differ between publishers and change over time.
+                Always confirm requirements on the journal’s own website
+                before submitting.
+              </p>
             </section>
           </article>
 

@@ -15,6 +15,11 @@ import {
   X,
   List,
 } from "lucide-react";
+
+/* ------------------------------------------------------------------ */
+/* FAQs                                                                */
+/* ------------------------------------------------------------------ */
+
 type Faq = { q: string; a: string };
 
 const faqs: Faq[] = [
@@ -31,12 +36,24 @@ const faqs: Faq[] = [
     a: "Synthesise the literature into themes, then state precisely what existing studies measure and what they do not. A strong gap names the missing knowledge, explains why it matters and connects directly to your contribution, for example: existing studies measure A but not B, so decisions about the application rest on incomplete evidence.",
   },
   {
+    q: "What is the difference between a research gap and a problem statement?",
+    a: "A problem statement describes a practical or scientific difficulty, while a research gap describes what the existing literature has not yet answered about it. A good introduction states the problem to show why it matters, and then the gap to show why your study is needed.",
+  },
+  {
     q: "How many references does a Q1 paper need?",
     a: "There is no universal number. It depends on the discipline, article type and journal. Many authors aim for a focused list of primary sources, with a healthy share from the last five years, but every reference must be relevant, read and verified against the publisher page.",
   },
   {
+    q: "Should I combine Results and Discussion or write them separately?",
+    a: "Follow the journal's template. Separate sections suit papers with many results that need a clean record, whereas a combined section suits papers where each result needs immediate interpretation. In either case, interpretation should appear next to the evidence, and the conclusion should not introduce new results.",
+  },
+  {
     q: "What is the difference between verification and validation?",
     a: "Verification checks that the model, code or procedure is implemented correctly, for example through convergence or grid-independence tests. Validation checks that the model represents reality, which means comparing your results with a published benchmark, experimental data or an independent dataset.",
+  },
+  {
+    q: "How should I report negative or unexpected results?",
+    a: "Report them honestly, show the evidence, and discuss plausible explanations while labelling them as hypotheses unless you have tested them. Reviewers trust a paper that explains where a method fails more than one that shows only favourable cases, and a clear negative result can itself be a contribution.",
   },
   {
     q: "What is CRediT and do I need it in my manuscript?",
@@ -56,18 +73,22 @@ const faqs: Faq[] = [
   },
 ];
 
+/* ------------------------------------------------------------------ */
+/* SEO: metadata and structured data                                   */
+/* ------------------------------------------------------------------ */
+
 /* TODO: set NEXT_PUBLIC_SITE_URL in .env (e.g. https://www.yourdomain.com) */
 const SITE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.scholargrid.org"
 ).replace(/\/$/, "");
 
 const SLUG = "/blog/q1-research-paper-structure";
-const URL = `${SITE_URL}${SLUG}`;
+const PAGE_URL = `${SITE_URL}${SLUG}`;
 
 const TITLE =
   "How to Structure a Q1 Research Paper: 10-Part Blueprint (2026 Guide)";
 const DESCRIPTION =
-  "Learn how to structure a Q1 research paper step by step: abstract, methodology, results, conclusion, CRediT and a final submission checklist for any discipline.";
+  "A 10-part blueprint for structuring a Q1 research paper: storyline planning, abstract and gap examples, methodology and reporting guidelines, validation and statistics, limitations, declarations, reference checks and a submission checklist.";
 
 export const metadata: Metadata = {
   /* If your root layout already uses title.template "%s | ScholarGrid",
@@ -81,19 +102,20 @@ export const metadata: Metadata = {
     "research paper format",
     "how to write a research gap",
     "research methodology section",
+    "reporting guidelines EQUATOR",
     "CRediT author contributions",
     "manuscript submission checklist",
   ],
-  alternates: { canonical: URL },
+  alternates: { canonical: PAGE_URL },
   robots: { index: true, follow: true },
   openGraph: {
     type: "article",
-    url: URL,
+    url: PAGE_URL,
     siteName: "ScholarGrid",
     title: `${TITLE} | ScholarGrid`,
     description: DESCRIPTION,
     publishedTime: "2026-11-12T00:00:00Z",
-    modifiedTime: "2026-11-12T00:00:00Z",
+    modifiedTime: "2026-11-17T00:00:00Z",
     authors: ["ScholarGrid Technical Team"],
   },
   twitter: {
@@ -108,15 +130,14 @@ const jsonLd = {
   "@graph": [
     {
       "@type": "BlogPosting",
-      "@id": `${URL}#article`,
+      "@id": `${PAGE_URL}#article`,
       headline: "How to Structure a Q1 Research Paper from Scratch",
-      alternativeHeadline:
-        "A 10-Part Blueprint for Any Discipline",
+      alternativeHeadline: "A 10-Part Blueprint for Any Discipline",
       description: DESCRIPTION,
       datePublished: "2026-11-12",
-      dateModified: "2026-11-12",
+      dateModified: "2026-11-17",
       inLanguage: "en",
-      mainEntityOfPage: URL,
+      mainEntityOfPage: PAGE_URL,
       author: { "@type": "Organization", name: "ScholarGrid Technical Team" },
       publisher: {
         "@type": "Organization",
@@ -138,7 +159,7 @@ const jsonLd = {
           "@type": "ListItem",
           position: 3,
           name: "Q1 Research Paper Structure",
-          item: URL,
+          item: PAGE_URL,
         },
       ],
     },
@@ -152,7 +173,6 @@ const jsonLd = {
     },
   ],
 };
-
 
 /* ------------------------------------------------------------------ */
 /* Table of contents                                                   */
@@ -173,6 +193,57 @@ const contents = [
   { id: "faq", title: "FAQs" },
   { id: "final-thoughts", title: "Conclusion" },
 ];
+
+/* ------------------------------------------------------------------ */
+/* Code and text samples                                               */
+/* ------------------------------------------------------------------ */
+
+const paperPlan = `Working title:
+Target journal and article type:
+Research question (one sentence):
+Gap (one sentence, with two or three citations):
+Contributions (two or three, each checkable):
+Figures and tables, in the order of the story:   F1 ...   F2 ...   T1 ...
+Main claim of each figure or table (one sentence each):
+Baselines or benchmarks, and why they are fair:
+Validation evidence planned:
+Known limitations:
+Data and code availability plan:`;
+
+const readmeTemplate = `# Project title (link to the paper DOI)
+
+## Contents
+data/raw        original data, with source, licence and DOI
+data/processed  cleaned data and the script that produced it
+code/           scripts that regenerate every figure and table (fig3.py, table2.py ...)
+
+## Environment
+Language and version, packages pinned in requirements.txt or environment.yml,
+hardware used (CPU or GPU model, memory), and typical run time.
+
+## How to reproduce
+1. Create the environment.
+2. Run code/run_all.sh (or the commands below).
+3. Compare the output with the figures in the paper.
+
+## Random seeds and settings
+List the seeds, tolerances, grid sizes, hyperparameters and data splits.
+
+## Licence and citation
+Licence for code and for data, and a CITATION.cff file with the preferred citation.`;
+
+const dataStatement = `Data availability: The data and code supporting this study are openly available in
+[repository name] at [DOI or URL]. Third-party data were obtained from [source] under
+[licence or access conditions] and can be requested from [custodian]. Restricted data
+cannot be shared because [specific reason]; access procedure: [description].`;
+
+const ethicsStatement = `Ethics: The study was approved by [committee] (reference [number]) and all participants
+gave informed consent. [or] Ethics approval was not required because the study used only
+publicly available, anonymised data from [source].`;
+
+const aiStatement = `Use of AI tools: During the preparation of this work the authors used [tool, version]
+for [specific purpose]. The authors reviewed and edited the output and take full
+responsibility for the content of the publication.`;
 
 /* ------------------------------------------------------------------ */
 /* Reusable components                                                 */
@@ -201,6 +272,38 @@ function Ext({ href, children }: { href: string; children: React.ReactNode }) {
     >
       {children}
     </a>
+  );
+}
+
+function Cite({ n }: { n: number }) {
+  return (
+    <a
+      href={`#ref${n}`}
+      className="font-semibold text-blue-800 transition hover:text-blue-950 hover:underline"
+    >
+      [{n}]
+    </a>
+  );
+}
+
+function InlineCode({ children }: { children: React.ReactNode }) {
+  return (
+    <code className="rounded bg-blue-50 px-1.5 py-0.5 font-mono text-[13px] text-blue-900">
+      {children}
+    </code>
+  );
+}
+
+function CodeBlock({ label, code }: { label: string; code: string }) {
+  return (
+    <div className="my-5 overflow-hidden rounded-xl border border-slate-200">
+      <p className="border-b border-slate-200 bg-slate-100 px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-600">
+        {label}
+      </p>
+      <pre className="overflow-x-auto bg-slate-950 p-4 text-[13px] leading-relaxed text-slate-100">
+        <code>{code}</code>
+      </pre>
+    </div>
   );
 }
 
@@ -239,7 +342,10 @@ function SubHeading({ children }: { children: React.ReactNode }) {
 function Check({ children }: { children: React.ReactNode }) {
   return (
     <li className="flex gap-3">
-      <CheckCircle2 className="mt-1 h-[18px] w-[18px] shrink-0 text-blue-800" />
+      <CheckCircle2
+        className="mt-1 h-[18px] w-[18px] shrink-0 text-blue-800"
+        aria-hidden="true"
+      />
       <span>{children}</span>
     </li>
   );
@@ -333,6 +439,34 @@ function NumberedSteps({ items }: { items: React.ReactNode[] }) {
   );
 }
 
+function ExampleBox({
+  tone,
+  label,
+  children,
+  note,
+}: {
+  tone: "weak" | "strong";
+  label: string;
+  children: React.ReactNode;
+  note?: string;
+}) {
+  const styles =
+    tone === "weak"
+      ? "border-red-100 bg-red-50/50 text-red-800"
+      : "border-emerald-100 bg-emerald-50/50 text-emerald-800";
+  return (
+    <div className={`my-5 rounded-lg border p-4 ${styles.split(" ").slice(0, 2).join(" ")}`}>
+      <p className={`text-[11px] font-bold uppercase tracking-wider ${styles.split(" ")[2]}`}>
+        {label}
+      </p>
+      <p className="mt-2 text-[15px] leading-relaxed text-slate-700">{children}</p>
+      {note && (
+        <p className="mt-1.5 text-[13px] leading-relaxed text-slate-500">{note}</p>
+      )}
+    </div>
+  );
+}
+
 const P = "text-[15px] leading-[1.85] text-slate-700";
 
 /* ------------------------------------------------------------------ */
@@ -370,19 +504,23 @@ function ArticleBody() {
   const checklist = [
     "The research gap is specific, meaningful, and supported by a literature matrix.",
     "Objectives are measurable and match the conclusions one by one.",
+    "Each contribution is checkable and appears again in the results and the conclusion.",
     "Assumptions, data, variables, parameters, and conditions are fully stated.",
     "The selected methodology is justified and reproducible.",
+    "The appropriate reporting guideline or reproducibility checklist was followed.",
     "Software versions, numerical settings, random seeds, and experimental protocols are reported.",
+    "Test data were kept separate from tuning, and fair, tuned baselines were used.",
     "Validation against a published or benchmark case is demonstrated.",
     "Sensitivity analysis and uncertainty estimates are reported.",
     "Every figure and table has an interpretation explaining the observed mechanism.",
     "The main novelty metric receives a detailed discussion.",
+    "Claims use language that matches the strength of the evidence.",
     "Limitations are acknowledged and future research directions are specific.",
-    "CRediT contributions, funding, competing interests, and data availability statements are complete.",
-    "References are verified, relevant, recent, and formatted according to the target journal.",
+    "CRediT contributions, funding, competing interests, ethics, AI use and data availability statements are complete.",
+    "References are verified, relevant, recent, checked for retractions, and formatted according to the target journal.",
   ];
 
-  const references = [
+  const references: React.ReactNode[] = [
     <>
       Booth, W. C., Colomb, G. G., Williams, J. M., Bizup, J., & FitzGerald,
       W. T. (2016). <i>The Craft of Research</i> (4th ed.). University of
@@ -421,6 +559,71 @@ function ArticleBody() {
     <>
       Roache, P. J. (1998). <i>Verification and Validation in Computational
       Science and Engineering</i>. Hermosa Publishers.
+    </>,
+    <>
+      Roache, P. J. (1994). Perspective: A method for uniform reporting of
+      grid refinement studies. <i>Journal of Fluids Engineering</i>, 116(3),
+      405–413.{" "}
+      <Ext href="https://doi.org/10.1115/1.2910291">doi:10.1115/1.2910291</Ext>
+    </>,
+    <>
+      von Elm, E., Altman, D. G., Egger, M., et al. (2007). The Strengthening
+      the Reporting of Observational Studies in Epidemiology (STROBE)
+      statement: Guidelines for reporting observational studies.{" "}
+      <i>PLoS Medicine</i>, 4(10), e296.{" "}
+      <Ext href="https://doi.org/10.1371/journal.pmed.0040296">
+        doi:10.1371/journal.pmed.0040296
+      </Ext>
+    </>,
+    <>
+      Simera, I., Moher, D., Hoey, J., Schulz, K. F., & Altman, D. G. (2010).
+      A catalogue of reporting guidelines for health research.{" "}
+      <i>European Journal of Clinical Investigation</i>, 40(1), 35–53.{" "}
+      <Ext href="https://www.equator-network.org/">equator-network.org</Ext>
+    </>,
+    <>
+      Cumming, G. (2014). The new statistics: Why and how.{" "}
+      <i>Psychological Science</i>, 25(1), 7–29.{" "}
+      <Ext href="https://doi.org/10.1177/0956797613504966">
+        doi:10.1177/0956797613504966
+      </Ext>
+    </>,
+    <>
+      Wasserstein, R. L., & Lazar, N. A. (2016). The ASA statement on
+      p-values: Context, process, and purpose. <i>The American
+      Statistician</i>, 70(2), 129–133.{" "}
+      <Ext href="https://doi.org/10.1080/00031305.2016.1154108">
+        doi:10.1080/00031305.2016.1154108
+      </Ext>
+    </>,
+    <>
+      Pineau, J., Vincent-Lamarre, P., Sinha, K., et al. (2021). Improving
+      reproducibility in machine learning research (a report from the
+      NeurIPS 2019 reproducibility program).{" "}
+      <i>Journal of Machine Learning Research</i>, 22(164), 1–20.
+    </>,
+    <>
+      Kapoor, S., & Narayanan, A. (2023). Leakage and the reproducibility
+      crisis in machine-learning-based science. <i>Patterns</i>, 4(9),
+      100804.{" "}
+      <Ext href="https://doi.org/10.1016/j.patter.2023.100804">
+        doi:10.1016/j.patter.2023.100804
+      </Ext>
+    </>,
+    <>
+      International Committee of Medical Journal Editors (ICMJE).
+      Recommendations for the conduct, reporting, editing, and publication of
+      scholarly work in medical journals.{" "}
+      <Ext href="https://www.icmje.org/recommendations/">
+        icmje.org/recommendations
+      </Ext>
+    </>,
+    <>
+      Committee on Publication Ethics (COPE). Authorship and AI tools (COPE
+      position statement).{" "}
+      <Ext href="https://publicationethics.org/guidance/cope-position/authorship-and-ai-tools">
+        publicationethics.org
+      </Ext>
     </>,
   ];
 
@@ -480,7 +683,6 @@ function ArticleBody() {
             </div>
           </details>
         </div>
-
       </nav>
 
       <main>
@@ -511,11 +713,11 @@ function ArticleBody() {
               </span>
               <span className="flex items-center gap-1.5 text-xs text-slate-500">
                 <Calendar size={14} aria-hidden="true" />
-                <time dateTime="2026-11-12">November 2026</time>
+                <time dateTime="2026-11-17">Updated November 2026</time>
               </span>
               <span className="flex items-center gap-1.5 text-xs text-slate-500">
                 <Clock size={14} aria-hidden="true" />
-                20 min read
+                28 min read
               </span>
             </div>
 
@@ -527,8 +729,9 @@ function ArticleBody() {
             <p className="mt-5 max-w-3xl text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">
               Learn how to plan, structure, write, and validate a Q1 research
               paper for high-ranking journals. This step-by-step guide covers
-              the abstract, introduction, methodology, results, conclusion,
-              declarations, references, and a final submission checklist.
+              storyline planning, the abstract, introduction, methodology,
+              results, conclusion, declarations, references, worked examples,
+              and a final submission checklist.
             </p>
 
             <div className="mt-7 flex flex-wrap items-center justify-between gap-4 border-t border-slate-200 pt-5">
@@ -604,18 +807,17 @@ function ArticleBody() {
 
                 <p className="text-[15px] leading-[1.85] text-slate-700 sm:text-base">
                   Each part explains what the section must achieve, provides
-                  practical writing templates, discusses discipline-specific
-                  adaptations, and identifies common mistakes. Use it to plan a
-                  new manuscript, audit an existing draft, or supervise
-                  students developing their first journal paper. If you are
-                  still collecting sources, start with our{" "}
+                  practical writing templates and worked examples, discusses
+                  discipline-specific adaptations, and identifies common
+                  mistakes. Use it to plan a new manuscript, audit an existing
+                  draft, or supervise students developing their first journal
+                  paper. If you are still collecting sources, start with our{" "}
                   <Int href="/blog/systematic-literature-review-guide">
                     systematic literature review guide
                   </Int>
                   .
                 </p>
               </div>
-
 
               <ArticleTable
                 caption="Standard sections of a research paper and what each must achieve"
@@ -628,6 +830,75 @@ function ArticleBody() {
                   ["Results and discussion", "What did you find, and why did it happen?", <a key="e" href="#results" className={linkClass}>Part 05</a>],
                   ["Conclusion", "What do the findings mean and what comes next?", <a key="f" href="#conclusion" className={linkClass}>Part 06</a>],
                   ["Declarations and references", "Is the work transparent and verifiable?", <a key="g" href="#contributions" className={linkClass}>Parts 07–08</a>],
+                ]}
+              />
+
+              <h3 className="mt-7 font-serif text-xl font-bold text-slate-950">
+                Plan the storyline before you write
+              </h3>
+
+              <p className={`${P} mt-3`}>
+                Authors who write section by section often discover too late
+                that their figures do not support their claims. A more reliable
+                habit is to plan the storyline first: decide the question,
+                the gap, the two or three contributions, and the figures and
+                tables that will prove each one, in the order the reader will
+                meet them. Writing then becomes the job of explaining a plan
+                that already works. The one-page template below captures that
+                plan <Cite n={1} />.
+              </p>
+
+              <CodeBlock label="One-page paper plan" code={paperPlan} />
+
+              <h3 className="mt-7 font-serif text-xl font-bold text-slate-950">
+                How the structure changes with the article type
+              </h3>
+
+              <ArticleTable
+                caption="How the structure and emphasis change with the article type"
+                headers={["Article type", "Typical emphasis", "Where novelty lives", "Common mistake"]}
+                rows={[
+                  ["Original research article", "Full IMRaD flow with validation and discussion", "New method, data, analysis or insight", "Describing the work without a clear gap"],
+                  ["Short communication or letter", "One focused result, brief methods, tight discussion", "A single, sharp finding", "Cramming a full paper into a short format"],
+                  ["Application or case study", "Context, constraints, lessons and transferability", "New application or evidence under real conditions", "Giving details of one case with no general lesson"],
+                  ["Review or systematic review", "Search strategy, selection, synthesis and gaps", "Organisation of knowledge and identification of gaps", "A list of summaries with no comparison"],
+                  ["Methods or data paper", "Design, benchmarking, availability and reuse", "New resource or procedure and proof of its use", "No evidence that others can reproduce or reuse it"],
+                ]}
+              />
+
+              <h3 className="mt-7 font-serif text-xl font-bold text-slate-950">
+                A rough word budget
+              </h3>
+
+              <p className={`${P} mt-3`}>
+                Journals set their own limits, so treat the proportions below as
+                a rule of thumb for a typical empirical paper. If a section
+                is far outside its range, ask whether it is doing the job
+                that the reader expects of it.
+              </p>
+
+              <ArticleTable
+                caption="Typical proportions of an empirical research paper (rule of thumb)"
+                headers={["Section", "Share of the main text", "What usually goes wrong when it is off"]}
+                rows={[
+                  ["Abstract", "150 to 250 words (check the journal)", "Too long and vague, or missing numbers"],
+                  ["Introduction", "About 10 to 15%", "Too long a history, with a late or missing gap"],
+                  ["Methods or formulation", "About 20 to 25%", "Too short to reproduce, or padded with textbook material"],
+                  ["Results and discussion", "About 35 to 45%", "Description without explanation"],
+                  ["Conclusion", "About 3 to 5%", "Repeats the abstract, or adds new results"],
+                ]}
+              />
+
+              <h3 className="mt-7 font-serif text-xl font-bold text-slate-950">
+                Test the draft with a reverse outline
+              </h3>
+
+              <NumberedSteps
+                items={[
+                  <>Write one sentence that states the main point of every paragraph in the draft, in the order they appear.</>,
+                  <>Read only those sentences. They should form the argument of the paper without the surrounding text.</>,
+                  <>Mark any paragraph that has no clear point, repeats another, or does not serve a contribution, and cut, merge or move it.</>,
+                  <>Check that every contribution in the introduction has a matching result, figure or table, and a matching sentence in the conclusion.</>,
                 ]}
               />
             </section>
@@ -675,6 +946,44 @@ function ArticleBody() {
               provide insights into [theoretical or practical implication].
             </Callout>
 
+            <p className={`${P} mt-3`}>
+              A filled-in version makes the pattern easier to see. The
+              example below is hypothetical and its numbers are invented for
+              illustration only.
+            </p>
+
+            <ExampleBox
+              tone="weak"
+              label="Weak abstract (hypothetical)"
+              note="No gap, no method, no numbers, and a claim that cannot be checked."
+            >
+              Load forecasting is important for power systems. In this paper
+              a novel forecasting model is proposed. Experiments show that the
+              model performs well and outperforms other methods, which
+              demonstrates its effectiveness.
+            </ExampleBox>
+
+            <ExampleBox
+              tone="strong"
+              label="Strong abstract (hypothetical, numbers invented)"
+              note="Each sentence carries one function from the six-sentence plan, and the results are quantified."
+            >
+              Short-term load forecasts drive dispatch and reserve decisions,
+              yet the most accurate recent models need hardware that small
+              utilities lack. Existing lightweight forecasters either ignore
+              calendar effects or degrade sharply in extreme weather. This
+              study develops a forecaster that stays accurate during
+              extreme-weather days while running on a single CPU. We combine a
+              gradient-boosted model with weather-lag features and a
+              regime-switching correction, and evaluate it on a held-out year
+              of hourly data from ten feeders. The proposed model reduces mean
+              absolute percentage error by 12% relative to the strongest
+              baseline overall and by 21% on extreme-weather days, with
+              inference under 5 ms per forecast. The approach allows utilities
+              with limited computing capacity to improve reserve planning
+              without new hardware.
+            </ExampleBox>
+
             <SubHeading>1.2 How to Select Research Keywords</SubHeading>
 
             <p className={`${P} mt-3`}>
@@ -712,7 +1021,8 @@ function ArticleBody() {
               <Check>Identify the principal method or approach.</Check>
               <Check>Include the relevant application or research domain.</Check>
               <Check>Avoid generic terms such as analysis and study.</Check>
-              <Check>Check the journal’s required keyword count.</Check>
+              <Check>Do not simply repeat words from the title, because the title is already indexed.</Check>
+              <Check>Use the terms that other researchers would type into a database to find your work, and check the journal’s required keyword count.</Check>
             </CheckList>
 
             <SubHeading>1.3 How to Prepare the Nomenclature Table</SubHeading>
@@ -760,10 +1070,9 @@ function ArticleBody() {
               problem to the specific gap addressed by your study. Instead of
               listing previous papers individually, synthesise existing
               literature into meaningful research themes. Swales’ classic
-              “create a research space” model and{" "}
-              <i>The Craft of Research</i> (see{" "}
-              <a href="#references" className={linkClass}>references</a>) are
-              both useful frameworks.
+              “create a research space” model <Cite n={2} /> and{" "}
+              <i>The Craft of Research</i> <Cite n={1} /> are both useful
+              frameworks.
             </p>
 
             <NumberedSteps
@@ -776,35 +1085,44 @@ function ArticleBody() {
               ]}
             />
 
+            <p className={`${P} mt-4`}>
+              As a guide, a typical introduction of about 800 to 1,200 words
+              spends roughly one paragraph on context, two or three on the
+              thematic literature synthesis, one on the gap, and one on the
+              contributions and the roadmap. The proportions matter more than
+              the exact counts: the gap should not appear on page three.
+            </p>
+
             <SubHeading>2.2 How to Write a Research Gap: Weak Versus Strong</SubHeading>
 
-            <div className="my-5 rounded-lg border border-red-100 bg-red-50/50 p-4">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-red-800">
-                Weak research gap
-              </p>
-              <p className="mt-2 text-[15px] leading-relaxed text-slate-700">
-                Few researchers have studied [topic].
-              </p>
-              <p className="mt-1.5 text-[13px] leading-relaxed text-slate-500">
-                This statement does not identify what is missing or why the
-                missing knowledge matters.
-              </p>
-            </div>
+            <ExampleBox
+              tone="weak"
+              label="Weak research gap"
+              note="This statement does not identify what is missing or why the missing knowledge matters."
+            >
+              Few researchers have studied [topic].
+            </ExampleBox>
 
-            <div className="my-5 rounded-lg border border-emerald-100 bg-emerald-50/50 p-4">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-emerald-800">
-                Strong research gap
-              </p>
-              <p className="mt-2 text-[15px] leading-relaxed text-slate-700">
-                Existing studies of [topic] measure [A] but not [B], so
-                decisions about [application] rest on incomplete evidence. This
-                paper quantifies [B] under [specific conditions].
-              </p>
-              <p className="mt-1.5 text-[13px] leading-relaxed text-slate-500">
-                This version identifies the missing knowledge and connects it
-                directly to the contribution.
-              </p>
-            </div>
+            <ExampleBox
+              tone="strong"
+              label="Strong research gap"
+              note="This version identifies the missing knowledge and connects it directly to the contribution."
+            >
+              Existing studies of [topic] measure [A] but not [B], so
+              decisions about [application] rest on incomplete evidence. This
+              paper quantifies [B] under [specific conditions].
+            </ExampleBox>
+
+            <p className={`${P} mt-3`}>
+              Applied to the hypothetical forecasting study from Part 01, the
+              strong pattern becomes: “Existing lightweight load forecasters
+              report average error but not error on extreme-weather days, when
+              forecast errors are most costly, so reserve decisions for those
+              days rest on unquantified risk. This paper quantifies and
+              reduces that error under a single-CPU constraint.” Notice that
+              it names what is measured, what is missing, why it matters, and
+              what the paper will do.
+            </p>
 
             <SubHeading>2.3 How to Build a Literature Matrix</SubHeading>
 
@@ -820,8 +1138,8 @@ function ArticleBody() {
               and the{" "}
               <Ext href="https://www.prisma-statement.org/">
                 PRISMA 2020 reporting guideline
-              </Ext>
-              .
+              </Ext>{" "}
+              <Cite n={3} />.
             </p>
 
             <ArticleTable
@@ -840,7 +1158,6 @@ function ArticleBody() {
                 ["[Author 3]", "2025", "[Method]", "[Finding]", "[Limitation]", "[Research gap]"],
               ]}
             />
-
 
             <Callout title="Practical research tip">
               Read the limitations and future research sections of relevant
@@ -869,6 +1186,27 @@ function ArticleBody() {
               validate, and predict. Avoid vague expressions such as explore or
               look at when a more precise objective is possible.
             </p>
+
+            <ExampleBox
+              tone="weak"
+              label="Weak contribution statement (hypothetical)"
+              note="Nothing here can be checked, so a reviewer cannot tell what is new."
+            >
+              We propose a novel forecasting model and show that it performs
+              well.
+            </ExampleBox>
+
+            <ExampleBox
+              tone="strong"
+              label="Strong contribution statement (hypothetical)"
+              note="Each item is concrete, checkable, and returns later in the results and the conclusion."
+            >
+              The contributions are: (i) a regime-switching correction that
+              reduces error on extreme-weather days by 21%; (ii) a benchmark
+              of six lightweight baselines, tuned with the same budget, on ten
+              feeders; and (iii) open code and data that reproduce every
+              figure.
+            </ExampleBox>
 
             <SubHeading>2.5 Establishing the Research Model</SubHeading>
 
@@ -1013,6 +1351,7 @@ function ArticleBody() {
               <Check>Explain how the model was derived or cite the published model being adopted.</Check>
               <Check>Show transformations such as normalisation, non-dimensionalisation, or standardisation.</Check>
               <Check>Ensure the transformed problem is clearly presented.</Check>
+              <Check>Check the units of every equation, since a dimensional inconsistency is one of the quickest ways to lose a reviewer’s trust.</Check>
             </CheckList>
 
             <SubHeading>3.4 Conditions, Constraints and Baseline Cases</SubHeading>
@@ -1096,7 +1435,8 @@ function ArticleBody() {
               and provide sufficient information for independent reproduction.
               Reporting guidelines from the{" "}
               <Ext href="https://www.equator-network.org/">EQUATOR Network</Ext>{" "}
-              help you choose the right checklist for your study design.
+              <Cite n={10} /> help you choose the right checklist for your
+              study design.
             </p>
 
             <ArticleTable
@@ -1111,16 +1451,47 @@ function ArticleBody() {
                   "RCT, cohort, case-control, systematic review",
                   <>
                     Protocol, ethics, sample size,{" "}
-                    <Ext href="https://www.consort-statement.org/">CONSORT</Ext>,{" "}
-                    <Ext href="https://www.strobe-statement.org/">STROBE</Ext>,{" "}
-                    <Ext href="https://www.prisma-statement.org/">PRISMA</Ext>
+                    <Ext href="https://www.consort-statement.org/">CONSORT</Ext>{" "}
+                    <Cite n={4} />,{" "}
+                    <Ext href="https://www.strobe-statement.org/">STROBE</Ext>{" "}
+                    <Cite n={9} />,{" "}
+                    <Ext href="https://www.prisma-statement.org/">PRISMA</Ext>{" "}
+                    <Cite n={3} />
                   </>,
                 ],
                 ["Social science and management", "Survey, interviews, SEM, mixed methods", "Sampling, instrument validation, reliability, ethics"],
               ]}
             />
 
-            <SubHeading>4.2 How to Write the Methodology as Numbered Steps</SubHeading>
+            <SubHeading>4.2 Which Reporting Guideline Should You Follow?</SubHeading>
+
+            <p className={`${P} mt-3`}>
+              Reporting guidelines are checklists that tell you what a
+              reader needs to know about a particular study design. Journals,
+              especially in health research, may require the matching checklist
+              and ask you to submit it with the manuscript. The table below
+              lists widely used examples, and the EQUATOR Network library lists
+              many more <Cite n={10} />.
+            </p>
+
+            <ArticleTable
+              caption="Common reporting guidelines by study design"
+              headers={["Study design", "Guideline", "Use it for"]}
+              rows={[
+                ["Randomised trial", "CONSORT", "Parallel-group randomised trials"],
+                ["Observational study", "STROBE", "Cohort, case-control and cross-sectional studies"],
+                ["Systematic review", "PRISMA 2020", "Searching, screening and reporting reviews"],
+                ["Diagnostic accuracy", "STARD", "Studies that evaluate a diagnostic test"],
+                ["Prediction model", "TRIPOD (and TRIPOD+AI)", "Development and validation of prediction models"],
+                ["Case report", "CARE", "Individual clinical cases"],
+                ["Qualitative research", "COREQ or SRQR", "Interviews, focus groups and qualitative studies"],
+                ["Animal research", "ARRIVE 2.0", "In vivo experiments"],
+                ["Economic evaluation", "CHEERS", "Cost-effectiveness and economic studies"],
+                ["Machine learning and engineering", "Journal or conference reproducibility checklist", "Data, splits, hyperparameters, seeds, hardware and code"],
+              ]}
+            />
+
+            <SubHeading>4.3 How to Write the Methodology as Numbered Steps</SubHeading>
 
             <p className={`${P} mt-3`}>
               A numbered procedure makes the methodology easier to understand,
@@ -1141,34 +1512,39 @@ function ArticleBody() {
               ]}
             />
 
-            <SubHeading>4.3 Verification, Validation and Reproducibility</SubHeading>
+            <SubHeading>4.4 Verification, Validation and Reproducibility</SubHeading>
 
             <p className={`${P} mt-3`}>
               Verification establishes whether the computational or analytical
               procedure is implemented correctly. Validation establishes
               whether it represents reality. Reproducibility allows other
-              researchers to understand and repeat the work.
+              researchers to understand and repeat the work <Cite n={7} />.
             </p>
 
             <CheckList>
               <Check>Reduce the model to a known limiting case and compare it with published findings.</Check>
-              <Check>Demonstrate that results remain stable after refining the grid, domain, or sample.</Check>
+              <Check>
+                Demonstrate that results remain stable after refining the
+                grid, domain, or sample, and report the refinement study in a
+                consistent way, for example with the grid convergence index{" "}
+                <Cite n={8} />.
+              </Check>
               <Check>Report software versions, numerical settings, and random seeds.</Check>
               <Check>
                 Share code and data in an accessible repository where
                 possible, following the{" "}
                 <Ext href="https://www.go-fair.org/fair-principles/">
                   FAIR principles
-                </Ext>
-                .
+                </Ext>{" "}
+                <Cite n={5} />.
               </Check>
               <Check>
                 For human or animal research, report ethics approval and
                 consent where applicable, in line with{" "}
                 <Ext href="https://www.icmje.org/recommendations/">
                   ICMJE recommendations
-                </Ext>
-                .
+                </Ext>{" "}
+                <Cite n={15} />.
               </Check>
             </CheckList>
 
@@ -1178,7 +1554,58 @@ function ArticleBody() {
               against a benchmark, published result, or independent reference.
             </Callout>
 
-            <SubHeading>4.4 Common Methodology Mistakes</SubHeading>
+            <SubHeading>4.5 Experimental Design, Sample Size and Sensitivity</SubHeading>
+
+            <CheckList>
+              <Check>
+                <b>Plan the sample size before collecting data.</b> A power
+                analysis, or for computational work a justified number of
+                independent runs, folds or seeds, prevents conclusions that
+                rest on noise.
+              </Check>
+              <Check>
+                <b>Pre-specify the primary analysis.</b> For confirmatory
+                studies, registering the plan on a platform such as the Open
+                Science Framework, or submitting a registered report where
+                the journal offers it, separates planned from exploratory
+                analyses.
+              </Check>
+              <Check>
+                <b>Run a sensitivity analysis.</b> Changing one parameter at a
+                time is a useful start, and a global method such as Sobol
+                indices shows which inputs dominate the output when parameters
+                interact.
+              </Check>
+              <Check>
+                <b>Prevent data leakage.</b> Split the data before any
+                preprocessing or tuning, keep the test set untouched until the
+                final evaluation, and keep related samples (the same patient,
+                site or time block) on one side of a split. Leakage is a
+                documented source of overoptimistic results <Cite n={14} />.
+              </Check>
+              <Check>
+                <b>Use fair baselines.</b> Give every baseline the same
+                tuning budget, data and metrics, and include recent strong
+                methods, not only weak older ones.
+              </Check>
+            </CheckList>
+
+            <SubHeading>4.6 Data and Code: Make Them Reusable</SubHeading>
+
+            <p className={`${P} mt-3`}>
+              Deposit data and code in a repository that provides a DOI, such
+              as Zenodo, Figshare, Dryad, Mendeley Data or the Open Science
+              Framework. A GitHub repository can be archived on Zenodo to
+              obtain a citable DOI for a specific release. A short README that
+              tells a stranger how to regenerate every figure is the
+              cheapest reproducibility improvement you can make, and it
+              answers the reproducibility concerns that machine-learning venues
+              now raise routinely <Cite n={13} />.
+            </p>
+
+            <CodeBlock label="README template for a data and code repository" code={readmeTemplate} />
+
+            <SubHeading>4.7 Common Methodology Mistakes</SubHeading>
 
             <CheckList>
               <Check>Naming a method without explaining why it was selected.</Check>
@@ -1186,6 +1613,7 @@ function ArticleBody() {
               <Check>Skipping sensitivity or convergence analysis.</Check>
               <Check>Claiming validation without presenting a comparison.</Check>
               <Check>Providing insufficient detail for independent reproduction.</Check>
+              <Check>Tuning on the test set, or comparing a tuned method with untuned baselines.</Check>
             </CheckList>
 
             <p className={`${P} mt-4`}>
@@ -1246,6 +1674,16 @@ function ArticleBody() {
               established reference results.
             </Callout>
 
+            <p className={`${P} mt-3`}>
+              State the difference formula in the manuscript, because
+              “agreement within 1 percent” is ambiguous without it. A common
+              choice is: difference (%) = 100 × |present − published| ÷
+              |published|. With invented numbers, a published value of 1.2475
+              and a present value of 1.2481 give 100 × 0.0006 ÷ 1.2475, which
+              is about 0.048 percent. Report the largest difference across
+              all validation cases, not just the best one, and say whether the
+              published reference is itself experimental or computational.
+            </p>
 
             <SubHeading>5.2 How to Present the Main Results</SubHeading>
 
@@ -1253,7 +1691,9 @@ function ArticleBody() {
               Include a main results table containing the core numerical
               findings that readers may want to compare or cite. The reported
               precision should reflect the uncertainty of the underlying
-              measurements or calculations.
+              measurements or calculations. Present figures in the order of
+              your storyline, so that each one advances an argument and none
+              is included just because it was easy to produce.
             </p>
 
             <ArticleTable
@@ -1346,9 +1786,39 @@ function ArticleBody() {
               <Check>Identify the statistical test, test statistic, and exact p-value where applicable.</Check>
               <Check>Distinguish statistical significance from practical importance.</Check>
               <Check>Report alternative solution branches or subgroups when results are not unique.</Check>
+              <Check>
+                Emphasise effect sizes and confidence intervals over a lone
+                p-value <Cite n={11} />, and avoid treating a threshold as a
+                verdict <Cite n={12} />.
+              </Check>
+              <Check>
+                When you run many comparisons, say so and adjust for them
+                (for example with Holm or false-discovery-rate methods), or
+                label the extra tests as exploratory.
+              </Check>
             </CheckList>
 
-            <SubHeading>5.6 How to Choose Effective Figures and Tables</SubHeading>
+            <SubHeading>5.6 Match the Strength of Your Language to the Evidence</SubHeading>
+
+            <p className={`${P} mt-3`}>
+              Reviewers often object to wording that is stronger than the
+              data. Use the ladder below to choose verbs deliberately, and
+              keep the strongest verbs for results that have been tested
+              directly.
+            </p>
+
+            <ArticleTable
+              caption="A ladder of evidence strength and suitable wording"
+              headers={["Evidence you have", "Suitable wording", "Avoid unless proven"]}
+              rows={[
+                ["A proof, or an experiment designed to test the claim directly", "demonstrates, establishes", "Applying it to untested conditions"],
+                ["Consistent, repeated evidence under stated conditions", "shows, indicates, confirms (for the tested range)", "proves, always, in all cases"],
+                ["Supporting evidence with plausible alternatives", "suggests, is consistent with, is associated with", "causes, leads to"],
+                ["A mechanism or explanation that you did not test", "may, could, a possible explanation is", "because (stated as fact)"],
+              ]}
+            />
+
+            <SubHeading>5.7 How to Choose Effective Figures and Tables</SubHeading>
 
             <p className={`${P} mt-3`}>
               Figures should answer specific research questions rather than
@@ -1370,7 +1840,18 @@ function ArticleBody() {
               <Check>Ensure tables and figures are referenced and discussed in the text.</Check>
             </CheckList>
 
-            <SubHeading>5.7 Common Results and Discussion Mistakes</SubHeading>
+            <SubHeading>5.8 Report Unexpected and Negative Results Honestly</SubHeading>
+
+            <p className={`${P} mt-3`}>
+              Every real study has results that do not behave as expected.
+              Show them, state the conditions, and offer explanations that you
+              label as hypotheses unless you tested them. A paper that
+              explains where the method fails earns more trust than one that
+              shows only the favourable cases, and a clear negative result,
+              properly designed, is a contribution in its own right.
+            </p>
+
+            <SubHeading>5.9 Common Results and Discussion Mistakes</SubHeading>
 
             <CheckList>
               <Check>Presenting plots without explaining the underlying mechanism.</Check>
@@ -1378,6 +1859,7 @@ function ArticleBody() {
               <Check>Reporting more decimal places than the precision justifies.</Check>
               <Check>Selecting only favourable results and omitting unsuccessful cases.</Check>
               <Check>Mixing the presentation of results with unsupported conclusions.</Check>
+              <Check>Repeating the contents of tables in sentences instead of interpreting them.</Check>
             </CheckList>
 
             {/* PART 06: CONCLUSION */}
@@ -1418,6 +1900,23 @@ function ArticleBody() {
               enhanced.
             </Callout>
 
+            <ExampleBox
+              tone="strong"
+              label="Example conclusion paragraph (hypothetical, numbers invented)"
+              note="It answers each contribution in turn, with numbers, and ends on a boundary of the claim."
+            >
+              This study set out to improve short-term load forecasts during
+              extreme weather without specialised hardware. The
+              regime-switching correction reduced the mean absolute
+              percentage error on extreme-weather days by 21% against the
+              strongest tuned baseline (Fig. 6), while keeping inference
+              under 5 ms on a single CPU. The gain held on eight of ten
+              feeders, and was smaller on the two feeders with the fewest
+              extreme events (Table 4). These findings apply to the feeder
+              types and climate in the study and should be re-tested before
+              use elsewhere.
+            </ExampleBox>
+
             <SubHeading>6.3 Connecting Research to Real-Life Applications</SubHeading>
 
             <p className={`${P} mt-3`}>
@@ -1453,6 +1952,14 @@ function ArticleBody() {
               <Check>Generalisability limitations and the conditions under which the findings may not apply.</Check>
             </CheckList>
 
+            <p className={`${P} mt-4`}>
+              State each limitation together with its likely effect on the
+              conclusions and, when possible, how you checked it. “The
+              dataset covers one climate zone, so the extreme-weather gain may
+              differ elsewhere; a test on a second region is planned” is more
+              useful than “the study has limitations”.
+            </p>
+
             <SubHeading>6.5 How to Identify Future Research Directions</SubHeading>
 
             <CheckList>
@@ -1481,10 +1988,14 @@ function ArticleBody() {
               <Ext href="https://credit.niso.org/">
                 CRediT (Contributor Roles Taxonomy)
               </Ext>{" "}
-              provides a structured way to identify the different roles
-              performed by each author. Use the journal’s required format and
-              ensure that the contribution statements accurately reflect the
-              work completed.
+              <Cite n={6} /> provides a structured way to identify the
+              different roles performed by each author. Use the journal’s
+              required format and ensure that the contribution statements
+              accurately reflect the work completed. Agree on authorship, the
+              author order and the corresponding author early, using
+              recognised criteria such as those of the ICMJE{" "}
+              <Cite n={15} />, because authorship disputes during review are
+              slow and damaging.
             </p>
 
             <ArticleTable
@@ -1525,14 +2036,37 @@ function ArticleBody() {
 
             <SubHeading>7.4 Data Availability Statement</SubHeading>
 
-            <Callout title="Data availability template">
-              The data and solver scripts supporting this study are available
-              from the corresponding author on reasonable request. Where
-              possible, deposit the data and code in a public repository and
-              cite its DOI.
-            </Callout>
+            <p className={`${P} mt-3`}>
+              A good data availability statement tells readers exactly where
+              the data are, or why they cannot be shared and how access can be
+              obtained. Many journals and funders now prefer a repository with
+              a DOI, and treat a bare “available on request” as the weakest
+              option, so use it only when you give a specific reason.
+            </p>
 
-            <SubHeading>7.5 Disclosure of AI-Assisted Tools</SubHeading>
+            <ArticleTable
+              caption="Common ways to share data and when each is suitable"
+              headers={["Option", "When it is suitable", "Note"]}
+              rows={[
+                ["Public repository with a DOI", "Most research data and code", "Preferred by many journals and funders"],
+                ["Inside the paper or supplementary file", "Small datasets and tables", "Use a machine-readable format, not an image"],
+                ["Restricted-access repository", "Sensitive or licensed data", "Describe the access procedure and conditions"],
+                ["Third-party data", "Data owned by another party", "Cite the source and explain how to obtain it"],
+                ["On reasonable request", "Only when a specific reason prevents deposit", "Give the reason, and expect that it may be questioned"],
+              ]}
+            />
+
+            <CodeBlock label="Data availability statement" code={dataStatement} />
+
+            <SubHeading>7.5 Ethics, Consent and AI Disclosure</SubHeading>
+
+            <p className={`${P} mt-3`}>
+              If your study involves people, animals or sensitive data, state
+              the approving body, the reference number and the consent
+              arrangements, or explain why approval was not required.
+            </p>
+
+            <CodeBlock label="Ethics statement" code={ethicsStatement} />
 
             <p className={`${P} mt-3`}>
               If generative AI or other AI-assisted tools were used during
@@ -1543,9 +2077,11 @@ function ArticleBody() {
               <Ext href="https://publicationethics.org/guidance/cope-position/authorship-and-ai-tools">
                 COPE position statement
               </Ext>{" "}
-              notes that AI tools cannot be listed as authors, because authors
-              remain accountable for the work.
+              <Cite n={16} /> notes that AI tools cannot be listed as authors,
+              because authors remain accountable for the work.
             </p>
+
+            <CodeBlock label="AI-use disclosure" code={aiStatement} />
 
             {/* PART 08: REFERENCES */}
             <SectionHeading id="references" number="08">
@@ -1564,14 +2100,15 @@ function ArticleBody() {
             <p className={`${P} mt-3`}>
               The foundational sources below provide guidance on research
               design, academic writing, reporting standards, reproducibility,
-              and author contributions.
+              statistics, and author contributions. Verify each entry, and in
+              particular each DOI, on the publisher’s page before you reuse it.
             </p>
 
             <SubHeading>8.2 Foundational Research and Reporting Sources</SubHeading>
 
             <ol className="mt-5 list-decimal space-y-3 pl-5 text-[13px] leading-[1.8] text-slate-600 sm:text-sm">
               {references.map((reference, index) => (
-                <li key={index} className="pl-1">
+                <li key={index} id={`ref${index + 1}`} className="scroll-mt-28 pl-1">
                   {reference}
                 </li>
               ))}
@@ -1610,8 +2147,16 @@ function ArticleBody() {
 
             <CheckList>
               <Check>Cite primary research sources rather than relying only on review articles.</Check>
-              <Check>Aim for approximately 40 to 60 percent of references from the last five years where suitable for your field.</Check>
+              <Check>Aim for a healthy share of recent work from the last five years where it suits your field, since the right proportion varies by discipline.</Check>
               <Check>Never cite a paper that you have not read and verified.</Check>
+              <Check>
+                Check cited papers against the{" "}
+                <Ext href="https://retractiondatabase.org/">
+                  Retraction Watch Database
+                </Ext>{" "}
+                so that you do not build on retracted work.
+              </Check>
+              <Check>Discuss competing studies fairly, and limit self-citation to what is relevant.</Check>
               <Check>Follow the journal’s citation and reference formatting instructions.</Check>
             </CheckList>
 
@@ -1639,7 +2184,6 @@ function ArticleBody() {
               ))}
             </ul>
 
-
             {/* PART 10: SUBMISSION READINESS */}
             <SectionHeading id="submission-readiness" number="10">
               From Manuscript Structure to Submission Readiness
@@ -1655,7 +2199,7 @@ function ArticleBody() {
             <SubHeading>10.1 Final Submission Preparation Steps</SubHeading>
 
             <CheckList>
-              <Check>Confirm that the journal publishes the type of research presented in your manuscript, and verify its quartile on <Ext href="https://www.scimagojr.com/">Scimago</Ext>.</Check>
+              <Check>Confirm that the journal publishes the type of research presented in your manuscript, and verify its quartile on <Ext href="https://www.scimagojr.com/">Scimago</Ext>. Our guide to <Int href="/blog/fast-review-q1-q2-journals">finding fast-review Q1/Q2 journals</Int> shows how to compare candidates.</Check>
               <Check>Check the latest author instructions and manuscript template.</Check>
               <Check>Ensure that the title, abstract, keywords, and author information are consistent.</Check>
               <Check>Prepare the cover letter and required supplementary files.</Check>
@@ -1663,6 +2207,17 @@ function ArticleBody() {
               <Check>Check the generated submission PDF before completing the submission.</Check>
               <Check>Retain the final manuscript, source files, data, and relevant correspondence.</Check>
             </CheckList>
+
+            <p className={`${P} mt-4`}>
+              Before you submit, ask a co-author who did not write the paper to
+              review it as a skeptical referee, and fix every major point they
+              raise. For a day-by-day preparation plan and the technical
+              checks editors run, use our{" "}
+              <Int href="/blog/formatting-guide">manuscript formatting guide</Int>,
+              and keep our{" "}
+              <Int href="/blog/paper-rejection-reasons">rejection guide</Int>{" "}
+              open as a mock-review checklist.
+            </p>
 
             <Callout title="Final research writing advice">
               A strong Q1 manuscript is built through a clear research
@@ -1679,8 +2234,12 @@ function ArticleBody() {
 
             <div className="mt-6 divide-y divide-slate-200 overflow-hidden rounded-xl border border-slate-200">
               {faqs.map((faq, index) => (
-                <details key={faq.q} className="group bg-white open:bg-slate-50" {...(index === 0 ? { open: true } : {})}>
-                  <summary className="flex cursor-pointer list-none items-start justify-between gap-4 px-5 py-4 text-left">
+                <details
+                  key={faq.q}
+                  className="group bg-white open:bg-slate-50"
+                  {...(index === 0 ? { open: true } : {})}
+                >
+                  <summary className="flex cursor-pointer list-none items-start justify-between gap-4 px-5 py-4 text-left [&::-webkit-details-marker]:hidden">
                     <h3 className="font-serif text-base font-bold leading-snug text-slate-950">
                       {faq.q}
                     </h3>
@@ -1738,6 +2297,16 @@ function ArticleBody() {
                 evaluating its scientific contribution.
               </p>
 
+              <p className={`${P} mt-3`}>
+                A practical order of work is to plan the storyline on one
+                page, draft the figures and tables, write the methods and
+                results, then the introduction and abstract last, and finish
+                with a reverse outline, a mock review and the checklist in Part
+                09. Writing in that order keeps the argument honest, because
+                every claim has to survive contact with the evidence before it
+                reaches the abstract.
+              </p>
+
               <div className="mt-6 rounded-xl border border-blue-100 bg-blue-50/60 p-6">
                 <p className="font-serif text-lg font-bold text-blue-950">
                   Need expert support with your manuscript?
@@ -1765,6 +2334,13 @@ function ArticleBody() {
                   </Link>
                 </div>
               </div>
+
+              <p className="mt-6 text-xs italic leading-relaxed text-slate-500">
+                The worked examples in this guide are hypothetical, and their
+                numbers are invented for illustration. Journal requirements,
+                reporting guidelines and AI policies change over time, so
+                confirm them on the journal’s own website before submitting.
+              </p>
             </section>
           </article>
 
@@ -1930,6 +2506,7 @@ function ArticleBody() {
             <ul className="mt-4 space-y-2.5 text-[13px]">
               <li><Link href="/blog/formatting-guide" className="transition hover:text-white">Manuscript Formatting</Link></li>
               <li><Link href="/blog/paper-rejection-reasons" className="transition hover:text-white">Journal Rejection Guide</Link></li>
+              <li><Link href="/blog/fast-review-q1-q2-journals" className="transition hover:text-white">Fast-Review Q1/Q2 Journals</Link></li>
               <li><Link href="/blog/contour-visualizations" className="transition hover:text-white">Scientific Visualization</Link></li>
               <li><Link href="/blog/systematic-literature-review-guide" className="transition hover:text-white">Literature Review Guide</Link></li>
               <li><Link href="/blog/q1-research-paper-structure" className="transition hover:text-white">Q1 Research Paper Structure</Link></li>
