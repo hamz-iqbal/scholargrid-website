@@ -75,6 +75,15 @@ const articles = [
       "Explore how AI transforms scientific research through advanced tools, practical applications, key benefits, and ethical limitations for modern scholars.",
     href: "/blog/ai-in-scientific-research",
   },
+   {
+    number: "09",
+    category: "MATLAB vs Python",
+    title:
+      "Python or MATLAB in 2026? A Comparison for Computational Engineers",
+    description:
+      "Explore key differences between Python and MATLAB in machine learning, solvers, visualization, and practical engineering applications.",
+    href: "/blog/python-vs-matlab-scientific-computing",
+  },
 ];
 
 export default function BlogPage() {

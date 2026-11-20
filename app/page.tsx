@@ -88,6 +88,13 @@ const blogPosts = [
     desc: "Where AI helps in research, which tools to use, a worked physics-informed neural network example, and the limits and ethics of responsible use.",
     href: "/blog/ai-in-scientific-research",
   },
+   {
+    tag: "Python vs MATLAB",
+    title:
+      "Python vs MATLAB for Scientific Computing in 2026: The Ultimate Guide",
+    desc: "Compare Python and MATLAB for numerical solvers, visualization, machine learning, and cost to choose the best tool for research.",
+    href: "/blog/python-vs-matlab-scientific-computing",
+  },
 ];
 
 const featuredPost = blogPosts[0];
@@ -164,7 +171,7 @@ const services = [
 ];
 
 const stats = [
-  { value: "8", label: "In-depth research guides" },
+  { value: "9", label: "In-depth research guides" },
   { value: "Free", label: "To read, no sign-up" },
 ];
 
