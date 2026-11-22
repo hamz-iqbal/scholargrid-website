@@ -912,14 +912,13 @@ function ArticleBody() {
           </Link>
 
           <div className="hidden items-center gap-7 text-sm font-medium text-slate-600 md:flex">
-            <Link href="/" className="transition hover:text-blue-800">Home</Link>
-            <Link href="/#services" className="transition hover:text-blue-800">Services</Link>
-            <Link href="/#process" className="transition hover:text-blue-800">How it works</Link>
-            <Link href="/#insights" className="transition hover:text-blue-800">Insights</Link>
-            <Link href="/blog" className="font-semibold text-blue-800 transition hover:text-blue-950">
-              Knowledge Library
-            </Link>
-          </div>
+  <Link href="/blog" className="font-semibold text-blue-800 transition hover:text-blue-950">
+    Knowledge Library
+  </Link>
+  <Link href="/#coverage" className="transition hover:text-blue-800">Coverage</Link>
+  <Link href="/#topics" className="transition hover:text-blue-800">Topics</Link>
+  <Link href="/#faq" className="transition hover:text-blue-800">FAQ</Link>
+</div>
 
           <details className="group md:hidden">
             <summary

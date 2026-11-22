@@ -5,14 +5,11 @@ import Link from "next/link";
 import Image from "next/image";
 import {
   FileText,
-  Award,
   Cpu,
-  BarChart2,
   CheckCircle,
   ChevronDown,
   BookOpen,
   ArrowRight,
-  ExternalLink,
   GraduationCap,
   Layers,
   Sigma,
@@ -24,12 +21,6 @@ import {
 ------------------------------------------------------------------ */
 
 const SITE_URL = "https://scholargrid.org";
-
-const googleScholarUrl =
-  "https://scholar.google.com/citations?hl=en&user=-VGaDnoAAAAJ";
-
-const researchGateUrl =
-  "https://www.researchgate.net/profile/Hamza-Iqbal-19?ev=hdr_xprf";
 
 const blogPosts = [
   {
@@ -122,25 +113,26 @@ const startHere = [
   },
 ];
 
-const services = [
+/* Educational coverage areas (replaces the old "services" list) */
+const coverage = [
   {
     icon: PenLine,
-    title: "Academic writing support",
+    title: "Academic writing",
     description:
-      "Structure, argument flow, and clarity for journal articles, theses, and dissertations.",
+      "Guides on structure, argument flow, and clarity for journal articles, theses, and dissertations.",
     scope: [
       "Manuscript organization",
       "Abstract and introduction clarity",
-      "Response-to-reviewer guidance",
+      "How reviewer feedback is typically handled",
     ],
     href: "/blog/q1-research-paper-structure",
-    cta: "See the paper structure guide",
+    cta: "Read the paper structure guide",
   },
   {
     icon: Sigma,
     title: "LaTeX and journal formatting",
     description:
-      "Template setup, equations, references, and figure requirements for Elsevier, IEEE, and similar publishers.",
+      "Explanations of template setup, equations, references, and figure requirements for Elsevier, IEEE, and similar publishers.",
     scope: [
       "LaTeX and Word templates",
       "Equation and table formatting",
@@ -151,16 +143,16 @@ const services = [
   },
   {
     icon: Cpu,
-    title: "Computational support",
+    title: "Computational methods",
     description:
-      "Python and MATLAB workflows for analysis, numerical modeling, and publication-ready figures.",
+      "Tutorials on Python and MATLAB workflows for analysis, numerical modeling, and publication-ready figures.",
     scope: [
       "Contour and 3D plots",
       "Reproducible analysis scripts",
-      "Results presentation",
+      "Presenting results clearly",
     ],
     href: "/blog/contour-visualizations",
-    cta: "Learn the visualization workflow",
+    cta: "Read the visualization guide",
   },
   {
     icon: Layers,
@@ -173,12 +165,12 @@ const services = [
       "Quartile and review-time checks",
     ],
     href: "/blog/systematic-literature-review-guide",
-    cta: "Start the literature review guide",
+    cta: "Read the literature review guide",
   },
 ];
 
 const stats = [
-  { value: "10", label: "In-depth research guides" },
+  { value: String(blogPosts.length), label: "In-depth research guides" },
   { value: "Free", label: "To read, no sign-up" },
 ];
 
@@ -199,43 +191,66 @@ const topicLinks = [
   { label: "Systematic literature review", href: "/blog/systematic-literature-review-guide" },
   { label: "Q1/Q2 formatting pitfalls", href: "/blog/q1-q2-manuscript-formatting-avoid-rejection" },
   { label: "Fast-review journals", href: "/blog/fast-review-q1-q2-journals" },
+  { label: "AI tools for literature review", href: "/blog/best-ai-tools-for-literature-review" },
+];
+
+/* How the guides are written (replaces the researcher-profile section) */
+const editorialPoints = [
+  {
+    icon: FileText,
+    title: "Sourced from published work",
+    description:
+      "Guides cite journal articles, standards, and official documentation so you can check the original source.",
+  },
+  {
+    icon: CheckCircle,
+    title: "Limits stated openly",
+    description:
+      "Where a claim comes from a vendor, a preprint, or an untested script, the guide says so.",
+  },
+  {
+    icon: BookOpen,
+    title: "Corrections welcome",
+    description:
+      "If you find an error or an out-of-date detail, tell us through the contact page and we will review it.",
+  },
 ];
 
 const faqs = [
   {
     q: "What is ScholarGrid?",
-    a: "ScholarGrid is an academic knowledge platform for PhD scholars and researchers. It publishes practical guides on academic writing, LaTeX and journal formatting, computational methods, literature reviews, and scholarly publishing.",
+    a: "ScholarGrid is a free educational publication for PhD scholars and researchers. It publishes practical guides on academic writing, LaTeX and journal formatting, computational methods, literature reviews, and scholarly publishing.",
     category: "About",
   },
   {
     q: "Who are the guides written for?",
-    a: "PhD candidates, master's students, research associates, and faculty who are preparing manuscripts, theses, or journal submissions. Most guides assume you already have a research result and need help presenting and publishing it.",
+    a: "PhD candidates, master's students, research associates, and faculty who are preparing manuscripts, theses, or journal submissions. Most guides assume you already have a research result and want to understand how to present and publish it.",
     category: "Audience",
   },
   {
-    q: "Do you cover Q1 and Q2 journal publishing?",
+    q: "Do the guides cover Q1 and Q2 journal publishing?",
     a: "Yes. The library covers manuscript structure, journal selection, formatting for Elsevier and IEEE, common causes of rejection, and how to verify that a journal is legitimate before you submit.",
     category: "Publishing",
   },
   {
-    q: "Do you help with LaTeX and computational work?",
+    q: "Do the guides cover LaTeX and computational work?",
     a: "Yes. The guides explain template setup, equations, references, and figure preparation, and cover Python and MATLAB workflows for contour plots, 3D visualizations, and reproducible analysis.",
     category: "Tools",
   },
   {
-    q: "Can ScholarGrid help with literature reviews?",
-    a: "Yes. The systematic literature review guide walks through search protocols, PRISMA screening, concept matrices, and evidence synthesis so you can identify research gaps with confidence.",
+    q: "Is there a guide on literature reviews?",
+    a: "Yes. The systematic literature review guide walks through search protocols, PRISMA screening, concept matrices, and evidence synthesis. A separate guide compares AI tools for literature review and explains how to verify and report their use.",
     category: "Methodology",
+  },
+  {
+    q: "Do you write, edit, or ghostwrite papers?",
+    a: "No. ScholarGrid is an educational resource and does not sell writing, editing, or ghostwriting services. Every guide is free to read, and your research and manuscript remain your own work.",
+    category: "Policy",
   },
   {
     q: "How often is new content added?",
     a: "New articles are added periodically. The Knowledge Library always lists the latest guides first.",
     category: "Content",
-  },
-  {
-    q: "Where can I see the researcher's publications?",
-    a: "Publication records and citations are available on the linked Google Scholar and ResearchGate profiles further down this page.",
-    category: "Profiles",
   },
 ];
 
@@ -286,7 +301,7 @@ export default function ScholarGridLandingPage() {
     name: "ScholarGrid",
     url: SITE_URL,
     description:
-      "Academic writing, LaTeX, and computational guides for PhD scholars and researchers.",
+      "Free academic writing, LaTeX, and computational guides for PhD scholars and researchers.",
   };
 
   return (
@@ -327,14 +342,11 @@ export default function ScholarGridLandingPage() {
             <a href="#library" className="transition hover:text-blue-800">
               Knowledge Library
             </a>
-            <a href="#services" className="transition hover:text-blue-800">
-              Support Scope
+            <a href="#coverage" className="transition hover:text-blue-800">
+              Coverage
             </a>
             <a href="#topics" className="transition hover:text-blue-800">
               Topics
-            </a>
-            <a href="#profiles" className="transition hover:text-blue-800">
-              Researcher
             </a>
             <a href="#faq" className="transition hover:text-blue-800">
               FAQ
@@ -368,7 +380,7 @@ export default function ScholarGridLandingPage() {
               </p>
 
               <h1 className="max-w-2xl font-serif text-4xl font-bold leading-[1.15] tracking-tight text-slate-950 sm:text-5xl lg:text-[3.4rem]">
-                Academic writing, LaTeX, and computational support for
+                Academic writing, LaTeX, and computational guides for
                 getting your research published.
               </h1>
 
@@ -411,7 +423,7 @@ export default function ScholarGridLandingPage() {
                     className="text-blue-800"
                     aria-hidden="true"
                   />
-                  Written by a published researcher
+                  Sourced from published work
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle
@@ -470,7 +482,7 @@ export default function ScholarGridLandingPage() {
         {/* Trust Strip */}
 
         <section
-          aria-label="Track record"
+          aria-label="Library overview"
           className="border-b border-slate-200 bg-white"
         >
           <div className="mx-auto grid max-w-7xl grid-cols-2 divide-x divide-slate-200">
@@ -595,25 +607,25 @@ export default function ScholarGridLandingPage() {
           </div>
         </section>
 
-        {/* Services / Support Scope */}
+        {/* Coverage (educational topics, not services) */}
 
         <section
-          id="services"
+          id="coverage"
           className="scroll-mt-24 border-y border-slate-200 bg-slate-50 py-16 lg:py-20"
         >
           <div className="mx-auto max-w-7xl px-6 sm:px-8">
             <SectionHeading
-              title="What ScholarGrid helps with"
-              description="Four areas of support for researchers who are writing, formatting, analyzing, and submitting. Each one links to the guide that explains the method."
+              title="What the library covers"
+              description="Four subject areas for researchers who are writing, formatting, analyzing, and submitting. Each one links to the guide that explains the method."
             />
 
             <div className="grid gap-5 sm:grid-cols-2">
-              {services.map((service) => {
-                const Icon = service.icon;
+              {coverage.map((area) => {
+                const Icon = area.icon;
 
                 return (
                   <article
-                    key={service.title}
+                    key={area.title}
                     className="flex flex-col rounded-xl border border-slate-200 bg-white p-7"
                   >
                     <div className="flex items-center gap-4">
@@ -621,16 +633,16 @@ export default function ScholarGridLandingPage() {
                         <Icon size={22} aria-hidden="true" />
                       </div>
                       <h3 className="font-serif text-xl font-bold text-slate-900">
-                        {service.title}
+                        {area.title}
                       </h3>
                     </div>
 
                     <p className="mt-4 text-sm leading-7 text-slate-600">
-                      {service.description}
+                      {area.description}
                     </p>
 
                     <ul className="mt-4 space-y-2 text-sm text-slate-700">
-                      {service.scope.map((item) => (
+                      {area.scope.map((item) => (
                         <li key={item} className="flex items-start gap-2">
                           <CheckCircle
                             size={16}
@@ -643,10 +655,10 @@ export default function ScholarGridLandingPage() {
                     </ul>
 
                     <Link
-                      href={service.href}
+                      href={area.href}
                       className="mt-6 inline-flex w-fit items-center gap-2 text-sm font-bold text-blue-900 hover:underline"
                     >
-                      {service.cta}
+                      {area.cta}
                       <ArrowRight size={15} aria-hidden="true" />
                     </Link>
                   </article>
@@ -686,96 +698,42 @@ export default function ScholarGridLandingPage() {
           </ul>
         </section>
 
-        {/* Researcher Profiles */}
+        {/* How the guides are written */}
 
         <section
-          id="profiles"
+          id="editorial"
           className="scroll-mt-24 border-y border-slate-200 bg-slate-50 py-16 lg:py-20"
         >
           <div className="mx-auto max-w-7xl px-6 sm:px-8">
-            <div className="grid items-center gap-10 lg:grid-cols-[1fr_0.9fr]">
-              <div>
-                <h2 className="font-serif text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
-                  Guidance from a published researcher
-                </h2>
+            <SectionHeading
+              title="How the guides are written"
+              description="Every guide is meant to be checked, not just read. Here is what to expect from the library."
+            />
 
-                <p className="mt-5 max-w-xl text-base leading-8 text-slate-600">
-                  The guides come from direct experience preparing and
-                  submitting manuscripts to Q1 and Q2 journals. Check
-                  the publication record and citations yourself on the
-                  public profiles below.
-                </p>
+            <ul className="grid gap-5 md:grid-cols-3">
+              {editorialPoints.map((point) => {
+                const Icon = point.icon;
 
-                <div className="mt-7 flex flex-wrap gap-3">
-                  <a
-                    href={googleScholarUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-lg bg-blue-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-950 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2"
+                return (
+                  <li
+                    key={point.title}
+                    className="rounded-xl border border-slate-200 bg-white p-6"
                   >
-                    Google Scholar
-                    <ExternalLink size={15} aria-hidden="true" />
-                  </a>
-
-                  <a
-                    href={researchGateUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-800 transition hover:border-blue-800 hover:text-blue-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2"
-                  >
-                    ResearchGate
-                    <ExternalLink size={15} aria-hidden="true" />
-                  </a>
-                </div>
-              </div>
-
-              <ul className="grid gap-4 sm:grid-cols-2">
-                <li className="rounded-xl border border-slate-200 bg-white p-6">
-                  <FileText
-                    size={24}
-                    aria-hidden="true"
-                    className="mb-4 text-blue-900"
-                  />
-                  <h3 className="font-serif text-lg font-bold text-slate-900">
-                    Peer-reviewed publications
-                  </h3>
-                  <p className="mt-2 text-sm leading-6 text-slate-600">
-                    Full publication list and citations are on Google
-                    Scholar.
-                  </p>
-                </li>
-
-                <li className="rounded-xl border border-slate-200 bg-white p-6">
-                  <BarChart2
-                    size={24}
-                    aria-hidden="true"
-                    className="mb-4 text-blue-900"
-                  />
-                  <h3 className="font-serif text-lg font-bold text-slate-900">
-                    Computational research
-                  </h3>
-                  <p className="mt-2 text-sm leading-6 text-slate-600">
-                    Numerical modeling and data-driven methods in engineering.
-                  </p>
-                </li>
-
-                <li className="rounded-xl border border-slate-200 bg-white p-6 sm:col-span-2">
-                  <Award
-                    size={24}
-                    aria-hidden="true"
-                    className="mb-4 text-blue-900"
-                  />
-                  <h3 className="font-serif text-lg font-bold text-slate-900">
-                    Publishing experience
-                  </h3>
-                  <p className="mt-2 text-sm leading-6 text-slate-600">
-                    The formatting and rejection guides are based on
-                    hands-on experience preparing manuscripts for
-                    journal submission.
-                  </p>
-                </li>
-              </ul>
-            </div>
+                    <Icon
+                      size={24}
+                      aria-hidden="true"
+                      className="mb-4 text-blue-900"
+                    />
+                    <h3 className="font-serif text-lg font-bold text-slate-900">
+                      {point.title}
+                    </h3>
+                    <p className="mt-2 text-sm leading-6 text-slate-600">
+                      {point.description}
+                    </p>
+                  </li>
+                );
+              })}
+            </ul>
           </div>
         </section>
 
@@ -828,14 +786,15 @@ export default function ScholarGridLandingPage() {
                     />
                   </button>
 
-                  {isOpen && (
-                    <div
-                      id={panelId}
-                      className="bg-slate-50 px-5 pb-6 pt-1 text-sm leading-7 text-slate-600 sm:px-7"
-                    >
-                      {faq.a}
-                    </div>
-                  )}
+                  {/* Always rendered in the HTML (hidden when closed) so crawlers can read every answer */}
+                  <div
+                    id={panelId}
+                    role="region"
+                    hidden={!isOpen}
+                    className="bg-slate-50 px-5 pb-6 pt-1 text-sm leading-7 text-slate-600 sm:px-7"
+                  >
+                    {faq.a}
+                  </div>
                 </div>
               );
             })}

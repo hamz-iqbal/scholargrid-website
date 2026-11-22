@@ -20,9 +20,10 @@ import {
 /* SEO: metadata, FAQs and structured data                             */
 /* ------------------------------------------------------------------ */
 
-/* Set NEXT_PUBLIC_SITE_URL in .env if your domain differs (no trailing slash) */
+/* Set NEXT_PUBLIC_SITE_URL in .env if your domain differs (no trailing slash).
+   The live site is served at the non-www domain, so that is the default. */
 const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.scholargrid.org"
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://scholargrid.org"
 ).replace(/\/$/, "");
 
 const SLUG = "/blog/formatting-guide";
@@ -791,12 +792,20 @@ function ArticleBody() {
           </Link>
 
           <div className="hidden items-center gap-7 text-sm font-medium text-slate-600 md:flex">
-            <Link href="/" className="transition hover:text-blue-800">Home</Link>
-            <Link href="/#services" className="transition hover:text-blue-800">Services</Link>
-            <Link href="/#process" className="transition hover:text-blue-800">How it works</Link>
-            <Link href="/#insights" className="transition hover:text-blue-800">Insights</Link>
-            <Link href="/blog" className="font-semibold text-blue-800 transition hover:text-blue-950">
+            <Link
+              href="/blog"
+              className="font-semibold text-blue-800 transition hover:text-blue-950"
+            >
               Knowledge Library
+            </Link>
+            <Link href="/#coverage" className="transition hover:text-blue-800">
+              Coverage
+            </Link>
+            <Link href="/#topics" className="transition hover:text-blue-800">
+              Topics
+            </Link>
+            <Link href="/#faq" className="transition hover:text-blue-800">
+              FAQ
             </Link>
           </div>
 
@@ -810,11 +819,10 @@ function ArticleBody() {
             </summary>
             <div className="absolute left-0 right-0 top-full border-t border-slate-200 bg-white px-6 py-4 shadow-sm">
               <div className="flex flex-col gap-4 text-sm font-medium text-slate-700">
-                <Link href="/">Home</Link>
-                <Link href="/#services">Services</Link>
-                <Link href="/#process">How it works</Link>
-                <Link href="/#insights">Insights</Link>
                 <Link href="/blog">Knowledge Library</Link>
+                <Link href="/#coverage">Coverage</Link>
+                <Link href="/#topics">Topics</Link>
+                <Link href="/#faq">FAQ</Link>
               </div>
             </div>
           </details>
@@ -1549,7 +1557,7 @@ function ArticleBody() {
               <Int href="/blog">ScholarGrid Knowledge Library</Int>.
             </p>
 
-            {/* Conclusion + CTA */}
+            {/* Conclusion + next steps */}
             <section
               id="conclusion"
               aria-labelledby="conclusion-heading"
@@ -1583,27 +1591,26 @@ function ArticleBody() {
 
               <div className="mt-6 rounded-xl border border-blue-100 bg-blue-50/60 p-6">
                 <p className="font-serif text-lg font-bold text-blue-950">
-                  Need help preparing your manuscript for submission?
+                  Keep learning with the next guide
                 </p>
                 <p className="mt-2 text-sm leading-[1.8] text-slate-700">
-                  ScholarGrid helps researchers format, structure, and prepare
-                  manuscripts for journal submission. Explore our academic
-                  services or keep learning in the Knowledge Library.
+                  Browse the Knowledge Library for more free guides on
+                  academic writing, journal selection, and research methods.
                 </p>
                 <div className="mt-4 flex flex-wrap items-center gap-4">
                   <Link
-                    href="/#services"
+                    href="/blog"
                     className="inline-flex items-center gap-2 rounded-lg bg-blue-950 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-800"
                   >
-                    Explore ScholarGrid Services
+                    Browse the Knowledge Library
                     <ArrowRight size={16} aria-hidden="true" />
                   </Link>
                   <Link
-                    href="/blog"
+                    href="/"
                     className="inline-flex items-center gap-2 text-sm font-semibold text-blue-800 transition hover:text-blue-950"
                   >
                     <ArrowLeft size={16} aria-hidden="true" />
-                    Back to Knowledge Library
+                    Back to Homepage
                   </Link>
                 </div>
               </div>
@@ -1781,8 +1788,8 @@ function ArticleBody() {
               </span>
             </Link>
             <p className="mt-4 max-w-sm text-[13px] leading-[1.8]">
-              An academic knowledge platform sharing practical research
-              resources, scholarly writing guidance, and publishing insights
+              A free educational publication sharing practical research
+              guides, scholarly writing explanations, and publishing insights
               for researchers across disciplines.
             </p>
           </div>
@@ -1792,9 +1799,12 @@ function ArticleBody() {
             <p className="text-sm font-semibold text-white">Explore ScholarGrid</p>
             <ul className="mt-4 space-y-2.5 text-[13px]">
               <li><Link href="/" className="transition hover:text-white">Home</Link></li>
-              <li><Link href="/#services" className="transition hover:text-white">Academic Services</Link></li>
-              <li><Link href="/#process" className="transition hover:text-white">How It Works</Link></li>
+              <li><Link href="/blog" className="transition hover:text-white">Knowledge Library</Link></li>
+              <li><Link href="/#coverage" className="transition hover:text-white">Coverage</Link></li>
               <li><Link href="/#faq" className="transition hover:text-white">Frequently Asked Questions</Link></li>
+              <li><Link href="/contact" className="transition hover:text-white">Contact</Link></li>
+              <li><Link href="/privacy-policy" className="transition hover:text-white">Privacy Policy</Link></li>
+              <li><Link href="/terms" className="transition hover:text-white">Terms &amp; Conditions</Link></li>
             </ul>
           </nav>
 
