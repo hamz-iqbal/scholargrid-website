@@ -1623,7 +1623,7 @@ function ArticleBody() {
                 <strong>Never list an AI tool as an author.</strong> Journals
                 that follow COPE guidance do not accept AI tools as authors,
                 because authors must be accountable for the work{" "}
-                <Cite n={29} />.
+                .
               </Check>
             </CheckList>
 
