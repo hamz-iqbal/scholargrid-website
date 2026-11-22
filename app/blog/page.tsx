@@ -84,6 +84,15 @@ const articles = [
       "Explore key differences between Python and MATLAB in machine learning, solvers, visualization, and practical engineering applications.",
     href: "/blog/python-vs-matlab-scientific-computing",
   },
+   {
+    number: "10",
+    category: "AI Literature Review Tools",
+    title:
+      "Top AI Tools for Literature Review in 2026 (Beyond Connected Papers)",
+    description:
+      "Discover the top AI tools for literature review in 2026 beyond Connected Papers. Automate paper discovery, extract insights, and speed up research.",
+    href: "/blog/best-ai-tools-for-literature-review",
+  },
 ];
 
 export default function BlogPage() {

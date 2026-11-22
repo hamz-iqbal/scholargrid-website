@@ -95,6 +95,13 @@ const blogPosts = [
     desc: "Compare Python and MATLAB for numerical solvers, visualization, machine learning, and cost to choose the best tool for research.",
     href: "/blog/python-vs-matlab-scientific-computing",
   },
+    {
+    tag: "AI for Literature Review",
+    title:
+      "7 Best AI Tools to Automate Literature Review & Paper Discovery in 2026",
+    desc: "Streamline your academic literature review with the best AI tools of 2026. Map citation networks, synthesize papers, and write thesis background faster.",
+    href: "/blog/best-ai-tools-for-literature-review",
+  },
 ];
 
 const featuredPost = blogPosts[0];
@@ -171,7 +178,7 @@ const services = [
 ];
 
 const stats = [
-  { value: "9", label: "In-depth research guides" },
+  { value: "10", label: "In-depth research guides" },
   { value: "Free", label: "To read, no sign-up" },
 ];
 
