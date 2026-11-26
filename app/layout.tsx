@@ -1,5 +1,7 @@
+
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Source_Serif_4 } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import ChatBotGate from "@/components/Chatbot";
@@ -15,7 +17,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// Serif font used for headings on the landing page (font-serif)
 const sourceSerif = Source_Serif_4({
   variable: "--font-source-serif",
   subsets: ["latin"],
@@ -23,6 +24,7 @@ const sourceSerif = Source_Serif_4({
 });
 
 const ADSENSE_CLIENT = "ca-pub-4708685236568228";
+const GA_MEASUREMENT_ID = "G-CT5CX80D93";
 
 const GOOGLE_SCHOLAR_URL =
   "https://scholar.google.com/citations?hl=en&user=-VGaDnoAAAAJ";
@@ -55,14 +57,11 @@ export const metadata: Metadata = {
   creator: "ScholarGrid",
   publisher: "ScholarGrid",
   alternates: {
-    // "./" resolves to each page's own URL, so blog posts do not all
-    // inherit the homepage as their canonical.
     canonical: "./",
   },
   verification: {
     google: "R-joaBU6oK5Y2WxN_RDz7f63hpLWrLt7CMKTBX6tzV8",
   },
-  // AdSense site verification via meta tag (rendered server-side in <head>)
   other: {
     "google-adsense-account": ADSENSE_CLIENT,
   },
@@ -126,35 +125,50 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      // AdSense and browser extensions can modify <head>/<html> before React
-      // hydrates; this stops that from throwing a hydration warning.
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${sourceSerif.variable} h-full antialiased`}
     >
-      {/* No manual <script> tags here. Next.js manages <head> from `metadata`. */}
       <body className="min-h-full flex flex-col relative">
+
+        {/* Google Analytics 4 */}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+          strategy="afterInteractive"
+        />
+
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){window.dataLayer.push(arguments);}
+            window.gtag = gtag;
+            gtag('js', new Date());
+            gtag('config', '${GA_MEASUREMENT_ID}');
+          `}
+        </Script>
+
         {children}
 
-        {/* Site-wide footer with Contact, Privacy Policy and Terms links */}
         <SiteFooter />
-
-        {/* Chatbot: shown on all pages except /blog and blog articles */}
         <ChatBotGate />
 
-        <Analytics /> {/* Vercel Live Traffic & Visitor Tracking Component */}
+        {/* Vercel Analytics */}
+        <Analytics />
 
-        {/* Google AdSense: standard script loading without Next.js data-nscript */}
+        {/* Google AdSense */}
         <script
           async
           src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`}
           crossOrigin="anonymous"
         />
 
-        {/* Site-wide Schema Markup (JSON-LD) */}
+        {/* JSON-LD */}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(jsonLd),
+          }}
         />
+
       </body>
     </html>
   );
