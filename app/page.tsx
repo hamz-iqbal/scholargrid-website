@@ -93,6 +93,12 @@ const blogPosts = [
     desc: "Streamline your academic literature review with the best AI tools of 2026. Map citation networks, synthesize papers, and write thesis background faster.",
     href: "/blog/best-ai-tools-for-literature-review",
   },
+  {tag: "Research Gap",
+    title:
+      "How to Identify a Real Research Gap From Literature (Without Guesswork)",
+    desc: "Stop guessing your research topic. Learn a practical, step-by-step framework to identify real literature gaps, structure original research questions, and avoid rejection.",
+    href: "/blog/identify-a-real-research-gap",
+  }
 ];
 
 const featuredPost = blogPosts[0];

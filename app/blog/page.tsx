@@ -93,6 +93,15 @@ const articles = [
       "Discover the top AI tools for literature review in 2026 beyond Connected Papers. Automate paper discovery, extract insights, and speed up research.",
     href: "/blog/best-ai-tools-for-literature-review",
   },
+  {
+    number: "11",
+    category: "Research Gap",
+    title:
+      "Finding the Research Gap: A Practical Guide for Graduate Scholars",
+    description:
+      "Master literature gap identification with ease. Discover how to analyze existing research, spot methodological limits, and confidently position your MS or PhD thesis topic.",
+    href: "/blog/identify-a-real-research-gap",
+  },
 ];
 
 export default function BlogPage() {
