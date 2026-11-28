@@ -98,7 +98,13 @@ const blogPosts = [
       "How to Identify a Real Research Gap From Literature (Without Guesswork)",
     desc: "Stop guessing your research topic. Learn a practical, step-by-step framework to identify real literature gaps, structure original research questions, and avoid rejection.",
     href: "/blog/identify-a-real-research-gap",
-  }
+  },
+  {tag: "Academic Productivity",
+    title:
+      "How to Organize Research Papers and Notes Without Losing Track",
+    desc: "Discover a practical workflow for scholars to organize research papers, PDFs, and notes effortlessly using folder hierarchies, reference managers, and literature matrices.",
+    href: "/blog/organize-research-papers-and-notes",
+  },
 ];
 
 const featuredPost = blogPosts[0];

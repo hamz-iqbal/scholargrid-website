@@ -102,6 +102,15 @@ const articles = [
       "Master literature gap identification with ease. Discover how to analyze existing research, spot methodological limits, and confidently position your MS or PhD thesis topic.",
     href: "/blog/identify-a-real-research-gap",
   },
+    {
+    number: "12",
+    category: "Research Workflow",
+    title:
+      "Organizing Research Papers & Notes: A Scholar’s Practical Guide",
+    description:
+      "Master scientific literature organization. Learn how to manage research files, automate citations, and structure reading notes without feeling overwhelmed during your literature review.",
+    href: "/blog/organize-research-papers-and-notes",
+  },
 ];
 
 export default function BlogPage() {
